@@ -2474,7 +2474,7 @@ async function generateAnswer(q){
   try{
     // ===== OpenRouter 接入（你的 API Key + 模型）=====
     // 主模型 google/gemma-4-31b-it:free；免费模型易被限流，故准备 2 个备用模型自动降级。
-    const OR_KEY='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';
+    const OR_KEY=import.meta.env.VITE_API_KEY;
     const OR_BASE='https://openrouter.ai/api/v1';
     const OR_MODELS=['google/gemma-4-31b-it:free','google/gemma-4-26b-a4b-it:free','openai/gpt-oss-20b:free'];
     let ans=null,full='',okDone=false;
@@ -3997,7 +3997,7 @@ window.ORACLE_SIGNS = {
 /* 部分工具接入 AI：只在用户主动点击时调用，避免自动消耗额度。 */
 (function(){
   const enabled={wealth:'财富与现金流',career:'职业选择',layoff:'职场风险',relation:'关系沟通',style:'环境与状态'};
-  const key='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';
+  const key=import.meta.env.VITE_API_KEY;
   const models=['google/gemma-4-31b-it:free','openai/gpt-oss-20b:free'];
   function install(type){
     if(!enabled[type])return;
