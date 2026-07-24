@@ -28,7 +28,7 @@ export function buildRelatedRoutes(intents){
     '健康':['health','monthly'],
     '学业':['persona','timeline'],
     '居住':['risk','wuxing'],
-    '玄学':['wuxing','bazi','timeline'],
+    '玄学':['ziwei','qimen','meihua'],
     '综合':['trend','monthly','todayAdv']
   };
   const seen=new Set();const out=[];

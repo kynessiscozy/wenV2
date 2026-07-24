@@ -1,4 +1,4 @@
-import { CURR_YEAR } from '../engines/shared.js';
+import { CURR_YEAR, DZ } from '../engines/shared.js';
 import { TJ } from '../state/tj.js';
 import { getCtx } from '../state/ctx.js';
 import { KB } from './kb.js';
@@ -121,6 +121,9 @@ export function buildBaziContext(d){
     `【五行权重】木${d.wx.c['木'].toFixed(1)} 火${d.wx.c['火'].toFixed(1)} 土${d.wx.c['土'].toFixed(1)} 金${d.wx.c['金'].toFixed(1)} 水${d.wx.c['水'].toFixed(1)}（最旺:${d.wx.s} 最弱:${d.wx.w}）`,
     `【生肖 / 纳音】${b.sx}　${b.ny}`,
     `【神煞】${d.shensha&&d.shensha.length?d.shensha.map(s=>s.n+'('+s.v+')').join(' '):'无'}`,
+    d.zw&&d.zw.ps?`【紫微斗数】命宫${d.zw.mingGongZhi!=null?(DZ[d.zw.mingGongZhi]||d.zw.mingGongZhi):'-'}（${(d.zw.ps[d.zw.mingGongZhi]?.m||[]).join('、')||'无主星'}），身宫${d.zw.bodyGongZhi!=null?(DZ[d.zw.bodyGongZhi]||d.zw.bodyGongZhi):'-'}（${(d.zw.ps[d.zw.bodyGongZhi]?.m||[]).join('、')||'借对宫'}）`:'',
+    d.qm&&d.qm.ps?`【奇门遁甲】${d.qm.yangDun?'阳遁':'阴遁'}${d.qm.ju}局；开门${(d.qm.ps.find(x=>x.d==='开门')||{}).p||'-'}；生门${(d.qm.ps.find(x=>x.d==='生门')||{}).p||'-'}；值符${(d.qm.ps.find(x=>x.g==='值符')||{}).p||'-'}`:'',
+    d.mh?`【梅花易数】本卦${d.mh.ug||'-'} / ${d.mh.lg||'-'}；${d.mh.cl||'-'}爻动；变卦${d.mh.mu||'-'} / ${d.mh.ml||'-'}`:'',
     cDy?`【当前大运】${cDy.g}${cDy.z}（${cDy.as}~${cDy.ae}岁，${cDy.ys}~${cDy.ye}年），大运十神：${dySS}`:'',
     cLn?`【${CURR_YEAR}流年】${cLn.g}${cLn.z} ${cLn.sx}年，流年十神：${lnSS}`:'',
     cLm?`【当前流月】${cLm.name} ${cLm.gz}（${cLm.jq}），流月十神：${lmSS}`:'',

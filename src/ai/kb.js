@@ -1,4 +1,4 @@
-import { CURR_YEAR } from '../engines/shared.js';
+import { CURR_YEAR, GW, DZ } from '../engines/shared.js';
 import { TJ } from '../state/tj.js';
 import { getLayoffAstroRisk } from './risk.js';
 
@@ -19,6 +19,9 @@ export const KB={
     bazi:        {sec:'s-ming',card:'bazi',     name:'四柱八字'},
     wuxing:      {sec:'s-ming',card:'wuxing',   name:'五行能量'},
     persona:     {sec:'s-ming',card:'persona',  name:'人格画像'},
+    ziwei:       {sec:'s-ming',card:'ziwei',    name:'紫微斗数'},
+    qimen:       {sec:'s-ming',card:'qimen',    name:'奇门遁甲'},
+    meihua:      {sec:'s-ming',card:'meihua',   name:'梅花易数'},
     timeline:    {sec:'s-ming',card:'timeline', name:'人生时间线'},
     trend:       {sec:'s-yun', card:'trend',    name:'年度核心趋势'},
     focus:       {sec:'s-yun', card:'focus',    name:'当下关注'},
@@ -56,7 +59,10 @@ export const KB={
     {t:'身弱',  d:'日主无力，宜印比扶身，财官为忌时不可贪。',           see:['persona','trend']},
     {t:'本命年',d:'流年地支与年柱地支相同的年份，宜守不宜攻。',         see:['timeline']},
     {t:'冲太岁',d:'流年地支冲本命年支，主变动、动荡。',                 see:['risk']},
-    {t:'空亡',  d:'日柱旬中所缺的两个地支，主漂泊、精神空虚。',         see:['bazi']}
+    {t:'空亡',  d:'日柱旬中所缺的两个地支，主漂泊、精神空虚。',         see:['bazi']},
+    {t:'紫微斗数',d:'以十二宫与星曜组合观察人生不同领域，命宫看底色，身宫看后天用力方向。', see:['ziwei']},
+    {t:'奇门遁甲',d:'以九宫、八门、九星、八神观察当下局势，适合看时机、入口与行动取舍。', see:['qimen']},
+    {t:'梅花易数',d:'以本卦、动爻、变卦观察事情变化，适合聚焦具体问题的趋势参考。', see:['meihua']}
   ],
   // FAQ 库
   faqs:[
@@ -294,6 +300,38 @@ export const KB={
           d.wx.st?'1) 适合 All-in 主业\n2) 用神为克泄之物\n3) 避免比劫之运':'1) 适合稳健蓄势\n2) 用神为印比生扶\n3) 财官旺运须借力'
         ];
       }, related:['t1','t2']},
+    {id:'t4', q:'紫微斗数怎么看？', kw:['紫微','紫微斗数','命宫','身宫','十四主星','十二宫'], intent:'玄学', anchor:'ziwei',
+      answer:(d)=>{
+        const zw=d.zw||{},ps=zw.ps||[];
+        const ming=ps[zw.mingGongZhi]||{},body=ps[zw.bodyGongZhi]||{},career=ps.find(p=>p.n==='事业宫')||{},wealth=ps.find(p=>p.n==='财帛宫')||{};
+        return [
+          `你的紫微盘命宫落${DZ[zw.mingGongZhi]||'-'}，命宫主星：${ming.m&&ming.m.length?ming.m.join('、'):'无主星/借对宫参看'}。`,
+          `身宫落${DZ[zw.bodyGongZhi]||'-'}，身宫星曜：${body.m&&body.m.length?body.m.join('、'):'以辅星和对宫综合'}；命宫看先天气质，身宫看后天发力方向。`,
+          `事业宫${career.m&&career.m.length?'见 '+career.m.join('、'):'主星不显，需看辅曜与大限'}；财帛宫${wealth.m&&wealth.m.length?'见 '+wealth.m.join('、'):'以流年与现实收入结构为主'}。`,
+          '1) 先看命宫/身宫定性格与行动方式；2) 再看事业、财帛、夫妻等宫位；3) 不单凭一颗星断吉凶，要合参四柱和大运。'
+        ];
+      }, related:['t1','t2','t5']},
+    {id:'t5', q:'奇门遁甲怎么看？', kw:['奇门','奇门遁甲','九宫','八门','九星','八神','开门','生门','值符'], intent:'玄学', anchor:'qimen',
+      answer:(d)=>{
+        const qm=d.qm||{},ps=qm.ps||[];
+        const open=ps.find(x=>x.d==='开门')||{},sheng=ps.find(x=>x.d==='生门')||{},rest=ps.find(x=>x.d==='休门')||{},fu=ps.find(x=>x.g==='值符')||{};
+        return [
+          `你的奇门盘为${qm.yangDun?'阳遁':'阴遁'}${qm.ju||'-'}局，值符落${fu.p||'-'}。`,
+          `开门在${open.p||'-'}，主沟通、打开局面与外部连接；生门在${sheng.p||'-'}，主增长、求财与修复。`,
+          `休门在${rest.p||'-'}，适合缓冲、复盘与谈和。奇门更偏“当下局势”，要结合具体问题和时间。`,
+          '1) 要行动看开门；2) 要收益看生门；3) 要修复看休门；4) 遇伤/惊/死门议题先降风险、留余地。'
+        ];
+      }, related:['t4','t6','g1']},
+    {id:'t6', q:'梅花易数卦象怎么看？', kw:['梅花','梅花易数','卦象','本卦','变卦','动爻','上卦','下卦'], intent:'玄学', anchor:'meihua',
+      answer:(d)=>{
+        const mh=d.mh||{};
+        return [
+          `本卦为上卦${mh.ug||'-'}、下卦${mh.lg||'-'}，${mh.cl||'-'}爻动。`,
+          `上卦属${mh.ue||'-'}，下卦属${mh.le||'-'}；动爻代表事情开始变化的触发点。`,
+          `变卦为${mh.mu||'-'} / ${mh.ml||'-'}，可作为后续趋势参考。${mh.cl<=3?'变化多从基础、自身、近处开始':'变化多受环境、他人、远处条件牵动'}。`,
+          '1) 先明确一个具体问题；2) 本卦看现状，动爻看转折，变卦看后势；3) 不用卦象替代现实证据。'
+        ];
+      }, related:['t4','t5','g1']},
     // —— 综合/迷茫 ——
     {id:'g1', q:'我最近为什么压力大？', kw:['压力','焦虑','瓶颈','迷茫','烦','累','低谷'], intent:'综合', anchor:'monthly',
       answer:(d)=>{

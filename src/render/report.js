@@ -141,6 +141,74 @@ export function getRelationMode(dg,ss,gen){const map={甲:'独立型',乙:'依�
 export function getSuitableType(wx,dg){const map={木:'情绪稳定、行动力强、土金偏旺的人',火:'包容性强、愿意给予空间的人',土:'有上进心、能带来新鲜感的人',金:'温柔细腻、善于沟通的人',水:'逻辑清晰、能给予安全感的人'};return map[wx.dw]||'五行互补、性格圆融的人';}
 export function getRelationRisks(wx,dg,ss){const r=[];if(wx.st)r.push('过于强势，容易忽略伴侣感受');if(!wx.st)r.push('过于迁就，边界感模糊导致委屈');if(ss.dzc.some(c=>c.s.includes('伤官')))r.push('言语锋利，易因沟通方式产生摩擦');if(wx.c['火']>3)r.push('情绪波动大，热情来得快去得也快');if(wx.c['水']>2.8)r.push('思虑过多，容易因猜疑产生隔阂');if(!r.length)r.push('暂无显著关系风险，保持真诚沟通即可');return r;}
 
+
+function _mysticPill(text,type='main'){
+  const palette={main:['var(--ac1)','var(--ac4)','var(--ac-text)'],aux:['rgba(138,181,200,.10)','rgba(138,181,200,.22)','#b7d7e6'],sha:['rgba(212,101,74,.10)','rgba(212,101,74,.24)','#e6a092'],muted:['rgba(255,255,255,.04)','rgba(255,255,255,.08)','rgba(255,255,255,.52)']};
+  const [bg,bd,co]=palette[type]||palette.main;
+  return '<span style="display:inline-flex;align-items:center;margin:2px 4px 2px 0;padding:3px 7px;border-radius:999px;background:'+bg+';border:1px solid '+bd+';color:'+co+';font-size:.72em;line-height:1.35;white-space:nowrap">'+(text||'—')+'</span>';
+}
+function _mysticNote(title,body){return '<div style="padding:10px 11px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);line-height:1.65"><div style="font-size:.68em;color:rgba(255,255,255,.38);margin-bottom:4px">'+title+'</div><div style="font-size:.78em;color:rgba(255,245,220,.76)">'+body+'</div></div>';}
+function _hexLines(lines,lineNumbers=[],changingLine=0){
+  return (lines||[]).map((v,idx)=>{
+    const lineNo=Array.isArray(lineNumbers)?lineNumbers[idx]:lineNumbers+idx+1,active=lineNo===changingLine;
+    const bar=v?'<span style="display:block;height:8px;border-radius:99px;background:'+(active?'#d4b85a':'var(--ac5)')+'"></span>':'<span style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><i style="display:block;height:8px;border-radius:99px;background:'+(active?'#d4b85a':'rgba(255,255,255,.42)')+'"></i><i style="display:block;height:8px;border-radius:99px;background:'+(active?'#d4b85a':'rgba(255,255,255,.42)')+'"></i></span>';
+    return '<div style="height:16px;display:flex;align-items:center;gap:8px">'+bar+(active?'<em style="font-style:normal;font-size:.66em;color:#d4b85a">动</em>':'')+'</div>';
+  }).join('');
+}
+function _elementRelation(a,b){
+  const sheng={木:'火',火:'土',土:'金',金:'水',水:'木'},ke={木:'土',火:'金',土:'水',金:'木',水:'火'};
+  if(a===b)return '上下卦同气，事情更容易沿着原有惯性推进。';
+  if(sheng[a]===b)return '上卦生下卦，外部条件对内在基础有扶助。';
+  if(sheng[b]===a)return '下卦生上卦，靠自身投入带动局面变化。';
+  if(ke[a]===b)return '上卦克下卦，外部压力较明显，宜先稳基础。';
+  if(ke[b]===a)return '下卦克上卦，主动性强，但要避免硬冲。';
+  return '内外关系平常，以具体行动和现实条件为准。';
+}
+export function renderZiWeiCard(zw){
+  if(!zw||!zw.ps)return '';
+  const ps=zw.ps||[],ming=ps[zw.mingGongZhi]||{},body=ps[zw.bodyGongZhi]||{},career=ps.find(p=>p.n==='事业宫')||{},wealth=ps.find(p=>p.n==='财帛宫')||{},love=ps.find(p=>p.n==='夫妻宫')||{};
+  const mainStars=(ming.m&&ming.m.length?ming.m:['未见主星']).join('、');
+  const bodyStars=(body.m&&body.m.length?body.m:['借对宫参看']).join('、');
+  const palaceHtml=ps.map((p,i)=>{
+    const isM=i===zw.mingGongZhi,isB=i===zw.bodyGongZhi;
+    return '<div style="min-height:92px;padding:10px;border-radius:14px;background:'+(isM?'var(--ac1)':'rgba(255,255,255,.028)')+';border:1px solid '+(isM?'var(--ac4)':'rgba(255,255,255,.06)')+'">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:7px"><b style="font-size:.78em;color:'+(isM?'var(--ac-text)':'rgba(255,245,220,.82)')+'">'+p.n+'</b><span style="font-size:.62em;color:rgba(255,255,255,.32)">'+(DZ[i]||'')+(isM?' · 命':'')+(isB?' · 身':'')+'</span></div>'
+      +'<div>'+((p.m&&p.m.length)?p.m.map(x=>_mysticPill(x,'main')).join(''):_mysticPill('无主星','muted'))+'</div>'
+      +(p.a&&p.a.length?'<div style="margin-top:4px">'+p.a.map(x=>_mysticPill(x,'aux')).join('')+'</div>':'')
+      +(p.s&&p.s.length?'<div style="margin-top:4px">'+p.s.map(x=>_mysticPill(x,'sha')).join('')+'</div>':'')
+      +'</div>';
+  }).join('');
+  return '<div class="glass card-2" data-card="ziwei"><div class="card-hd"><div class="card-ic">紫</div><div><div class="card-tt">紫微斗数</div><div class="card-st">命宫、身宫、十二宫与主辅煞星</div></div></div>'
+    +'<div class="ig" style="margin-bottom:12px">'+[
+      ['命宫', (DZ[zw.mingGongZhi]||'')+' · '+mainStars],['身宫',(DZ[zw.bodyGongZhi]||'')+' · '+bodyStars],['事业宫',(career.m&&career.m.length?career.m.join('、'):'平稳')],['财帛宫',(wealth.m&&wealth.m.length?wealth.m.join('、'):'看流年')],['夫妻宫',(love.m&&love.m.length?love.m.join('、'):'重经营')],['盘面提示','主星看性格，辅煞看助力与阻力']
+    ].map(x=>'<div class="ii"><div class="il">'+x[0]+'</div><div class="iv">'+x[1]+'</div></div>').join('')+'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">'+palaceHtml+'</div>'
+    +'<div class="at" style="margin-top:10px"><p>紫微盘用于补充“人事宫位”的观察：命宫看底色，身宫看后天用力方向；事业、财帛、夫妻等宫位要结合四柱、大运、流年一起看，不单凭单颗星定论。</p></div></div>';
+}
+export function renderQiMenCard(qm){
+  if(!qm||!qm.ps)return '';
+  const ps=qm.ps||[],dun=qm.yangDun?'阳遁':'阴遁',open=ps.find(x=>x.d==='开门')||{},sheng=ps.find(x=>x.d==='生门')||{},rest=ps.find(x=>x.d==='休门')||{},fu=ps.find(x=>x.g==='值符')||ps[0]||{};
+  const doorTone={开门:'开局、沟通、发布',生门:'增长、求财、修复',休门:'休整、谈和、恢复',景门:'曝光、表达、文书',杜门:'保密、学习、闭关',伤门:'冲突、突破、损耗',死门:'停滞、收尾、保守',惊门:'消息、口舌、突发'};
+  const grid=ps.map(x=>'<div style="min-height:96px;padding:10px;border-radius:14px;background:'+(x.cc?'rgba(212,184,90,.08)':'rgba(255,255,255,.028)')+';border:1px solid '+(x.g==='值符'?'var(--ac4)':'rgba(255,255,255,.06)')+'"><div style="display:flex;justify-content:space-between;gap:6px;margin-bottom:7px"><b style="font-size:.78em;color:rgba(255,245,220,.86)">'+x.p+'</b><span style="font-size:.62em;color:rgba(255,255,255,.35)">'+(x.cc?'中宫':'')+'</span></div><div>'+_mysticPill(x.d,'main')+_mysticPill(x.s,'aux')+_mysticPill(x.g,x.g==='白虎'||x.g==='玄武'?'sha':'muted')+'</div><div style="margin-top:7px;font-size:.66em;line-height:1.55;color:rgba(255,255,255,.44)">'+(doorTone[x.d]||'顺势观察')+'</div></div>').join('');
+  return '<div class="glass card-2" data-card="qimen"><div class="card-hd"><div class="card-ic">奇</div><div><div class="card-tt">奇门遁甲</div><div class="card-st">'+dun+' '+qm.ju+'局 · 九宫、八门、九星、八神</div></div></div>'
+    +'<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px">'
+    +_mysticNote('值符落宫',(fu.p||'—')+' · '+(fu.s||'—')+' · '+(fu.d||'—'))
+    +_mysticNote('开门位置',(open.p||'—')+'：适合沟通、发布、谈判与外部连接')
+    +_mysticNote('生门位置',(sheng.p||'—')+'：适合求财、增长、恢复与资源经营')
+    +'</div><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">'+grid+'</div>'
+    +'<div class="at" style="margin-top:10px"><p>奇门盘用于看“当下局势”：开门看行动入口，生门看增长机会，休门看修复与缓冲。这里按出生盘生成静态参考，具体择时仍要以现实时间和事项为准。</p></div></div>';
+}
+export function renderMeiHuaCard(mh){
+  if(!mh)return '';
+  const top=(mh.ul||[]).slice().reverse(),bottom=(mh.ll||[]).slice().reverse(),moveArea=mh.cl<=3?'内卦（基础、自己、近处）':'外卦（环境、他人、远处）';
+  const rel=_elementRelation(mh.ue,mh.le);
+  return '<div class="glass card-2" data-card="meihua"><div class="card-hd"><div class="card-ic">卦</div><div><div class="card-tt">梅花易数</div><div class="card-st">本卦、动爻、变卦与体用参考</div></div></div>'
+    +'<div style="display:grid;grid-template-columns:1.05fr .95fr;gap:12px;align-items:stretch">'
+    +'<div style="padding:14px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div style="font-family:var(--serif);font-size:1.35em;color:var(--ac-text)">'+mh.ug+'</div><div style="font-family:var(--serif);font-size:1.35em;color:rgba(255,245,220,.86);margin-top:4px">'+mh.lg+'</div></div><div style="text-align:right;font-size:.72em;color:rgba(255,255,255,.42)">本卦<br><b style="color:#d4b85a;font-size:1.3em">'+mh.cl+'爻动</b></div></div><div style="display:grid;gap:2px;max-width:180px;margin:0 auto 6px">'+_hexLines(top,[6,5,4],mh.cl)+_hexLines(bottom,[3,2,1],mh.cl)+'</div></div>'
+    +'<div style="display:grid;gap:8px">'+_mysticNote('上卦 / 下卦',mh.ug+'（'+mh.ue+'） / '+mh.lg+'（'+mh.le+'）')+_mysticNote('动爻位置',mh.cl+'爻动，重点看 '+moveArea)+_mysticNote('变卦',mh.mu+' / '+mh.ml)+_mysticNote('体用关系',rel)+'</div></div>'
+    +'<div class="at" style="margin-top:10px"><p>梅花易数更适合回答“某件事的变化趋势”。本卦看当前局面，动爻看变化触发点，变卦看后续走向；若用于重大决策，仍建议结合现实信息与专业意见。</p></div></div>';
+}
+
 export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue){
   // —— 统一上下文（所有派生量的唯一来源）——
   const _input=(window._ctx&&window._ctx.input)?window._ctx.input:{by:by,bm:1,bd:1};
@@ -176,6 +244,10 @@ export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue
   const persona=getPersona(dg,wx,wx.st,ss);
   H+=`<div class="glass card-2" data-card="persona"><div class="card-hd"><div class="card-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="card-tt">人格画像</div><div class="card-st">基于日主与格局推导</div></div></div>`;
   H+=`<div class="portrait-grid">${Object.entries(persona).map(([k,v])=>`<div class="port-item"><div class="port-label">${k}</div><div class="port-val">${v}</div></div>`).join('')}</div></div>`;
+
+  H+=renderZiWeiCard(zw);
+  H+=renderQiMenCard(qm);
+  H+=renderMeiHuaCard(mh);
 
   const tlData=getTimeline(dy,by,wx,b,dg,gen,age);
   const tlMin=Math.min(...tlData.map(t=>t.sc)),tlMax=Math.max(...tlData.map(t=>t.sc));
@@ -538,7 +610,7 @@ export function renderQuickRead(secKey,d){
     const direction=wx.st?'适合把判断转为行动，在关键节点主动争取':'适合先借助资源与协作，再稳步推进自己的计划';
     const summary='命局以「<b>'+dg+wx.dw+'</b>」为本，'+(wx.st?'气场刚强宜主动':'气场柔顺宜借力')+'，关键在用神「<b style="color:'+WC[wx.ys]+'">'+wx.ys+'</b>」的把握。'+persona.思维+'；目前处于<b>'+phase+'</b>，'+direction+'，重点是保持稳定节奏，不必频繁改变方向。';
     return _qrCard('命盘速读',items,summary,[
-      {k:'bazi',t:'查看四柱→'},{k:'wuxing',t:'五行结构→'}
+      {k:'bazi',t:'查看四柱→'},{k:'wuxing',t:'五行结构→'},{k:'ziwei',t:'三式合参→'}
     ]);
   }
   if(secKey==='yun'){
