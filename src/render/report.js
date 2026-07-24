@@ -464,13 +464,17 @@ export function organizeMasterReportLayout(ctx){
   // 命盘结构：四柱、五行、细盘、十神收进一个结构化主卡。
   const bazi=ming.querySelector('[data-card="bazi"]'),wuxing=ming.querySelector('[data-card="wuxing"]');
   const persona=ming.querySelector('[data-card="persona"]');
+  const ziwei=ming.querySelector('[data-card="ziwei"]'),qimen=ming.querySelector('[data-card="qimen"]'),meihua=ming.querySelector('[data-card="meihua"]');
   if(bazi&&wuxing&&persona&&!ming.querySelector('.master-structure')){
     const structure=document.createElement('section');
     structure.className='glass card-1 master-structure';structure.dataset.card='structure';
-    structure.innerHTML='<div class="card-hd"><div class="card-ic">⌘</div><div><div class="card-tt">命盘结构</div><div class="card-st">四柱、五行、细盘与十神关系</div></div></div><div class="structure-tabs" role="tablist"><button class="structure-tab active" type="button" data-structure="pillars" onclick="switchStructureTab(this)">四柱</button><button class="structure-tab" type="button" data-structure="elements" onclick="switchStructureTab(this)">五行</button><button class="structure-tab" type="button" data-structure="detail" onclick="switchStructureTab(this)">细盘</button><button class="structure-tab" type="button" data-structure="gods" onclick="switchStructureTab(this)">十神</button></div><div class="structure-panes"></div>';
+    structure.innerHTML='<div class="card-hd"><div class="card-ic">⌘</div><div><div class="card-tt">命盘结构</div><div class="card-st">四柱、五行、三式、细盘与十神关系</div></div></div><div class="structure-tabs" role="tablist"><button class="structure-tab active" type="button" data-structure="pillars" onclick="switchStructureTab(this)">四柱</button><button class="structure-tab" type="button" data-structure="elements" onclick="switchStructureTab(this)">五行</button><button class="structure-tab" type="button" data-structure="mystic" onclick="switchStructureTab(this)">三式</button><button class="structure-tab" type="button" data-structure="detail" onclick="switchStructureTab(this)">细盘</button><button class="structure-tab" type="button" data-structure="gods" onclick="switchStructureTab(this)">十神</button></div><div class="structure-panes"></div>';
     const grid=structure.querySelector('.structure-panes');
     const makePane=(key,node,active=false)=>{const pane=document.createElement('div');pane.className='structure-pane'+(active?' active':'');pane.dataset.structure=key;node.classList.add('structure-subcard');node.setAttribute('data-no-collapse','1');pane.appendChild(node);grid.appendChild(pane);};
     makePane('pillars',bazi,true);makePane('elements',wuxing);
+    const mystic=document.createElement('div');mystic.className='structure-mini mystic-structure-group';
+    [ziwei,qimen,meihua].filter(Boolean).forEach(node=>{node.setAttribute('data-no-collapse','1');mystic.appendChild(node);});
+    makePane('mystic',mystic);
     const details=document.createElement('div');details.className='structure-mini structure-subcard';
     const termLabel=t=>'<span class="glossary-term" data-term="'+t+'" onclick="showGlossPop(event)">'+t+'</span>';
     const finePillars=[['年柱',ctx.b.Y,ctx.ss.yg],['月柱',ctx.b.M,ctx.ss.mg],['日柱',ctx.b.D,'日主'],['时柱',ctx.b.H,ctx.ss.hg]];
