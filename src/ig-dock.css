@@ -38,3 +38,14 @@ body .ig-dock .ai-fab-icon{display:grid!important;place-items:center!important;w
 @media(max-width:600px){body .ig-dock.tab-bar{width:calc(100vw - 16px)!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;border-radius:999px!important;padding:6px 4px!important}}
 @media(max-width:350px){body .ig-dock.tab-bar{width:calc(100vw - 12px)!important}.ig-dock .ig-nav-icon{width:22px!important;height:22px!important}.ig-dock .ai-fab{width:43px!important;min-width:43px!important;height:43px!important;min-height:43px!important}}
 @media(prefers-reduced-motion:reduce){body .ig-dock.tab-bar{animation:none!important}body .ig-dock .tab-item,body .ig-dock .ig-nav-icon,body .ig-dock .ai-fab{transition:none!important}}
+
+/* Dock 内的问问大师入口与导航保持一致，使用紧凑胶囊形态。 */
+body .ig-dock .ai-fab{
+  width:52px!important;
+  min-width:52px!important;
+  height:42px!important;
+  min-height:42px!important;
+  border-radius:999px!important;
+}
+body .ig-dock .ai-fab-icon,body .ig-dock .ig-ai-icon{width:26px!important;height:26px!important}
+@media(max-width:350px){body .ig-dock .ai-fab{width:47px!important;min-width:47px!important;height:40px!important;min-height:40px!important}}
