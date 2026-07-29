@@ -94,7 +94,10 @@ function renderForm(){
     <div class="answerbook-mode" role="radiogroup" aria-label="选择阅读方式">
       ${Object.entries(MODES).map(([id,label],i)=>`<button type="button" class="answerbook-mode-btn ${i===0?'active':''}" data-mode="${id}" role="radio" aria-checked="${i===0?'true':'false'}">${label}</button>`).join('')}
     </div>
-    <button class="answerbook-open-btn" type="button" id="answerBookOpen">翻开这一页 <span>→</span></button>
+    <div class="answerbook-entry-actions">
+      <button class="answerbook-open-btn" type="button" id="answerBookOpen">翻开这一页 <span>→</span></button>
+      <button class="answerbook-random-btn" type="button" id="answerBookRandom">随手翻开一页</button>
+    </div>
     <p class="answerbook-disclaimer">它不是预测，也不替代你的判断。重要决定请结合现实条件与专业意见。</p>
   </section>`;
 }
@@ -138,6 +141,10 @@ function bindForm(root){
     const question=input.value.trim();
     if(!question){input.focus();input.classList.add('is-invalid');setTimeout(()=>input.classList.remove('is-invalid'),450);return;}
     showResult(root,question,mode,pick(mode));
+  });
+  root.querySelector('#answerBookRandom').addEventListener('click',()=>{
+    // A no-question reading is intentionally open-ended and uses a neutral prompt in the saved history.
+    showResult(root,'此刻的你',mode,pick(mode));
   });
 }
 function showResult(root,question,mode,answer){
