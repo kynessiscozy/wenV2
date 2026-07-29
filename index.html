@@ -91,16 +91,45 @@
   </div>
 </div>
 
+<!-- iOS Instagram-style Dock Bar -->
 <div class="tab-bar" id="tabBar">
   <div class="tab-bar-inner">
-    <div class="tab-indicator" id="tabIndicator"></div>
-    <div class="tab-item active" data-sec="s-ming" onclick="switchTab(this)">命盘</div>
-    <div class="tab-item" data-sec="s-yun" onclick="switchTab(this)">运势</div>
+    <div class="tab-item active" data-sec="s-ming" onclick="switchTab(this)">
+      <div class="tab-icon">
+        <svg class="ico-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+        <svg class="ico-filled" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="var(--tab-bg)"/><rect x="11" y="1" width="2" height="6" rx="1"/><rect x="11" y="17" width="2" height="6" rx="1"/><rect x="1" y="11" width="6" height="2" rx="1"/><rect x="17" y="11" width="6" height="2" rx="1"/></svg>
+      </div>
+      <span class="tab-label">命盘</span>
+    </div>
+    <div class="tab-item" data-sec="s-yun" onclick="switchTab(this)">
+      <div class="tab-icon">
+        <svg class="ico-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <svg class="ico-filled" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M2 12h3.3L9 4l5.5 17L18 12h4v1.5h-3.3L15 20 9.5 3 7 12H2z"/></svg>
+      </div>
+      <span class="tab-label">运势</span>
+    </div>
     <button class="ai-fab" id="aiFab" type="button" onclick="openAsk()" aria-label="打开问问大师" title="问问大师">
-      <span class="ai-orbits" aria-hidden="true"></span><span class="ai-fab-icon">✦</span><span class="ai-fab-text">问问</span><span class="ai-badge" aria-hidden="true">AI</span>
+      <span class="ai-orbits" aria-hidden="true"></span>
+      <span class="ai-fab-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </span>
+      <span class="ai-fab-text">问问</span>
+      <span class="ai-badge" aria-hidden="true">AI</span>
     </button>
-    <div class="tab-item" data-sec="s-rel" onclick="switchTab(this)">关系</div>
-    <div class="tab-item" data-sec="s-adv" onclick="switchTab(this)">工具</div>
+    <div class="tab-item" data-sec="s-rel" onclick="switchTab(this)">
+      <div class="tab-icon">
+        <svg class="ico-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <svg class="ico-filled" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </div>
+      <span class="tab-label">关系</span>
+    </div>
+    <div class="tab-item" data-sec="s-adv" onclick="switchTab(this)">
+      <div class="tab-icon">
+        <svg class="ico-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <svg class="ico-filled" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      </div>
+      <span class="tab-label">工具</span>
+    </div>
   </div>
 </div>
 
