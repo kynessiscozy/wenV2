@@ -13,8 +13,18 @@ function withOpenRouterHeaders(apiKey, title) {
   return {
     Authorization: 'Bearer ' + apiKey,
     'Content-Type': 'application/json',
-    'X-Title': title
+    'X-Title': title,
+    'HTTP-Referer': typeof location !== 'undefined' ? location.origin : 'https://kynessiscozy.github.io/wenV2/'
   };
+}
+
+function fetchWithTimeout(url, options, timeoutMs=22000) {
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeoutMs);
+  return fetch(url,{...options,signal:controller.signal}).finally(()=>clearTimeout(timer));
+}
+function cleanTurns(turns) {
+  return (turns||[]).slice(-6).map(x=>({role:x.role==='assistant'?'assistant':'user',content:String(x.content||'').slice(0,700)})).filter(x=>x.content);
 }
 
 function buildAskSystemPrompt({ systemPrompt, aiPrefs, chartContext }) {
@@ -23,7 +33,7 @@ function buildAskSystemPrompt({ systemPrompt, aiPrefs, chartContext }) {
     + (aiPrefs?.natural ? '使用自然口语。' : '直接、少寒暄。')
     + (aiPrefs?.length === 'standard' ? '回复可放宽到180至260字。' : '保持简洁。')
     + '\n用户命盘：\n'
-    + chartContext
+    + String(chartContext||'').slice(0,5000)
     + '\n当前时间：'
     + new Date().toLocaleString('zh-CN');
 }
@@ -44,20 +54,20 @@ export async function streamAskAnswer({
   for (const model of models) {
     try {
       full = '';
-      const resp = await fetch(OPENROUTER_BASE + '/chat/completions', {
+      const resp = await fetchWithTimeout(OPENROUTER_BASE + '/chat/completions', {
         method: 'POST',
         headers: withOpenRouterHeaders(apiKey, 'Wenwen Dashi'),
         body: JSON.stringify({
           model,
           stream: true,
-          temperature: 0.6,
-          max_tokens: 384,
+          temperature: aiPrefs?.temperature ?? 0.55,
+          max_tokens: aiPrefs?.length === 'standard' ? 320 : 240,
           messages: [
             {
               role: 'system',
               content: buildAskSystemPrompt({ systemPrompt, aiPrefs, chartContext })
             },
-            ...previousTurns,
+            ...cleanTurns(previousTurns),
             { role: 'user', content: question }
           ]
         })
@@ -94,6 +104,10 @@ export async function streamAskAnswer({
         }
       }
 
+      if(buf.trim().startsWith('data:')){
+        const raw=buf.trim().slice(5).trim();
+        if(raw&&raw!=='[DONE]'){try{const js=JSON.parse(raw),content=js.choices?.[0]?.delta?.content||'';if(content){full+=content;onDelta?.(full,content,model)}}catch(_){} }
+      }
       if (full.trim()) return full;
     } catch (_) {
       // 免费模型容易限流/不可用，自动尝试下一个模型。
@@ -115,7 +129,7 @@ export async function askToolInsight({
 
   for (const model of models) {
     try {
-      const resp = await fetch(OPENROUTER_BASE + '/chat/completions', {
+      const resp = await fetchWithTimeout(OPENROUTER_BASE + '/chat/completions', {
         method: 'POST',
         headers: withOpenRouterHeaders(apiKey, 'Wenwen Dashi Tool'),
         body: JSON.stringify({
