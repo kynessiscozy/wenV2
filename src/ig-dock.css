@@ -71,3 +71,53 @@ body .ig-dock.tab-bar{
 }
 body.ig-dock-scrolling .ig-dock.tab-bar{opacity:.9!important}
 @media(prefers-reduced-motion:reduce){body .ig-dock.tab-bar{transition:none!important}}
+
+/* 问问大师改为与玻璃设置一致的锚定式浮层：从 Dock 上方展开，而非全屏模态。 */
+.ai-overlay.open{
+  background:transparent!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  animation:none!important;
+}
+.ai-sheet{
+  left:50%!important;
+  top:auto!important;
+  bottom:calc(var(--ig-dock-height) + env(safe-area-inset-bottom,0px) + 26px)!important;
+  width:min(430px,calc(100vw - 24px))!important;
+  max-height:min(590px,calc(100dvh - var(--ig-dock-height) - env(safe-area-inset-bottom,0px) - 54px))!important;
+  padding:16px!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  border-radius:20px!important;
+  background:rgba(24,24,27,.90)!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.12)!important;
+  backdrop-filter:blur(30px) saturate(155%)!important;
+  -webkit-backdrop-filter:blur(30px) saturate(155%)!important;
+  transform:translate(-50%,10px) scale(.98)!important;
+  transform-origin:center bottom!important;
+}
+.ai-sheet.open{
+  transform:translate(-50%,0) scale(1)!important;
+  animation:none!important;
+}
+.ai-sheet::after{
+  content:'';
+  position:absolute;
+  left:50%; bottom:-7px;
+  width:13px; height:13px;
+  transform:translateX(-50%) rotate(45deg);
+  background:rgba(24,24,27,.90);
+  border-right:1px solid rgba(255,255,255,.12);
+  border-bottom:1px solid rgba(255,255,255,.12);
+}
+.ai-sheet>*{position:relative;z-index:1}
+@media(max-width:560px){
+  .ai-sheet{
+    bottom:calc(var(--ig-dock-height) + env(safe-area-inset-bottom,0px) + 21px)!important;
+    width:calc(100vw - 16px)!important;
+    max-height:min(560px,calc(100dvh - var(--ig-dock-height) - env(safe-area-inset-bottom,0px) - 44px))!important;
+    border-radius:18px!important;
+    padding:14px!important;
+  }
+  .ai-sheet .ai-body{min-height:150px!important;max-height:38dvh!important}
+}
+@media(prefers-reduced-motion:reduce){.ai-sheet,.ai-sheet.open{transition:none!important}}
