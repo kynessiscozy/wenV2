@@ -674,3 +674,30 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
   border:0 !important;
   box-shadow:none !important;
 }
+
+/* 工具中心：按功能主题加入低对比度背景插画，文字与操作仍保持高可读性。 */
+#s-adv .tool-tile[data-group]{
+  background-position:center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  border-color:rgba(255,255,255,.13)!important;
+  box-shadow:0 12px 28px -20px rgba(0,0,0,.92),inset 0 1px rgba(255,255,255,.10)!important;
+}
+#s-adv .tool-tile[data-group]::before{
+  inset:0!important;
+  opacity:1!important;
+  background:linear-gradient(145deg,rgba(7,9,14,.18),rgba(7,9,14,.68) 78%)!important;
+}
+#s-adv .tool-tile[data-group="money"]{background-image:linear-gradient(145deg,rgba(6,13,28,.15),rgba(6,9,18,.58)),url('/tool-bg-wealth.png')!important}
+#s-adv .tool-tile[data-group="life"]{background-image:linear-gradient(145deg,rgba(8,34,37,.12),rgba(5,14,18,.62)),url('/tool-bg-life.png')!important}
+#s-adv .tool-tile[data-group="relation"]{background-image:linear-gradient(145deg,rgba(36,10,34,.12),rgba(13,7,18,.64)),url('/tool-bg-relation.png')!important}
+#s-adv .tool-tile[data-group="play"]{background-image:linear-gradient(145deg,rgba(11,14,41,.12),rgba(7,9,22,.62)),url('/tool-bg-inspire.png')!important}
+#s-adv .tool-tile[data-group]:hover{
+  background-position:center!important;
+  border-color:hsla(var(--accent-h),var(--accent-s),76%,.42)!important;
+  box-shadow:0 18px 36px -18px rgba(0,0,0,.9),0 0 0 1px hsla(var(--accent-h),var(--accent-s),66%,.12),inset 0 1px rgba(255,255,255,.16)!important;
+}
+#s-adv .tool-tile[data-group] b,
+#s-adv .tool-tile[data-group] small{position:relative!important;text-shadow:0 1px 8px rgba(0,0,0,.75)!important}
+#s-adv .tool-tile[data-group] small{color:rgba(255,255,255,.63)!important}
+@media(prefers-reduced-transparency:reduce){#s-adv .tool-tile[data-group]{background-image:none!important;background-color:#171719!important}}
