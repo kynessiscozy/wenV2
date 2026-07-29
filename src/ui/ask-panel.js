@@ -14,7 +14,6 @@ export function openAsk(){
   }
   document.getElementById('aiOverlay').classList.add('open');
   document.getElementById('aiSheet').classList.add('open');
-  document.getElementById('aiFab')?.classList.add('hidden');
   const context=document.getElementById('aiContext'),d=window._ctx;
   if(context&&d){context.innerHTML='<span>✦ 当前命盘</span><b>'+d.dg+d.dw+' · '+(d.wx.st?'行动型节奏':'蓄力型节奏')+' · 可直接问事业、关系与近期选择</b>';}
   // 自由提问：打开后直接聚焦输入框。
@@ -23,7 +22,6 @@ export function openAsk(){
 export function closeAsk(){
   document.getElementById('aiOverlay').classList.remove('open');
   document.getElementById('aiSheet').classList.remove('open');
-  document.getElementById('aiFab')?.classList.remove('hidden');
   document.getElementById('aiSuggest').classList.remove('show');
 }
 export function newAskChat(){

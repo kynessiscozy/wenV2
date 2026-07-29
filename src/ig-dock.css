@@ -121,3 +121,6 @@ body.ig-dock-scrolling .ig-dock.tab-bar{opacity:.9!important}
   .ai-sheet .ai-body{min-height:150px!important;max-height:38dvh!important}
 }
 @media(prefers-reduced-motion:reduce){.ai-sheet,.ai-sheet.open{transition:none!important}}
+
+/* 打开锚定式问答面板时，Dock 与问问图标仍保持可见、可点击。 */
+.ai-overlay.open{z-index:89!important}
