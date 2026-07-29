@@ -55,12 +55,7 @@ export function goBack(){document.body.classList.remove('report-active');applyTh
 export function scrollToForm(){document.getElementById('formCard').scrollIntoView({behavior:'smooth',block:'center'});}
 
 export function switchTab(el){
-  document.querySelectorAll('.tab-item').forEach(t=>{
-    t.classList.remove('active','tab-pop');
-    t.removeAttribute('aria-current');
-  });
-  el.classList.add('active');
-  el.setAttribute('aria-current','page');
+  document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active','tab-pop'));el.classList.add('active');
   if(typeof moveTabIndicator==='function')moveTabIndicator(el);
   // IG-style tap feedback: restart the pop animation on the icon that just became active
   void el.offsetWidth;
