@@ -662,3 +662,6 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
 
 /* 三式合参结构卡片 */
 .three-styles-intro{margin:-3px 0 12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.055);font-size:.72em;line-height:1.65;color:rgba(255,255,255,.52)}.three-styles-tabs{grid-template-columns:repeat(3,1fr)!important}.three-styles-panes>.structure-pane{min-width:0}.three-styles-panes>.structure-pane>.card-hd{display:none}.three-styles-panes>.structure-pane>[style*="grid-template-columns"]{max-width:100%}.three-styles-note{margin-top:12px;padding:10px 12px;border-top:1px dashed rgba(255,255,255,.10);font-size:.68em;line-height:1.65;color:rgba(255,255,255,.40)}.three-styles-card .structure-subcard{border:0!important}@media(max-width:480px){.three-styles-tabs .structure-tab{font-size:.68em}.three-styles-card{padding-left:14px!important;padding-right:14px!important}.three-styles-card .structure-pane [style*="grid-template-columns:repeat(3"]{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+/* 命盘依据作为结果底部说明，不占用主结果卡片位置 */
+.tj-result>.tj-chart-basis{margin:14px 0 0!important;border-radius:0!important;border:0!important;border-top:1px solid rgba(255,255,255,.09)!important;background:transparent!important;padding:10px 2px 0!important;box-shadow:none!important;opacity:.82}
