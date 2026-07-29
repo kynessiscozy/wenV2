@@ -701,3 +701,23 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
 #s-adv .tool-tile[data-group] small{position:relative!important;text-shadow:0 1px 8px rgba(0,0,0,.75)!important}
 #s-adv .tool-tile[data-group] small{color:rgba(255,255,255,.63)!important}
 @media(prefers-reduced-transparency:reduce){#s-adv .tool-tile[data-group]{background-image:none!important;background-color:#171719!important}}
+
+/* 工具图标统一为单色线性 SVG，去除彩色图标底座。 */
+#s-adv .tool-tile>.tool-icon{
+  width:30px!important;
+  height:30px!important;
+  margin:0 0 12px!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  overflow:visible!important;
+  border:0!important;
+  border-radius:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  color:rgba(255,255,255,.92)!important;
+  transform:none!important;
+}
+#s-adv .tool-tile>.tool-icon::after{display:none!important}
+#s-adv .tool-tile>.tool-icon svg{width:25px!important;height:25px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.75!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+#s-adv .tool-tile:hover>.tool-icon{color:#fff!important;filter:drop-shadow(0 1px 6px rgba(255,255,255,.22));transform:translateY(-1px)!important}
