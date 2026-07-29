@@ -1,4 +1,4 @@
-import { TG, DZ, SX, NY, GW, ZW, ZC, SS } from './shared.js';
+import { TG, DZ, SX, WX, NY, GW, ZW, ZC, SS } from './shared.js';
 import { jqDate, getMonthPillar, getDayPillarIndex } from './calendar.js';
 
 function mkBazi(y,m,d,hourZhi){const mp=getMonthPillar(y,m,d);const yp=mp.yp;const ygi=((yp-4)%10+10)%10;const yzi=((yp-4)%12+12)%12;const mzi=(mp.mi+2)%12;const monthGanBase=[2,4,6,8,0];const mgi=(monthGanBase[ygi%5]+mp.mi)%10;const dji=getDayPillarIndex(y,m,d);const dgi=dji%10;const dzi=dji%12;const hourGanBase=[0,2,4,6,8];const hgi=(hourGanBase[dgi%5]+hourZhi)%10;const nyi=((yp-4)%60+60)%60;return{Y:{g:TG[ygi],z:DZ[yzi],gi:ygi,zi:yzi},M:{g:TG[mgi],z:DZ[mzi],gi:mgi,zi:mzi},D:{g:TG[dgi],z:DZ[dzi],gi:dgi,zi:dzi},H:{g:TG[hgi],z:DZ[hourZhi],gi:hgi,zi:hourZhi},dj:dji,ny:NY[nyi],sx:SX[yzi]};}
