@@ -721,3 +721,35 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
 #s-adv .tool-tile>.tool-icon::after{display:none!important}
 #s-adv .tool-tile>.tool-icon svg{width:25px!important;height:25px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.75!important;stroke-linecap:round!important;stroke-linejoin:round!important}
 #s-adv .tool-tile:hover>.tool-icon{color:#fff!important;filter:drop-shadow(0 1px 6px rgba(255,255,255,.22));transform:translateY(-1px)!important}
+
+/* 工具入口以文字为主：移除装饰性图标，强化标题与说明层级。 */
+#s-adv .tool-tile>.tool-icon{display:none!important}
+#s-adv .tool-tile{
+  min-height:126px!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  padding:18px 16px!important;
+  text-align:left!important;
+}
+#s-adv .tool-tile b{
+  width:100%!important;
+  margin:0!important;
+  color:#fff!important;
+  font-size:1em!important;
+  font-weight:720!important;
+  line-height:1.4!important;
+  text-align:left!important;
+}
+#s-adv .tool-tile small{
+  width:100%!important;
+  min-height:0!important;
+  margin:7px 0 0!important;
+  color:rgba(255,255,255,.62)!important;
+  font-size:.68em!important;
+  line-height:1.55!important;
+  text-align:left!important;
+}
+@media(max-width:560px){
+  #s-adv .tool-tile{min-height:116px!important;padding:16px 14px!important}
+  #s-adv .tool-tile b{font-size:.92em!important}
+}
