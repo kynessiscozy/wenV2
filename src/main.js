@@ -182,7 +182,8 @@ function sel(i,n){hid.value=i;inp.value=n;dd.classList.remove('show')}
 inp.addEventListener('focus',()=>{rdd(inp.value===(CD[hid.value]||{}).n?'':inp.value);dd.classList.add('show')});
 inp.addEventListener('input',()=>{rdd(inp.value);dd.classList.add('show')});
 inp.addEventListener('blur',()=>setTimeout(()=>dd.classList.remove('show'),150));
-inp.addEventListener('keydown',e=>{const opts=dd.querySelectorAll('.co');if(e.key==='ArrowDown'){e.preventDefault();ai=Math.min(ai+1,opts.length-1);opts.forEach((o,i)=>o.classList.toggle('act',i===ai));if(opts[ai])opts[ai].scrollIntoView({block:'nearest'})}else if(e.key==='ArrowUp'){e.preventDefault();ai=Math.max(ai-1,0);opts.forEach((o,i)=>o.classList.toggle('act',i===ai))}else if(e.key==='Enter'){e.preventDefault();if(ai>=0&&opts[ai])sel(opts[ai].dataset.i,opts[ai].dataset.n)}else if(e.key==='Escape')dd.classList.remove('show')})})();
+inp.addEventListener('keydown',e=>{const opts=dd.querySelectorAll('.co');if(e.key==='ArrowDown'){e.preventDefault();ai=Math.min(ai+1,opts.length-1);opts.forEach((o,i)=>o.classList.toggle('act',i===ai));if(opts[ai])opts[ai].scrollIntoView({block:'nearest'})}else if(e.key==='ArrowUp'){e.preventDefault();ai=Math.max(ai-1,0);opts.forEach((o,i)=>o.classList.toggle('act',i===ai))}else if(e.key==='Enter'){e.preventDefault();if(ai>=0&&opts[ai])sel(opts[ai].dataset.i,opts[ai].dataset.n)}else if(e.key==='Escape')dd.classList.remove('show')});window.rdd=rdd;window.sel=sel;})();
+(function(){window.calc=calc;window.loadProfile=loadProfile;window.selChip=selChip;window.exportProfiles=exportProfiles;window.handleImport=handleImport;window.openAsk=openAsk;window.closeAsk=closeAsk;window.goBack=goBack;window.switchTab=switchTab;window.showPage2=showPage2;window.openSaveModal=openSaveModal;window.closeSaveModal=closeSaveModal;window.confirmSaveProfile=confirmSaveProfile;window.openMonthModal=openMonthModal;window.closeMonthModal=closeMonthModal;})();
 
 document.addEventListener('DOMContentLoaded',()=>{
   initDB().then(()=>renderProfiles()).catch(e=>console.log('DB init',e));
@@ -1625,11 +1626,3 @@ Object.assign(window, {
   trueSolarTime,
   wrapProCollapsibles,
 });
-
-/* Ensure inline onclick functions survive tree-shaking */
-window.calc = calc;
-window.loadProfile = loadProfile;
-window.selChip = selChip;
-window.exportProfiles = exportProfiles;
-window.handleImport = handleImport;
-window.rdd = rdd;
