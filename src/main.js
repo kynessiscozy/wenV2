@@ -1632,3 +1632,15 @@ Object.assign(window, {
   trueSolarTime,
   wrapProCollapsibles,
 });
+
+/* iOS Instagram-style dock: compact while the report is being scrolled. */
+(function(){
+  const scroll=document.getElementById('p2Scroll');
+  if(!scroll)return;
+  let timer=null;
+  scroll.addEventListener('scroll',()=>{
+    document.body.classList.toggle('ig-dock-scrolling',scroll.scrollTop>10);
+    clearTimeout(timer);
+    timer=setTimeout(()=>{if(scroll.scrollTop<18)document.body.classList.remove('ig-dock-scrolling')},180);
+  },{passive:true});
+})();
