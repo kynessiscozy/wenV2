@@ -18,3 +18,5 @@ body.ig-dock-scrolling .ig-dock.tab-bar{width:min(320px,calc(100vw - 70px))!impo
 @media(max-width:380px){body .ig-dock.tab-bar{width:calc(100vw - 14px)!important}.ig-dock .tab-item{font-size:10px!important}.ig-dock .ai-fab{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important}}
 @media(prefers-reduced-motion:reduce){body .ig-dock.tab-bar,.ig-dock .tab-item,.ig-dock .ai-fab{animation:none!important;transition:none!important}}
 #page2 .p2-scroll{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))!important}
+/* 取消底部导航激活圆点 */
+body .ig-dock .tab-item::after,body .ig-dock .tab-item.active::after{display:none!important;content:none!important}
