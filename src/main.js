@@ -1716,3 +1716,21 @@ Object.assign(window, {
     ignoreScrollUntil=performance.now()+360;
   },{passive:true});
 })();
+
+/* Reuse each tool card's artwork in its detail-page introduction. */
+(function(){
+  const root=document.getElementById('toolModalContent');
+  if(!root)return;
+  const decorate=()=>{
+    const tool=root.querySelector('.tj-tool-v3');
+    const type=window._activeTool;
+    if(tool&&type)tool.dataset.toolArt=type;
+  };
+  new MutationObserver(decorate).observe(root,{childList:true,subtree:true});
+  const previousOpen=window.openToolPage;
+  window.openToolPage=function(type){
+    if(previousOpen)previousOpen(type);
+    [0,50,140].forEach(delay=>setTimeout(decorate,delay));
+  };
+  document.addEventListener('DOMContentLoaded',decorate);
+})();

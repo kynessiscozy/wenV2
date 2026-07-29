@@ -768,3 +768,34 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
 /* 生肖与关系使用对应的关系主题图，并以不同裁切和染色区分。 */
 #s-adv .tool-tile[data-tool="zodiac"]{background-image:linear-gradient(145deg,rgba(8,38,38,.14),rgba(4,15,20,.72)),url('/tool-bg-relation.png')!important;background-position:left center!important}
 #s-adv .tool-tile[data-tool="relation"]{background-image:linear-gradient(145deg,rgba(39,9,38,.13),rgba(10,6,18,.72)),url('/tool-bg-relation.png')!important;background-position:right center!important}
+
+/* 工具详情页复用入口插画，在标题区延续同一视觉语义。 */
+#toolModal .tj-tool-v3[data-tool-art] .tj-tool-intro{
+  position:relative!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+  min-height:116px;
+  background-position:center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  border-color:rgba(255,255,255,.14)!important;
+}
+#toolModal .tj-tool-v3[data-tool-art] .tj-tool-intro::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:linear-gradient(110deg,rgba(7,8,15,.34),rgba(7,8,15,.76) 75%);
+}
+#toolModal .tj-tool-v3[data-tool-art="wealth"] .tj-tool-intro{background-image:url('/tool-wealth.png')!important}
+#toolModal .tj-tool-v3[data-tool-art="career"] .tj-tool-intro{background-image:url('/tool-career.png')!important}
+#toolModal .tj-tool-v3[data-tool-art="date"] .tj-tool-intro{background-image:url('/tool-date.png')!important}
+#toolModal .tj-tool-v3[data-tool-art="style"] .tj-tool-intro{background-image:url('/tool-style.png')!important}
+#toolModal .tj-tool-v3[data-tool-art="layoff"] .tj-tool-intro{background-image:url('/tool-layoff.png')!important}
+#toolModal .tj-tool-v3[data-tool-art="daily"] .tj-tool-intro{background-image:url('/tool-daily.png')!important}
+#toolModal .tj-tool-v3[data-tool-art="name"] .tj-tool-intro{background-image:url('/tool-name.png')!important}
+#toolModal .tj-tool-v3[data-tool-art="oracle"] .tj-tool-intro{background-image:url('/tool-oracle.png')!important}
+#toolModal .tj-tool-v3[data-tool-art="answerbook"] .tj-tool-intro{background-image:url('/tool-answerbook.png')!important}
+#toolModal .tj-tool-v3[data-tool-art="lottery"] .tj-tool-intro{background-image:url('/tool-lottery.png')!important}
+#toolModal .tj-tool-v3[data-tool-art="zodiac"] .tj-tool-intro{background-image:url('/tool-bg-relation.png')!important;background-position:left center!important}
+#toolModal .tj-tool-v3[data-tool-art="relation"] .tj-tool-intro{background-image:url('/tool-bg-relation.png')!important;background-position:right center!important}
