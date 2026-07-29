@@ -116,6 +116,10 @@ export async function generateAnswer(q){
   const conversation=window._aiConversation||(window._aiConversation=[]);
   const aiPrefs=window.getAISettings?window.getAISettings():{natural:true,context:true,length:'short'};
   const previousTurns=aiPrefs.context?conversation.slice(-6):[];
+  // Short, referential questions should continue the prior topic instead of matching an unrelated FAQ.
+  const contextualFollowUp=previousTurns.length>0&&(
+    q.trim().length<=18||/^(那|然后|所以|具体|继续|怎么办|怎么做|为什么|他|她|这个|那我|我呢|可以吗|要不要)/.test(q.trim())
+  );
   if(!d){
     
     const div = document.createElement('div');
@@ -128,7 +132,7 @@ export async function generateAnswer(q){
     return;
   }
   // —— 步骤 1：智能信息库匹配 ——
-  const kbRes=smartAnswer(q,d);
+  const kbRes=contextualFollowUp?null:smartAnswer(q,d);
   if(kbRes){
     
     const div = document.createElement('div');
@@ -166,7 +170,12 @@ export async function generateAnswer(q){
     const links=buildRelatedRoutes(intents);
     if(links.length){_mkAns().innerHTML+=renderRouteButtons(links,'前往相关页面查看');}
     requestAnimationFrame(()=>{el.scrollIntoView({behavior:'smooth',block:'nearest'});});
-  }catch(e){generateAnswerFallback(q,d,el);}
+  }catch(e){
+    generateAnswerFallback(q,d,el);
+    // Keep offline/fallback turns in the same session so the next question still has a topic.
+    conversation.push({role:'user',content:q});
+    conversation.push({role:'assistant',content:'已基于当前话题给出建议。'});
+  }
 }
 
 // —— 渲染 KB 命中结果 ——
