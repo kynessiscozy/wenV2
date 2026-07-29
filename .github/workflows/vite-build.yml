@@ -5,8 +5,17 @@ on:
     branches: [codex/vite]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,8 +24,9 @@ jobs:
           node-version: 22
       - run: npm install
       - run: npm run build
-      - uses: peaceiris/actions-gh-pages@v4
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: gh-pages
+          path: dist
+      - id: deploy
+        uses: actions/deploy-pages@v4
