@@ -1659,3 +1659,13 @@ Object.assign(window, {
   dock.addEventListener('pointermove',e=>light(e.clientX,e.clientY),{passive:true});
   dock.addEventListener('pointerleave',()=>{dock.style.setProperty('--ig-light-x','50%');dock.style.setProperty('--ig-light-y','0%')},{passive:true});
 })();
+
+/* Keep the floating dock out of the way when iOS opens the keyboard. */
+(function(){
+  const vv=window.visualViewport;
+  if(!vv)return;
+  const sync=()=>{const keyboard=window.innerHeight-vv.height>160;document.body.classList.toggle('ig-keyboard',keyboard)};
+  vv.addEventListener('resize',sync,{passive:true});
+  vv.addEventListener('scroll',sync,{passive:true});
+  sync();
+})();

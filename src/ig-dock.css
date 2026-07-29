@@ -67,3 +67,12 @@ body .ig-dock .ai-orbits{z-index:-1}
 @keyframes igAiHalo{0%,100%{transform:scale(.96);opacity:.45}50%{transform:scale(1.08);opacity:.9}}
 body.ig-dock-scrolling .ig-dock.tab-bar{backdrop-filter:blur(22px) saturate(175%) contrast(1.04)!important;-webkit-backdrop-filter:blur(22px) saturate(175%) contrast(1.04)!important}
 @media(prefers-reduced-motion:reduce){body .ig-dock .ai-fab::before{animation:none!important}}
+
+/* iOS viewport/keyboard behavior: the floating dock yields space to the keyboard. */
+body.ig-keyboard .ig-dock.tab-bar{opacity:0!important;pointer-events:none!important;transform:translateX(-50%) translateY(20px) scale(.94)!important}
+@supports (backdrop-filter:blur(1px)){
+ body .ig-dock.tab-bar{background-color:rgba(35,35,38,.54)!important}
+}
+@supports not (backdrop-filter:blur(1px)){
+ body .ig-dock.tab-bar{background:rgba(24,24,26,.96)!important}
+}
