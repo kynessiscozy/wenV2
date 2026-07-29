@@ -4,7 +4,7 @@ body .ig-dock.tab-bar{
   position:fixed!important;z-index:90!important;display:none;left:50%!important;right:auto!important;
   bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;width:min(430px,calc(100vw - 24px))!important;
   height:var(--ig-dock-height)!important;margin:0!important;padding:6px!important;box-sizing:border-box!important;
-  transform:translateX(-50%)!important;overflow:visible!important;isolation:isolate;border-radius:21px!important;
+  transform:translateX(-50%)!important;overflow:visible!important;isolation:isolate;border-radius:999px!important;
   border:1px solid rgba(255,255,255,.17)!important;
   background:linear-gradient(135deg,rgba(42,42,47,.78),rgba(20,20,23,.82) 58%,rgba(34,34,39,.75))!important;
   box-shadow:0 18px 42px rgba(0,0,0,.42),0 3px 10px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.16),inset 0 -1px rgba(0,0,0,.25)!important;
@@ -18,7 +18,7 @@ body.ig-keyboard .ig-dock.tab-bar{transform:translateX(-50%) translateY(125%)!im
 
 body .ig-dock .tab-bar-inner{position:relative!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;align-items:center!important;width:100%!important;height:52px!important;min-height:52px!important;margin:0!important;padding:0!important;gap:0!important}
 body .ig-dock .tab-indicator{display:none!important}
-body .ig-dock .tab-item{position:relative!important;z-index:1!important;display:grid!important;place-items:center!important;width:100%!important;height:52px!important;min-height:52px!important;margin:0!important;padding:0!important;border:0!important;border-radius:15px!important;background:transparent!important;color:rgba(255,255,255,.72)!important;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:color .18s ease,transform .2s var(--ig-dock-ease),background .2s ease!important}
+body .ig-dock .tab-item{position:relative!important;z-index:1!important;display:grid!important;place-items:center!important;width:100%!important;height:52px!important;min-height:52px!important;margin:0!important;padding:0!important;border:0!important;border-radius:999px!important;background:transparent!important;color:rgba(255,255,255,.72)!important;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:color .18s ease,transform .2s var(--ig-dock-ease),background .2s ease!important}
 body .ig-dock .tab-item:hover{color:#fff!important;background:rgba(255,255,255,.055)!important}
 body .ig-dock .tab-item.active{color:#fff!important;background:linear-gradient(145deg,rgba(255,255,255,.15),rgba(255,255,255,.055))!important;box-shadow:inset 0 1px rgba(255,255,255,.18),inset 0 -1px rgba(0,0,0,.10),0 3px 9px rgba(0,0,0,.12)!important}
 body .ig-dock .tab-item:active{transform:scale(.88)!important;opacity:.72!important}
@@ -28,13 +28,13 @@ body .ig-dock .tab-item.active .ig-heart{fill:currentColor!important}
 body .ig-dock .ig-nav-label{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 
 /* Center action is visually distinct without overpowering the report navigation. */
-body .ig-dock .ai-fab{grid-column:3!important;grid-row:1!important;position:relative!important;z-index:3!important;justify-self:center!important;display:grid!important;place-items:center!important;width:46px!important;min-width:46px!important;height:46px!important;min-height:46px!important;margin:0!important;padding:0!important;border:1px solid rgba(255,255,255,.28)!important;border-radius:15px!important;color:#fff!important;background:linear-gradient(145deg,hsla(var(--accent-h),var(--accent-s),67%,.82),hsla(var(--accent-h),var(--accent-s),42%,.72))!important;box-shadow:0 7px 15px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.28)!important;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .22s var(--ig-dock-ease),filter .18s ease!important}
+body .ig-dock .ai-fab{grid-column:3!important;grid-row:1!important;position:relative!important;z-index:3!important;justify-self:center!important;display:grid!important;place-items:center!important;width:46px!important;min-width:46px!important;height:46px!important;min-height:46px!important;margin:0!important;padding:0!important;border:1px solid rgba(255,255,255,.30)!important;border-radius:50%!important;color:#fff!important;background:linear-gradient(145deg,hsla(var(--accent-h),var(--accent-s),67%,.82),hsla(var(--accent-h),var(--accent-s),42%,.72))!important;box-shadow:0 7px 15px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.28)!important;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .22s var(--ig-dock-ease),filter .18s ease!important}
 body .ig-dock .ai-fab:hover{filter:brightness(1.12)!important;transform:translateY(-1px) scale(1.04)!important}
 body .ig-dock .ai-fab:active{transform:scale(.87)!important;filter:brightness(.9)!important}
 body .ig-dock .ai-fab-icon{display:grid!important;place-items:center!important;width:26px!important;height:26px!important;color:#fff!important}.ig-dock .ig-ai-icon{display:block!important;width:27px!important;height:27px!important;fill:currentColor!important;stroke:none!important;filter:drop-shadow(0 1px 3px rgba(0,0,0,.23))}.ig-dock .ai-fab-text,.ig-dock .ai-badge,.ig-dock .ai-orbits{display:none!important}
 
 #page2 .p2-scroll{padding-bottom:calc(var(--ig-dock-height) + env(safe-area-inset-bottom,0px) + 36px)!important}
 @keyframes igDockEnter{from{opacity:0;transform:translateX(-50%) translateY(16px) scale(.98)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
-@media(max-width:600px){body .ig-dock.tab-bar{width:calc(100vw - 16px)!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;border-radius:18px!important;padding:6px 4px!important}}
+@media(max-width:600px){body .ig-dock.tab-bar{width:calc(100vw - 16px)!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;border-radius:999px!important;padding:6px 4px!important}}
 @media(max-width:350px){body .ig-dock.tab-bar{width:calc(100vw - 12px)!important}.ig-dock .ig-nav-icon{width:22px!important;height:22px!important}.ig-dock .ai-fab{width:43px!important;min-width:43px!important;height:43px!important;min-height:43px!important}}
 @media(prefers-reduced-motion:reduce){body .ig-dock.tab-bar{animation:none!important}body .ig-dock .tab-item,body .ig-dock .ig-nav-icon,body .ig-dock .ai-fab{transition:none!important}}
