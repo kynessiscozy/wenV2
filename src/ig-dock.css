@@ -157,3 +157,17 @@ body.ig-dock-scrolling .ig-dock.tab-bar{opacity:.9!important}
   .ai-sheet .ai-new,.ai-sheet .ai-settings,.ai-sheet .ai-close{width:29px!important;height:29px!important;min-width:29px!important;min-height:29px!important}
   .ai-sheet .ai-title{margin-right:112px!important}
 }
+
+/* 操作组移至面板外侧右上方，标题与内容区域保持完整宽度。 */
+.ai-sheet .ai-actions{
+  top:-45px!important;
+  right:0!important;
+  z-index:12!important;
+  background:rgba(24,24,27,.90)!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.10)!important;
+}
+.ai-sheet .ai-title{margin-right:0!important}
+@media(max-width:560px){
+  .ai-sheet .ai-actions{top:-43px!important;right:0!important}
+  .ai-sheet .ai-title{margin-right:0!important}
+}
