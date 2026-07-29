@@ -52,3 +52,18 @@ body .ig-dock .ig-ai-icon{display:block;width:23px;height:23px;fill:none;stroke:
 body .ig-dock .ai-fab-icon{display:flex!important;align-items:center;justify-content:center!important;font-size:0!important;color:#fff!important}
 body.ig-dock-scrolling .ig-dock .tab-item::before{display:none!important}
 @media(max-width:380px){body .ig-dock .ig-nav-icon{width:20px!important;height:20px!important}}
+
+/* 深度 Liquid Glass 层：高光、折射、边缘光和触控反馈 */
+body .ig-dock.tab-bar{isolation:isolate;overflow:visible;--ig-light-x:50%;--ig-light-y:0%;}
+body .ig-dock.tab-bar::after{content:'';position:absolute;inset:1px;border-radius:inherit;pointer-events:none;z-index:-1;background:radial-gradient(150px 70px at var(--ig-light-x) var(--ig-light-y),rgba(255,255,255,.28),transparent 72%),linear-gradient(115deg,rgba(255,255,255,.18),transparent 24%,transparent 68%,rgba(255,255,255,.08));mix-blend-mode:screen;opacity:.72;transition:opacity .35s ease}
+body .ig-dock.tab-bar:hover::after{opacity:1}
+body .ig-dock .tab-indicator{background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.08) 48%,rgba(255,255,255,.14))!important;backdrop-filter:blur(12px) saturate(180%)!important;-webkit-backdrop-filter:blur(12px) saturate(180%)!important;box-shadow:inset 0 1px 1px rgba(255,255,255,.3),inset 0 -1px 1px rgba(0,0,0,.16),0 4px 12px rgba(0,0,0,.14)!important}
+body .ig-dock .tab-item{filter:none;will-change:transform,color}
+body .ig-dock .tab-item.active .ig-nav-icon{filter:drop-shadow(0 0 6px rgba(255,255,255,.35))}
+body .ig-dock .ai-fab{will-change:transform;overflow:visible!important}
+body .ig-dock .ai-fab::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(255,255,255,.2);box-shadow:0 0 18px rgba(255,205,105,.2);opacity:.8;pointer-events:none;animation:igAiHalo 3.2s ease-in-out infinite}
+body .ig-dock .ai-fab::after{content:'';position:absolute;inset:2px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,.3),transparent 38%);pointer-events:none;mix-blend-mode:screen}
+body .ig-dock .ai-orbits{z-index:-1}
+@keyframes igAiHalo{0%,100%{transform:scale(.96);opacity:.45}50%{transform:scale(1.08);opacity:.9}}
+body.ig-dock-scrolling .ig-dock.tab-bar{backdrop-filter:blur(22px) saturate(175%) contrast(1.04)!important;-webkit-backdrop-filter:blur(22px) saturate(175%) contrast(1.04)!important}
+@media(prefers-reduced-motion:reduce){body .ig-dock .ai-fab::before{animation:none!important}}

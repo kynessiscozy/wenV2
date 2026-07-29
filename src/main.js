@@ -1650,3 +1650,12 @@ Object.assign(window, {
   dock.addEventListener('click',()=>requestAnimationFrame(realign),{passive:true});
   [0,120,300,520].forEach(ms=>setTimeout(realign,ms));
 })();
+
+/* Liquid Glass dock lighting follows the pointer/finger position. */
+(function(){
+  const dock=document.getElementById('tabBar');
+  if(!dock)return;
+  const light=(x,y)=>{const r=dock.getBoundingClientRect();dock.style.setProperty('--ig-light-x',((x-r.left)/Math.max(1,r.width)*100).toFixed(1)+'%');dock.style.setProperty('--ig-light-y',((y-r.top)/Math.max(1,r.height)*100).toFixed(1)+'%')};
+  dock.addEventListener('pointermove',e=>light(e.clientX,e.clientY),{passive:true});
+  dock.addEventListener('pointerleave',()=>{dock.style.setProperty('--ig-light-x','50%');dock.style.setProperty('--ig-light-y','0%')},{passive:true});
+})();
