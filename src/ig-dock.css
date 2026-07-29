@@ -49,3 +49,15 @@ body .ig-dock .ai-fab{
 }
 body .ig-dock .ai-fab-icon,body .ig-dock .ig-ai-icon{width:26px!important;height:26px!important}
 @media(max-width:350px){body .ig-dock .ai-fab{width:47px!important;min-width:47px!important;height:40px!important;min-height:40px!important}}
+
+/* 问问大师仅保留图标：去除入口自身的胶囊、描边、渐变和投影。 */
+body .ig-dock .ai-fab{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+body .ig-dock .ai-fab:hover{background:transparent!important;filter:none!important;transform:scale(1.05)!important}
+body .ig-dock .ai-fab:active{transform:scale(.88)!important}
+body .ig-dock .ai-fab-icon{color:rgba(255,255,255,.94)!important;text-shadow:none!important}
+body .ig-dock .ig-ai-icon{filter:none!important}
