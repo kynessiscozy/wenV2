@@ -216,7 +216,7 @@ function _threeStyleInner(html){
 }
 export function renderThreeStylesCard(zw,qm,mh){
   const panes=[['ziwei','紫微斗数',renderZiWeiCard(zw)],['qimen','奇门遁甲',renderQiMenCard(qm)],['meihua','梅花易数',renderMeiHuaCard(mh)]];
-  return '<div class=\"glass card-1 three-styles-card structure-card\" data-card=\"three-styles\"><div class=\"card-hd\"><div class=\"card-ic\">三</div><div><div class=\"card-tt\">三式合参</div><div class=\"card-st\">紫微斗数 · 奇门遁甲 · 梅花易数</div></div></div><div class=\"three-styles-intro\">以紫微看人生结构，以奇门看局势入口，以梅花看事情变化；三式用于交叉观察，不以单一术式下确定结论。</div><div class=\"structure-tabs three-styles-tabs\" role=\"tablist\" aria-label=\"三式合参结构\">'+panes.map(([key,label],i)=>'<button class=\"structure-tab'+(i===0?' active':'')+'\" type=\"button\" data-structure=\"'+key+'\" onclick=\"switchStructureTab(this)\">'+label+'</button>').join('')+'</div><div class=\"structure-panes three-styles-panes\">'+panes.map(([key,,html],i)=>'<div class=\"structure-pane'+(i===0?' active':'')+'\" data-structure=\"'+key+'\" data-card=\"'+key+'\">'+_threeStyleInner(html)+'</div>').join('')+'</div><div class=\"three-styles-note\">合参提示：三式分别回答“底色、时势、变化”。若结果出现差异，优先核对出生信息、具体问题、起局时间与现实证据。</div></div>';
+  return '<div class=\"glass card-2 three-styles-card structure-card\" data-card=\"three-styles\"><div class=\"card-hd\"><div class=\"card-ic\">三</div><div><div class=\"card-tt\">三式合参</div><div class=\"card-st\">紫微斗数 · 奇门遁甲 · 梅花易数</div></div></div><div class=\"three-styles-intro\">以紫微看人生结构，以奇门看局势入口，以梅花看事情变化；三式用于交叉观察，不以单一术式下确定结论。</div><div class=\"structure-tabs three-styles-tabs\" role=\"tablist\" aria-label=\"三式合参结构\">'+panes.map(([key,label],i)=>'<button class=\"structure-tab'+(i===0?' active':'')+'\" type=\"button\" data-structure=\"'+key+'\" onclick=\"switchStructureTab(this)\">'+label+'</button>').join('')+'</div><div class=\"structure-panes three-styles-panes\">'+panes.map(([key,,html],i)=>'<div class=\"structure-pane'+(i===0?' active':'')+'\" data-structure=\"'+key+'\" data-card=\"'+key+'\">'+_threeStyleInner(html)+'</div>').join('')+'</div><div class=\"three-styles-note\">合参提示：三式分别回答“底色、时势、变化”。若结果出现差异，优先核对出生信息、具体问题、起局时间与现实证据。</div></div>';
 }
 
 export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue){
@@ -544,7 +544,8 @@ export function organizeMasterReportLayout(ctx){
       +'<div><b>04 · 干支互动校验</b><span>'+interactionText+'。合、冲、刑、害仅作为结构变量参与判断，须与月令、用神及实际时间条件一并核对，不单独判吉凶。</span></div>'
       +'<div><b>05 · 取用与应用边界</b><span>当前以 <em style="color:'+WC[(yong.primary||ctx.wx.ys)]+'">'+(yong.primary||ctx.wx.ys)+'</em> 为主取向'+(yong.secondary?'，'+yong.secondary+' 为辅助':'')+'；依据：'+yongReasons+'。该取向用于整理行动节奏与观察重点，不替代健康、法律、财务等专业判断。</span></div>'
       +'</div>';
-    persona.insertAdjacentElement('afterend',chain);
+    const threeStyles=ming.querySelector('[data-card=\"three-styles\"]');
+    if(threeStyles)threeStyles.insertAdjacentElement('afterend',chain);else persona.insertAdjacentElement('afterend',chain);
   }
   // 运势固定为：当年运势 → 人生时间线 → 流日流时 → 当年流月 → 大运时间轴。
   const trend=yun.querySelector('[data-card="trend"]'),timeline=ming.querySelector('[data-card="timeline"]'),focus=yun.querySelector('[data-card="focus"]'),months=yun.querySelector('[data-card="liuyue"]'),dayun=yun.querySelector('[data-card="dayun"]');
