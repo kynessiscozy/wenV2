@@ -23,6 +23,7 @@ import { runOracleTool } from './tools/oracle.js';
 import { runLotteryTool } from './tools/lottery.js';
 import { runZodiacTool } from './tools/zodiac.js';
 import { runRelationTool } from './tools/relation.js';
+import { openAnswerBook } from './tools/answerbook-v2.js';
 import { TJX } from './state/tjx.js';
 import { calcYearScores, calcPattern } from './state/scoring.js';
 import { buildContext } from './state/context.js';
@@ -1733,4 +1734,14 @@ Object.assign(window, {
     [0,50,140].forEach(delay=>setTimeout(decorate,delay));
   };
   document.addEventListener('DOMContentLoaded',decorate);
+})();
+
+
+/* Answer Book v2: a self-contained reflective reading flow. */
+(function(){
+  const priorOpenTool=window.openToolPage;
+  window.openToolPage=function(type){
+    if(type==='answerbook'){openAnswerBook();return;}
+    if(priorOpenTool)priorOpenTool(type);
+  };
 })();
