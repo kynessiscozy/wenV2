@@ -247,3 +247,8 @@ body.ig-dock-scrolling .ig-dock.tab-bar{opacity:.9!important}
   .ai-sheet .ai-title{min-height:34px!important;padding-right:104px!important}
   .ai-sheet .ai-settings-panel{top:50px!important;right:9px!important;width:min(280px,calc(100% - 18px))!important}
 }
+
+/* 问问大师不单独显示关闭键：Dock 图标本身即为开关，背景空白点击仍可关闭。 */
+.ai-sheet .ai-close{display:none!important}
+.ai-sheet .ai-title{padding-right:72px!important}
+@media(max-width:560px){.ai-sheet .ai-title{padding-right:70px!important}}

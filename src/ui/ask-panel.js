@@ -7,6 +7,11 @@ import { streamAskAnswer } from '../ai/openrouter.js';
 import { renderSmartAnswer, renderRouteButtons, buildRelatedRoutes, formatStandardAnswer } from '../render/ai.js';
 
 export function openAsk(){
+  // The Dock icon is a toggle: it closes an already-open anchored chat panel.
+  if(document.getElementById('aiSheet')?.classList.contains('open')){
+    closeAsk();
+    return;
+  }
   const fab=document.getElementById('aiFab');
   if(fab){
     fab.classList.remove('fab-pop');void fab.offsetWidth;fab.classList.add('fab-pop');
