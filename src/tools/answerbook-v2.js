@@ -122,6 +122,7 @@ export function openAnswerBook(){
   const root=document.getElementById('toolModalContent');
   if(!modal||!root)return;
   window._activeTool='answerbook';
+  document.querySelector('#toolModal .tool-sheet')?.classList.remove('result-open');
   root.innerHTML=renderForm();
   modal.classList.add('open');
   bindForm(root);
