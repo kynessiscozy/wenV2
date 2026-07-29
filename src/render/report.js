@@ -209,6 +209,16 @@ export function renderMeiHuaCard(mh){
     +'<div class="at" style="margin-top:10px"><p>梅花易数更适合回答“某件事的变化趋势”。本卦看当前局面，动爻看变化触发点，变卦看后续走向；若用于重大决策，仍建议结合现实信息与专业意见。</p></div></div>';
 }
 
+function _threeStyleInner(html){
+  if(!html)return '<div class=\"three-style-empty\">暂无该术式数据</div>';
+  const start=html.indexOf('>');
+  return start>=0&&html.endsWith('</div>')?html.slice(start+1,-6):html;
+}
+export function renderThreeStylesCard(zw,qm,mh){
+  const panes=[['ziwei','紫微斗数',renderZiWeiCard(zw)],['qimen','奇门遁甲',renderQiMenCard(qm)],['meihua','梅花易数',renderMeiHuaCard(mh)]];
+  return '<div class=\"glass card-1 three-styles-card structure-card\" data-card=\"three-styles\"><div class=\"card-hd\"><div class=\"card-ic\">三</div><div><div class=\"card-tt\">三式合参</div><div class=\"card-st\">紫微斗数 · 奇门遁甲 · 梅花易数</div></div></div><div class=\"three-styles-intro\">以紫微看人生结构，以奇门看局势入口，以梅花看事情变化；三式用于交叉观察，不以单一术式下确定结论。</div><div class=\"structure-tabs three-styles-tabs\" role=\"tablist\" aria-label=\"三式合参结构\">'+panes.map(([key,label],i)=>'<button class=\"structure-tab'+(i===0?' active':'')+'\" type=\"button\" data-structure=\"'+key+'\" onclick=\"switchStructureTab(this)\">'+label+'</button>').join('')+'</div><div class=\"structure-panes three-styles-panes\">'+panes.map(([key,,html],i)=>'<div class=\"structure-pane'+(i===0?' active':'')+'\" data-structure=\"'+key+'\" data-card=\"'+key+'\">'+_threeStyleInner(html)+'</div>').join('')+'</div><div class=\"three-styles-note\">合参提示：三式分别回答“底色、时势、变化”。若结果出现差异，优先核对出生信息、具体问题、起局时间与现实证据。</div></div>';
+}
+
 export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue){
   // —— 统一上下文（所有派生量的唯一来源）——
   const _input=(window._ctx&&window._ctx.input)?window._ctx.input:{by:by,bm:1,bd:1};
@@ -245,9 +255,7 @@ export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue
   H+=`<div class="glass card-2" data-card="persona"><div class="card-hd"><div class="card-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="card-tt">人格画像</div><div class="card-st">基于日主与格局推导</div></div></div>`;
   H+=`<div class="portrait-grid">${Object.entries(persona).map(([k,v])=>`<div class="port-item"><div class="port-label">${k}</div><div class="port-val">${v}</div></div>`).join('')}</div></div>`;
 
-  H+=renderZiWeiCard(zw);
-  H+=renderQiMenCard(qm);
-  H+=renderMeiHuaCard(mh);
+  H+=renderThreeStylesCard(zw,qm,mh);
 
   const tlData=getTimeline(dy,by,wx,b,dg,gen,age);
   const tlMin=Math.min(...tlData.map(t=>t.sc)),tlMax=Math.max(...tlData.map(t=>t.sc));
@@ -583,7 +591,7 @@ export function organizeMasterReportLayout(ctx){
   }
 }
 export function switchStructureTab(btn){
-  const card=btn.closest('.master-structure');if(!card)return;
+  const card=btn.closest('.master-structure,.three-styles-card');if(!card)return;
   const key=btn.dataset.structure;
   card.querySelectorAll('.structure-tab').forEach(tab=>tab.classList.toggle('active',tab===btn));
   card.querySelectorAll('.structure-pane').forEach(pane=>pane.classList.toggle('active',pane.dataset.structure===key));
