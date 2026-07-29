@@ -36,3 +36,11 @@ body.ig-dock-scrolling .ig-dock .ai-fab{align-self:center!important}
 @media(max-width:360px){body .ig-dock.tab-bar{width:calc(100vw - 12px)!important}.ig-dock .ai-fab{width:42px!important;min-width:42px!important;height:42px!important;min-height:42px!important}}
 /* 收缩态滑动胶囊高度与缩小后的导航按钮一致 */
 body.ig-dock-scrolling .ig-dock .tab-indicator{top:4px!important;height:30px!important;max-height:30px!important;box-sizing:border-box!important;border-radius:999px!important}
+/* Dock navigation uses one consistent inline SVG icon language. */
+body .ig-dock .ig-nav-icon{display:block!important;width:22px!important;height:22px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;transition:transform .28s cubic-bezier(.2,.8,.2,1.3),stroke-width .2s!important}
+body .ig-dock .tab-item.active .ig-nav-icon{transform:scale(1.08)!important;stroke-width:2.15!important}
+body .ig-dock .ig-nav-label{display:none!important}
+body .ig-dock .ig-ai-icon{display:block;width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+body .ig-dock .ai-fab-icon{display:flex!important;align-items:center;justify-content:center!important;font-size:0!important;color:#fff!important}
+body.ig-dock-scrolling .ig-dock .tab-item::before{display:none!important}
+@media(max-width:380px){body .ig-dock .ig-nav-icon{width:20px!important;height:20px!important}}
