@@ -1693,10 +1693,12 @@ Object.assign(window, {
   const scroll=document.getElementById('p2Scroll');
   const dock=document.getElementById('tabBar');
   if(!scroll||!dock||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  let previous=scroll.scrollTop,frame=0;
+  let previous=scroll.scrollTop,frame=0,ignoreScrollUntil=0;
   const settle=()=>{dock.style.setProperty('--ig-dock-scale','1');document.body.classList.remove('ig-dock-scrolling');};
   scroll.addEventListener('scroll',()=>{
     const current=scroll.scrollTop;
+    // A tab change resets the report scroll position. That programmatic scroll must not compact the Dock again.
+    if(performance.now()<ignoreScrollUntil){previous=current;return;}
     const distance=Math.abs(current-previous);
     previous=current;
     if(frame)return;
@@ -1709,5 +1711,8 @@ Object.assign(window, {
     });
   },{passive:true});
   // The compact state stays while reading; any deliberate Dock tap restores its full size.
-  dock.addEventListener('click',settle,{passive:true});
+  dock.addEventListener('click',()=>{
+    settle();
+    ignoreScrollUntil=performance.now()+360;
+  },{passive:true});
 })();
