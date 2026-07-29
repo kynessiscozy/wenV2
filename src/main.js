@@ -1701,9 +1701,9 @@ Object.assign(window, {
     previous=current;
     if(frame)return;
     frame=requestAnimationFrame(()=>{
-      // Cap the response so the dock always remains easy to hit.
-      const scale=Math.max(.935,1-Math.min(distance,18)*.0036);
-      dock.style.setProperty('--ig-dock-scale',scale.toFixed(3));
+      // Keep one stable compact size throughout a reading gesture.
+      // This prevents a slow follow-up scroll from visually expanding the Dock again.
+      dock.style.setProperty('--ig-dock-scale','.94');
       document.body.classList.add('ig-dock-scrolling');
       frame=0;
     });
