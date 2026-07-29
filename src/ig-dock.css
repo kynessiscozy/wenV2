@@ -171,3 +171,11 @@ body.ig-dock-scrolling .ig-dock.tab-bar{opacity:.9!important}
   .ai-sheet .ai-actions{top:-43px!important;right:0!important}
   .ai-sheet .ai-title{margin-right:0!important}
 }
+
+/* 问问大师打开后，内容区退后并作高斯模糊；Dock 保持在遮罩之上。 */
+.ai-overlay.open{
+  background:rgba(0,0,0,.10)!important;
+  backdrop-filter:blur(12px)!important;
+  -webkit-backdrop-filter:blur(12px)!important;
+}
+@media(prefers-reduced-transparency:reduce){.ai-overlay.open{background:rgba(0,0,0,.48)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
