@@ -668,3 +668,9 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
 
 /* 问问大师聊天体验层 */
 #aiSheet .ai-send:disabled{opacity:.3!important;filter:grayscale(.5);cursor:not-allowed!important}.ai-msg-actions{display:flex;justify-content:flex-end;gap:6px;margin:6px 2px 0;opacity:.65}.ai-msg-actions button{padding:4px 8px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.035);color:rgba(255,255,255,.48);font:500 .62em var(--sf);cursor:pointer;transition:all .2s}.ai-msg-actions button:hover{color:var(--ac-text);background:var(--ac1);border-color:var(--ac4)}#aiSheet .ai-input{overflow-y:auto;transition:height .16s ease}
+
+/* 问问大师采用内容浮层，不再绘制整张弹窗的外框。 */
+.ai-sheet{
+  border:0 !important;
+  box-shadow:none !important;
+}
