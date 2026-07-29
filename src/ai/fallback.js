@@ -35,6 +35,7 @@ export function generateAnswerFallback(q,d,el){
   // —— 兜底回答末尾也附跳转按钮 ——
   const links=buildRelatedRoutes(intents);
   if(links.length)html+=renderRouteButtons(links,'前往相关页面查看');
-  el.innerHTML='<div class="ai-body-inner">'+html+'</div>';
+  const loading=el.querySelector('.loading-state');if(loading)loading.remove();
+  const answer=document.createElement('div');answer.className='ai-body-inner';answer.innerHTML=html;el.appendChild(answer);
   requestAnimationFrame(()=>{el.scrollIntoView({behavior:'smooth',block:'nearest'});});
 }
