@@ -1,78 +1,63 @@
-/* Instagram iOS 27 / Liquid Glass inspired floating bottom dock. */
-:root{--ig-dock-h:58px}
-body .ig-dock.tab-bar{position:fixed!important;z-index:60!important;left:50%!important;right:auto!important;bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;width:min(430px,calc(100vw - 24px))!important;height:var(--ig-dock-h)!important;box-sizing:border-box!important;padding:5px!important;transform:translateX(-50%)!important;border:1px solid rgba(255,255,255,.22)!important;border-radius:999px!important;background:rgba(28,28,30,.66)!important;background-image:linear-gradient(135deg,rgba(255,255,255,.23),rgba(255,255,255,.04) 38%,rgba(255,255,255,.09))!important;backdrop-filter:blur(26px) saturate(190%) contrast(1.08)!important;-webkit-backdrop-filter:blur(26px) saturate(190%) contrast(1.08)!important;box-shadow:0 16px 42px rgba(0,0,0,.42),0 2px 8px rgba(0,0,0,.28),inset 0 1px 1px rgba(255,255,255,.34),inset 0 -1px 1px rgba(0,0,0,.28)!important;animation:igDockFloatIn .48s cubic-bezier(.2,.8,.2,1) both!important;transition:width .38s cubic-bezier(.2,.8,.2,1),height .38s cubic-bezier(.2,.8,.2,1),bottom .38s,opacity .25s!important}
+/* Instagram iOS-inspired navigation: quiet, icon-led and always anchored to the screen edge. */
+:root{--ig-nav-height:50px;--ig-nav-bg:rgba(10,10,11,.96)}
+
+/* The mobile Instagram tab bar is a full-width bottom rail, not a floating control. */
+body .ig-dock.tab-bar{
+  position:fixed!important;z-index:90!important;left:0!important;right:0!important;bottom:0!important;
+  display:none;height:calc(var(--ig-nav-height) + env(safe-area-inset-bottom,0px))!important;
+  width:100%!important;margin:0!important;padding:0!important;box-sizing:border-box!important;
+  transform:none!important;border:0!important;border-top:1px solid rgba(255,255,255,.12)!important;
+  border-radius:0!important;background:var(--ig-nav-bg)!important;background-image:none!important;
+  backdrop-filter:blur(22px) saturate(145%)!important;-webkit-backdrop-filter:blur(22px) saturate(145%)!important;
+  box-shadow:0 -1px 0 rgba(0,0,0,.24)!important;isolation:isolate;
+  transition:transform .28s cubic-bezier(.2,.8,.2,1),background .2s ease!important;
+}
 body .ig-dock.tab-bar.show{display:block!important}
-body .ig-dock.tab-bar::before{content:''!important;display:block!important;position:absolute!important;inset:1px 16% auto!important;height:1px!important;background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent)!important;pointer-events:none!important;opacity:.7}
-body .ig-dock .tab-bar-inner{position:relative!important;width:100%!important;height:48px!important;max-width:none!important;margin:0!important;display:grid!important;grid-template-columns:1fr 1fr 1fr 1fr 1fr!important;align-items:center!important;gap:1px!important}
-body .ig-dock .tab-indicator{top:3px!important;left:0!important;height:42px!important;width:20%!important;opacity:1!important;border-radius:999px!important;background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.16)!important;box-shadow:inset 0 1px 1px rgba(255,255,255,.16),0 2px 8px rgba(0,0,0,.12)!important;transform:none;transition:transform .52s cubic-bezier(.34,1.56,.64,1),width .3s cubic-bezier(.4,0,.2,1),top .3s cubic-bezier(.4,0,.2,1),height .3s cubic-bezier(.4,0,.2,1),opacity .25s!important}
-body .ig-dock .tab-indicator.ready{opacity:1!important}
-body .ig-dock .tab-item{position:relative!important;z-index:2!important;min-width:0!important;width:100%!important;height:42px!important;min-height:42px!important;padding:0!important;border-radius:999px!important;display:flex!important;align-items:center!important;justify-content:center!important;color:rgba(255,255,255,.68)!important;font-size:11px!important;font-weight:600!important;letter-spacing:.1px!important;transition:color .22s,transform .22s!important}
-body .ig-dock .tab-item.active{background:transparent!important;color:#fff!important;transform:translateY(-1px)!important;text-shadow:0 0 12px rgba(255,255,255,.35)!important}
-body .ig-dock .tab-item:active{transform:scale(.9)!important}
-body .ig-dock .ai-fab{grid-column:3!important;grid-row:1!important;z-index:4!important;justify-self:center!important;width:48px!important;min-width:48px!important;height:48px!important;min-height:48px!important;margin:0!important;border-radius:50%!important;background:linear-gradient(145deg,rgba(255,255,255,.42),rgba(178,132,54,.72) 58%,rgba(79,58,24,.7))!important;border:1px solid rgba(255,255,255,.68)!important;box-shadow:0 7px 18px rgba(0,0,0,.36),0 0 0 4px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.62),inset 0 -5px 10px rgba(0,0,0,.18)!important;transition:transform .3s cubic-bezier(.2,.8,.2,1.4),filter .25s!important}
-body .ig-dock .ai-fab:hover{transform:translateY(-3px) scale(1.06)!important;filter:brightness(1.12)!important}.ig-dock .ai-fab:active{transform:scale(.88)!important}.ig-dock .ai-fab-icon{font-size:22px!important;color:#fff!important;text-shadow:0 1px 8px rgba(0,0,0,.38)!important}.ig-dock .ai-fab-text{position:absolute!important;top:calc(100% + 2px)!important;left:50%!important;transform:translateX(-50%)!important;font-size:8px!important;line-height:1!important;color:rgba(255,255,255,.78)!important;white-space:nowrap!important}.ig-dock .ai-badge{top:-5px!important;right:-5px!important}.ig-dock .ai-orbits{inset:-10px!important}
-body .ig-dock .tab-item[data-sec="s-ming"]{grid-column:1;grid-row:1}body .ig-dock .tab-item[data-sec="s-yun"]{grid-column:2;grid-row:1}body .ig-dock .tab-item[data-sec="s-rel"]{grid-column:4;grid-row:1}body .ig-dock .tab-item[data-sec="s-adv"]{grid-column:5;grid-row:1}
-body .ig-dock .tab-item::after{content:'';position:absolute;bottom:1px;width:3px;height:3px;border-radius:50%;background:#fff;opacity:0;transform:scale(.4);transition:opacity .22s,transform .22s}.ig-dock .tab-item.active::after{opacity:.9;transform:scale(1)}
-body.ig-dock-scrolling .ig-dock.tab-bar{width:min(320px,calc(100vw - 70px))!important;height:48px!important;bottom:calc(9px + env(safe-area-inset-bottom,0px))!important;opacity:.9!important}.ig-dock-scrolling .ig-dock .tab-bar-inner{height:38px!important}.ig-dock-scrolling .ig-dock .tab-item{height:34px!important;min-height:34px!important;font-size:0!important}.ig-dock-scrolling .ig-dock .tab-item::before{font-size:17px!important;line-height:1!important;opacity:.82}.ig-dock-scrolling .ig-dock .tab-item[data-sec="s-ming"]::before{content:'⌂'}.ig-dock-scrolling .ig-dock .tab-item[data-sec="s-yun"]::before{content:'◉'}.ig-dock-scrolling .ig-dock .tab-item[data-sec="s-rel"]::before{content:'♡'}.ig-dock-scrolling .ig-dock .tab-item[data-sec="s-adv"]::before{content:'⌘'}.ig-dock-scrolling .ig-dock .ai-fab{width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important}.ig-dock-scrolling .ig-dock .ai-fab-text,.ig-dock-scrolling .ig-dock .ai-badge{display:none!important}
-body .ig-dock .tab-item.tab-pop .ig-nav-icon{animation:igIconPop .42s cubic-bezier(.34,1.56,.64,1)!important}
-body .ig-dock .ai-fab.fab-pop{animation:igFabPop .42s cubic-bezier(.34,1.56,.64,1)!important}
-@keyframes igIconPop{0%{transform:scale(.78)}55%{transform:scale(1.32)}80%{transform:scale(.97)}100%{transform:scale(1)}}
-@keyframes igFabPop{0%{transform:scale(.86)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
-/* Subtle idle breathing glow on the AI orb — invites the tap, pauses while the dock is compact/scrolling */
-body .ig-dock .ai-fab{animation:igFabPulse 3.4s ease-in-out infinite!important}
-body.ig-dock-scrolling .ig-dock .ai-fab{animation-play-state:paused!important}
-@keyframes igFabPulse{0%,100%{box-shadow:0 7px 18px rgba(0,0,0,.36),0 0 0 4px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.62),inset 0 -5px 10px rgba(0,0,0,.18)}50%{box-shadow:0 7px 22px rgba(0,0,0,.42),0 0 0 7px rgba(255,255,255,.15),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -5px 10px rgba(0,0,0,.18)}}
-@keyframes igDockFloatIn{from{opacity:0;transform:translateX(-50%) translateY(18px) scale(.96)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
-@media(max-width:380px){body .ig-dock.tab-bar{width:calc(100vw - 14px)!important}.ig-dock .tab-item{font-size:10px!important}.ig-dock .ai-fab{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important}}
-@media(prefers-reduced-motion:reduce){body .ig-dock.tab-bar,.ig-dock .tab-item,.ig-dock .ai-fab,.ig-dock .tab-indicator,.ig-dock .ig-nav-icon{animation:none!important;transition:none!important}}
-#page2 .p2-scroll{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))!important}
-/* 取消底部导航激活圆点 */
-body .ig-dock .tab-item::after,body .ig-dock .tab-item.active::after{display:none!important;content:none!important}
-/* 收缩态保持胶囊高亮与导航按钮同心，避免下滑时上下错位 */
-body.ig-dock-scrolling .ig-dock .tab-indicator{top:2px!important;height:34px!important;border-radius:999px!important}
-body.ig-dock-scrolling .ig-dock .tab-item{align-self:center!important}
-body.ig-dock-scrolling .ig-dock .ai-fab{align-self:center!important}
-/* 移动端安全区与五列网格校准 */
-@media(max-width:600px){
-  body .ig-dock.tab-bar{width:calc(100vw - 20px)!important;height:calc(var(--ig-dock-h) + env(safe-area-inset-bottom,0px))!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;padding-left:4px!important;padding-right:4px!important}
-  body .ig-dock .tab-bar-inner{grid-template-columns:repeat(5,minmax(0,1fr))!important;width:100%!important}
-  body .ig-dock .tab-item{justify-self:stretch!important;align-self:center!important;font-size:clamp(10px,2.8vw,11px)!important}
-  body .ig-dock .ai-fab{justify-self:center!important;align-self:center!important}
-  body.ig-dock-scrolling .ig-dock.tab-bar{width:calc(100vw - 76px)!important;height:calc(48px + env(safe-area-inset-bottom,0px))!important;bottom:calc(7px + env(safe-area-inset-bottom,0px))!important}
-  body.ig-dock-scrolling .ig-dock .tab-bar-inner{height:38px!important}
-}
-@media(max-width:360px){body .ig-dock.tab-bar{width:calc(100vw - 12px)!important}.ig-dock .ai-fab{width:42px!important;min-width:42px!important;height:42px!important;min-height:42px!important}}
-/* 收缩态滑动胶囊高度与缩小后的导航按钮一致 */
-body.ig-dock-scrolling .ig-dock .tab-indicator{top:4px!important;height:30px!important;max-height:30px!important;box-sizing:border-box!important;border-radius:999px!important}
-/* Dock navigation uses one consistent inline SVG icon language. */
-body .ig-dock .ig-nav-icon{display:block!important;width:22px!important;height:22px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;transition:transform .28s cubic-bezier(.2,.8,.2,1.3),stroke-width .2s!important}
-body .ig-dock .tab-item.active .ig-nav-icon{transform:scale(1.08)!important;stroke-width:2.15!important}
-body .ig-dock .ig-nav-label{display:none!important}
-body .ig-dock .ig-ai-icon{display:block;width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
-body .ig-dock .ai-fab-icon{display:flex!important;align-items:center;justify-content:center!important;font-size:0!important;color:#fff!important}
-body.ig-dock-scrolling .ig-dock .tab-item::before{display:none!important}
-@media(max-width:380px){body .ig-dock .ig-nav-icon{width:20px!important;height:20px!important}}
+body .ig-dock.tab-bar::before{content:''!important;position:absolute!important;display:block!important;left:0!important;right:0!important;top:-1px!important;bottom:auto!important;height:1px!important;inset:auto!important;background:rgba(255,255,255,.14)!important;opacity:1!important}
+body.ig-keyboard .ig-dock.tab-bar{transform:translateY(110%)!important}
 
-/* 深度 Liquid Glass 层：高光、折射、边缘光和触控反馈 */
-body .ig-dock.tab-bar{isolation:isolate;overflow:visible;--ig-light-x:50%;--ig-light-y:0%;}
-body .ig-dock.tab-bar::after{content:'';position:absolute;inset:1px;border-radius:inherit;pointer-events:none;z-index:-1;background:radial-gradient(150px 70px at var(--ig-light-x) var(--ig-light-y),rgba(255,255,255,.28),transparent 72%),linear-gradient(115deg,rgba(255,255,255,.18),transparent 24%,transparent 68%,rgba(255,255,255,.08));mix-blend-mode:screen;opacity:.72;transition:opacity .35s ease}
-body .ig-dock.tab-bar:hover::after{opacity:1}
-body .ig-dock .tab-indicator{background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.08) 48%,rgba(255,255,255,.14))!important;backdrop-filter:blur(12px) saturate(180%)!important;-webkit-backdrop-filter:blur(12px) saturate(180%)!important;box-shadow:inset 0 1px 1px rgba(255,255,255,.3),inset 0 -1px 1px rgba(0,0,0,.16),0 4px 12px rgba(0,0,0,.14)!important}
-body .ig-dock .tab-item{filter:none;will-change:transform,color}
-body .ig-dock .tab-item.active .ig-nav-icon{filter:drop-shadow(0 0 6px rgba(255,255,255,.35))}
-body .ig-dock .ai-fab{will-change:transform;overflow:visible!important}
-body .ig-dock .ai-fab::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(255,255,255,.2);box-shadow:0 0 18px rgba(255,205,105,.2);opacity:.8;pointer-events:none;animation:igAiHalo 3.2s ease-in-out infinite}
-body .ig-dock .ai-fab::after{content:'';position:absolute;inset:2px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,.3),transparent 38%);pointer-events:none;mix-blend-mode:screen}
-body .ig-dock .ai-orbits{z-index:-1}
-@keyframes igAiHalo{0%,100%{transform:scale(.96);opacity:.45}50%{transform:scale(1.08);opacity:.9}}
-body.ig-dock-scrolling .ig-dock.tab-bar{backdrop-filter:blur(22px) saturate(175%) contrast(1.04)!important;-webkit-backdrop-filter:blur(22px) saturate(175%) contrast(1.04)!important}
-@media(prefers-reduced-motion:reduce){body .ig-dock .ai-fab::before{animation:none!important}}
-
-/* iOS viewport/keyboard behavior: the floating dock yields space to the keyboard. */
-body.ig-keyboard .ig-dock.tab-bar{opacity:0!important;pointer-events:none!important;transform:translateX(-50%) translateY(20px) scale(.94)!important}
-@supports (backdrop-filter:blur(1px)){
- body .ig-dock.tab-bar{background-color:rgba(35,35,38,.54)!important}
+body .ig-dock .tab-bar-inner{
+  position:relative!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  align-items:center!important;width:100%!important;max-width:600px!important;height:var(--ig-nav-height)!important;
+  min-height:var(--ig-nav-height)!important;margin:0 auto!important;padding:0 3px!important;box-sizing:border-box!important;gap:0!important;
 }
-@supports not (backdrop-filter:blur(1px)){
- body .ig-dock.tab-bar{background:rgba(24,24,26,.96)!important}
+/* Kept for navigation JS compatibility; Instagram uses the active glyph rather than a sliding pill. */
+body .ig-dock .tab-indicator{display:none!important}
+body .ig-dock .tab-item{
+  position:relative!important;z-index:1!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;height:48px!important;min-height:48px!important;margin:0!important;padding:0!important;
+  color:rgba(255,255,255,.95)!important;background:transparent!important;border:0!important;border-radius:0!important;
+  transform:none!important;text-shadow:none!important;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:opacity .16s ease,transform .16s cubic-bezier(.2,.9,.3,1.2)!important;
+}
+body .ig-dock .tab-item:active{opacity:.55!important;transform:scale(.84)!important}
+body .ig-dock .ig-nav-icon{display:block!important;width:25px!important;height:25px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;transition:transform .2s cubic-bezier(.2,.9,.3,1.25),stroke-width .15s ease,fill .15s ease!important}
+body .ig-dock .tab-item.active .ig-nav-icon{stroke-width:2.45!important;transform:scale(1.03)!important}
+body .ig-dock .tab-item.active .ig-nav-icon.ig-heart{fill:currentColor!important}
+body .ig-dock .ig-nav-label{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+
+/* The middle action follows Instagram's square create affordance while retaining the AI entry point. */
+body .ig-dock .ai-fab{
+  grid-column:3!important;grid-row:1!important;position:relative!important;z-index:2!important;justify-self:center!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;width:48px!important;min-width:48px!important;height:48px!important;min-height:48px!important;
+  margin:0!important;padding:0!important;color:#fff!important;background:transparent!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;filter:none!important;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:transform .18s cubic-bezier(.2,.9,.3,1.2),opacity .16s ease!important;
+}
+body .ig-dock .ai-fab:active{opacity:.55!important;transform:scale(.84)!important}
+body .ig-dock .ai-fab-icon{display:flex!important;align-items:center!important;justify-content:center!important;width:25px!important;height:25px!important;color:#fff!important;text-shadow:none!important}
+body .ig-dock .ig-ai-icon{display:block!important;width:25px!important;height:25px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.9!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+body .ig-dock .ai-fab-text,.ig-dock .ai-badge,.ig-dock .ai-orbits{display:none!important}
+
+/* Page changes use the short, direct iOS-style ease rather than ornamental liquid animations. */
+#page2 .sec.active{animation:igPageIn .26s cubic-bezier(.2,.7,.2,1) both}
+#page2 .glass{transition:transform .2s ease,background-color .2s ease,border-color .2s ease}
+#page2 button:not(.tab-item),#page2 [role="button"]{transition:transform .16s ease,opacity .16s ease,background-color .18s ease!important}
+#page2 button:not(:disabled):active,#page2 [role="button"]:active{transform:scale(.975)}
+#page2 .p2-scroll{padding-bottom:calc(var(--ig-nav-height) + env(safe-area-inset-bottom,0px) + 28px)!important;scroll-behavior:smooth}
+@keyframes igPageIn{from{opacity:.72;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+/* Native iOS accessibility behavior. */
+@media(prefers-reduced-motion:reduce){
+  body .ig-dock.tab-bar,body .ig-dock .tab-item,body .ig-dock .ig-nav-icon,body .ig-dock .ai-fab,#page2 .sec.active,#page2 button{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
