@@ -140,12 +140,26 @@ function bindForm(root){
   root.querySelector('#answerBookOpen').addEventListener('click',()=>{
     const question=input.value.trim();
     if(!question){input.focus();input.classList.add('is-invalid');setTimeout(()=>input.classList.remove('is-invalid'),450);return;}
-    showResult(root,question,mode,pick(mode));
+    openWithAnimation(root,question,mode);
   });
   root.querySelector('#answerBookRandom').addEventListener('click',()=>{
     // A no-question reading is intentionally open-ended and uses a neutral prompt in the saved history.
-    showResult(root,'此刻的你',mode,pick(mode));
+    openWithAnimation(root,'此刻的你',mode);
   });
+}
+function openWithAnimation(root,question,mode){
+  const answer=pick(mode);
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){showResult(root,question,mode,answer);return;}
+  const stage=document.createElement('div');
+  stage.className='answerbook-fullscreen';
+  stage.innerHTML='<div class="answerbook-fullscreen-glow"></div><div class="answerbook-fullscreen-book"><div class="answerbook-cover-left"></div><div class="answerbook-cover-right"><span>答案之书</span><small>THE BOOK OF ANSWERS</small></div><div class="answerbook-fullscreen-page"><i>✦</i><b>请在心里默念</b><em>翻开属于此刻的一页</em></div></div>';
+  document.body.appendChild(stage);
+  requestAnimationFrame(()=>stage.classList.add('opening'));
+  setTimeout(()=>{
+    showResult(root,question,mode,answer);
+    stage.classList.add('leaving');
+    setTimeout(()=>stage.remove(),360);
+  },1050);
 }
 function showResult(root,question,mode,answer){
   root.innerHTML=renderResult(question,mode,answer);
