@@ -1669,3 +1669,21 @@ Object.assign(window, {
   vv.addEventListener('scroll',sync,{passive:true});
   sync();
 })();
+
+/* 问问大师体验层：自适应输入框、答案操作、无障碍状态与快捷重试。 */
+(function(){
+  const mount=()=>{
+    const sheet=document.getElementById('aiSheet'),input=document.getElementById('askInput'),send=document.querySelector('#aiSheet .ai-send'),result=document.getElementById('askResult');
+    if(!sheet||!input||!result||sheet.dataset.uxMounted)return;
+    sheet.dataset.uxMounted='1';result.setAttribute('aria-live','polite');result.setAttribute('aria-label','问问大师对话内容');input.setAttribute('enterkeyhint','send');
+    const resize=()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px';if(send)send.disabled=!input.value.trim()};
+    input.addEventListener('input',resize);resize();
+    const addActions=()=>result.querySelectorAll('.ai-body-inner:not(.ai-tool-call):not([data-actions])').forEach(msg=>{
+      if(!msg.querySelector('.ai-dialogue'))return;msg.dataset.actions='1';
+      const bar=document.createElement('div');bar.className='ai-msg-actions';bar.innerHTML='<button type="button" data-act="copy" aria-label="复制回答">复制</button><button type="button" data-act="retry" aria-label="重新回答">再问一次</button>';msg.appendChild(bar);
+    });
+    new MutationObserver(()=>{addActions();result.scrollTo({top:result.scrollHeight,behavior:'smooth'})}).observe(result,{childList:true,subtree:true});
+    result.addEventListener('click',e=>{const b=e.target.closest('.ai-msg-actions button');if(!b)return;const msg=b.closest('.ai-body-inner');if(b.dataset.act==='copy'){const text=msg?.innerText?.replace(/复制\n再问一次$/,'')||'';navigator.clipboard?.writeText(text).then(()=>{b.textContent='已复制';setTimeout(()=>b.textContent='复制',1200)}).catch(()=>{})}else{const bubbles=[...result.querySelectorAll('.ai-user-bubble')];const q=bubbles.at(-1)?.textContent?.trim();if(q)doAsk(q)}});
+  };
+  document.addEventListener('DOMContentLoaded',mount);const old=window.openAsk;window.openAsk=function(){if(old)old();setTimeout(mount,80)};
+})();
