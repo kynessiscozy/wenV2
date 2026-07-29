@@ -6,6 +6,7 @@
 <title>问问大师 · 东方人生决策系统</title>
 
 <link rel="stylesheet" href="/src/styles.css">
+<link rel="stylesheet" href="/src/ig-dock.css">
 </head>
 <body>
 
@@ -91,8 +92,7 @@
   </div>
 </div>
 
-<!-- iOS Instagram-style Dock Bar -->
-<div class="tab-bar" id="tabBar">
+<div class="ig-dock tab-bar" id="tabBar">
   <div class="tab-bar-inner">
     <div class="tab-item active" data-sec="s-ming" onclick="switchTab(this)">
       <div class="tab-icon">
@@ -108,13 +108,10 @@
       </div>
       <span class="tab-label">运势</span>
     </div>
-    <button class="ai-fab" id="aiFab" type="button" onclick="openAsk()" aria-label="打开问问大师" title="问问大师">
-      <span class="ai-orbits" aria-hidden="true"></span>
+    <button class="ai-fab" id="aiFab" type="button" onclick="openAsk()" aria-label="问问大师" title="问问大师">
       <span class="ai-fab-icon">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       </span>
-      <span class="ai-fab-text">问问</span>
-      <span class="ai-badge" aria-hidden="true">AI</span>
     </button>
     <div class="tab-item" data-sec="s-rel" onclick="switchTab(this)">
       <div class="tab-icon">

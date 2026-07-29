@@ -77,8 +77,15 @@ export function setGlassMode(mode){
 export function toggleLgPanel(){document.getElementById('lgPanel').classList.toggle('open');}
 
 export function moveTabIndicator(el){
-  // Instagram-style: no pill indicator; selection shown via icon fill transition.
+  const ind=document.getElementById('tabIndicator');
+  const wrap=document.getElementById('tabBar')&&document.getElementById('tabBar').querySelector('.tab-bar-inner');
+  if(!ind||!wrap||!el)return;
+  const wr=wrap.getBoundingClientRect(),er=el.getBoundingClientRect();
+  ind.style.width=er.width+'px';
+  ind.style.transform='translateX('+(er.left-wr.left)+'px)';
+  ind.classList.add('ready');
 }
+
 
 export function initNavigationUI(){
   document.addEventListener('click',function(e){
