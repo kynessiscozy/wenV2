@@ -7,6 +7,11 @@ import { streamAskAnswer } from '../ai/openrouter.js';
 import { renderSmartAnswer, renderRouteButtons, buildRelatedRoutes, formatStandardAnswer } from '../render/ai.js';
 
 export function openAsk(){
+  const fab=document.getElementById('aiFab');
+  if(fab){
+    fab.classList.remove('fab-pop');void fab.offsetWidth;fab.classList.add('fab-pop');
+    fab.addEventListener('animationend',()=>fab.classList.remove('fab-pop'),{once:true});
+  }
   document.getElementById('aiOverlay').classList.add('open');
   document.getElementById('aiSheet').classList.add('open');
   document.getElementById('aiFab')?.classList.add('hidden');

@@ -55,8 +55,12 @@ export function goBack(){document.body.classList.remove('report-active');applyTh
 export function scrollToForm(){document.getElementById('formCard').scrollIntoView({behavior:'smooth',block:'center'});}
 
 export function switchTab(el){
-  document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active','tab-pop'));el.classList.add('active');
   if(typeof moveTabIndicator==='function')moveTabIndicator(el);
+  // IG-style tap feedback: restart the pop animation on the icon that just became active
+  void el.offsetWidth;
+  el.classList.add('tab-pop');
+  el.addEventListener('animationend',()=>el.classList.remove('tab-pop'),{once:true});
   // 切换 sec 时让卡片重新错落入场（重置动画）
   const targetSec=document.getElementById(el.dataset.sec);
   if(targetSec){

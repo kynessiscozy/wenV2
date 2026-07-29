@@ -1,76 +1,195 @@
-/* =====================================================
-   Instagram iOS-Style Dock — Minimal Override
-   Only changes what's needed. Zero HTML/JS changes.
-   ===================================================== */
+/* ===========================================================
+   Instagram iOS-Style Bottom Dock — Independent Module
+   All selectors use body .ig-dock (0,3,0) to beat any old rule
+   =========================================================== */
 
-/* --- Container: full-width bottom bar --- */
-.ig-dock.tab-bar {
+/* --- Outer container --- */
+body .ig-dock.tab-bar {
+  display: none !important;
   position: fixed !important;
+  z-index: 60 !important;
   bottom: 0 !important;
   left: 0 !important;
   right: 0 !important;
   width: 100% !important;
+  min-height: auto !important;
   max-width: none !important;
-  transform: none !important;
-  border-radius: 0 !important;
   padding: 0 0 env(safe-area-inset-bottom, 0px) !important;
+  margin: 0 !important;
   background: rgba(20, 20, 22, 0.82) !important;
   backdrop-filter: blur(40px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
   border: none !important;
   border-top: 0.5px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 0 !important;
   box-shadow: none !important;
+  transform: none !important;
+  animation: igDockIn 0.45s cubic-bezier(0.25, 0.1, 0.25, 1) backwards !important;
+}
+@keyframes igDockIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Inner row: space-around, max-width centered --- */
-.ig-dock .tab-bar-inner {
+body .ig-dock.tab-bar.show {
+  display: block !important;
+}
+
+/* --- Inner flex row --- */
+body .ig-dock .tab-bar-inner {
   display: flex !important;
   align-items: center !important;
   justify-content: space-around !important;
   gap: 0 !important;
-  padding: 8px 4px !important;
+  padding: 2px 4px 0 !important;
   max-width: 540px !important;
+  width: 100% !important;
+  height: 49px !important;
   margin: 0 auto !important;
+  background: transparent !important;
+  border: none !important;
+  isolation: isolate !important;
+  min-height: auto !important;
   position: relative !important;
 }
 
-/* --- Tab items: icon-like text labels --- */
-.ig-dock .tab-item {
+/* --- Tab item — icon-only, IG style --- */
+body .ig-dock .tab-item {
   flex: 1 !important;
-  padding: 8px 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  height: 100% !important;
+  padding: 0 !important;
   margin: 0 !important;
-  border-radius: 12px !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.3px !important;
-  color: rgba(255, 255, 255, 0.50) !important;
-  background: transparent !important;
-  text-align: center !important;
-  transition: color 0.2s ease !important;
-  min-height: auto !important;
-}
-.ig-dock .tab-item:hover { color: rgba(255, 255, 255, 0.72) !important; background: transparent !important; }
-.ig-dock .tab-item.active { color: #fff !important; font-weight: 600 !important; background: transparent !important; }
-
-/* --- Indicator pill: thin bar under active tab --- */
-.ig-dock .tab-indicator {
-  top: auto !important;
-  bottom: 2px !important;
-  height: 3px !important;
-  border-radius: 3px !important;
-  background: #fff !important;
   border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
   box-shadow: none !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  font-family: var(--sf, -apple-system, sans-serif) !important;
+  letter-spacing: 0.2px !important;
+  line-height: 1 !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  transition: color 0.15s ease !important;
+  min-height: auto !important;
+  min-width: 0 !important;
+  position: relative !important;
+  z-index: 1 !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  transform: none !important;
+  text-shadow: none !important;
+  animation: none !important;
+  will-change: auto !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  transition: left 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), width 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+  outline: none !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
-.ig-dock .tab-indicator::before,
-.ig-dock .tab-indicator::after { display: none !important; }
-.ig-dock .tab-indicator.ready { opacity: 1 !important; }
+body .ig-dock .tab-item:hover {
+  color: rgba(255, 255, 255, 0.78) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+body .ig-dock .tab-item.active {
+  color: #fff !important;
+  font-weight: 500 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  text-shadow: none !important;
+}
+body .ig-dock .tab-item:active .tab-icon {
+  transform: scale(0.82) !important;
+  transition: transform 0.1s ease-out !important;
+}
 
-/* --- AI button: rounded square centre button --- */
-.ig-dock .ai-fab {
+/* --- Icon wrapper (bigger, since no label underneath — matches IG proportions) --- */
+body .ig-dock .tab-item .tab-icon {
+  position: relative !important;
+  width: 27px !important;
+  height: 27px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  transition: transform 0.1s ease-out !important;
+}
+
+/* --- Icon SVGs --- */
+body .ig-dock .tab-item .tab-icon svg {
+  position: absolute !important;
+  width: 100% !important;
+  height: 100% !important;
+  transition: opacity 0.15s ease !important;
+  display: block !important;
+}
+body .ig-dock .tab-item .tab-icon .ico-outline {
+  opacity: 1 !important;
+  color: currentColor !important;
+  transform: none !important;
+}
+body .ig-dock .tab-item .tab-icon .ico-filled {
+  opacity: 0 !important;
+  color: currentColor !important;
+  transform: none !important;
+}
+body .ig-dock .tab-item.active .tab-icon .ico-outline {
+  opacity: 0 !important;
+}
+body .ig-dock .tab-item.active .tab-icon .ico-filled {
+  opacity: 1 !important;
+}
+/* IG's signature tap "pop": a quick elastic overshoot on the icon that just became active */
+body .ig-dock .tab-item.tab-pop .tab-icon {
+  animation: igIconPop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+@keyframes igIconPop {
+  0%   { transform: scale(0.75); }
+  55%  { transform: scale(1.22); }
+  80%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* --- Label: kept in the DOM for screen readers, hidden visually — real IG has no text in the tab bar --- */
+body .ig-dock .tab-item .tab-label {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* --- Hide old pill indicator (not used in the icon-only layout) --- */
+body .ig-dock #tabIndicator,
+body .ig-dock .tab-indicator,
+body .ig-dock .tab-indicator::before,
+body .ig-dock .tab-indicator::after,
+body .ig-dock .tab-indicator.ready {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+}
+
+/* --- AI centre button --- */
+body .ig-dock .ai-fab {
   flex: 0 0 44px !important;
   width: 44px !important;
   min-width: 44px !important;
@@ -81,42 +200,118 @@
   border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
   background: rgba(255, 255, 255, 0.08) !important;
   box-shadow: none !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  transition: transform 0.18s cubic-bezier(0.25, 0.1, 0.25, 1), background 0.18s ease !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   position: relative !important;
-  top: 0 !important;
+  top: -3px !important;
+  z-index: 2 !important;
+  overflow: visible !important;
+  isolation: isolate !important;
 }
-.ig-dock .ai-fab::before,
-.ig-dock .ai-fab::after,
-.ig-dock .ai-fab .ai-orbits,
-.ig-dock .ai-fab .ai-badge { display: none !important; }
-.ig-dock .ai-fab-icon {
+body .ig-dock .ai-fab::before,
+body .ig-dock .ai-fab::after {
+  display: none !important;
+  content: none !important;
+}
+body .ig-dock .ai-fab:hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+  transform: scale(1.06) !important;
+  box-shadow: none !important;
+}
+body .ig-dock .ai-fab:active {
+  transform: scale(0.9) !important;
+  transition: transform 0.08s ease-out !important;
+}
+body .ig-dock .ai-fab.fab-pop {
+  animation: igIconPop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+body .ig-dock .ai-fab .ai-orbits,
+body .ig-dock .ai-fab .ai-badge,
+body .ig-dock .ai-fab .ai-fab-text {
+  display: none !important;
+}
+body .ig-dock .ai-fab .ai-fab-icon {
   width: 30px !important;
   height: 30px !important;
-  border-radius: 8px !important;
+  border-radius: 10px !important;
+  font-size: 0 !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   animation: none !important;
-  font-size: 18px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+body .ig-dock .ai-fab .ai-fab-icon svg {
+  width: 20px !important;
+  height: 20px !important;
   color: #fff !important;
+  display: block !important;
 }
-.ig-dock .ai-fab-text { display: none !important; }
 
-/* --- Content bottom padding --- */
+/* --- p2-scroll bottom padding (bar is now the flat 49pt IG height) --- */
 body.report-active #p2Scroll {
-  padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
+  padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px)) !important;
 }
 
-/* --- Responsive --- */
+/* --- Responsive (also with body prefix) --- */
 @media (max-width: 560px) {
-  .ig-dock .tab-bar-inner { padding: 6px 2px !important; }
-  .ig-dock .tab-item { font-size: 12px !important; padding: 7px 3px !important; }
-  .ig-dock .ai-fab { flex: 0 0 42px !important; width: 42px !important; min-width: 42px !important; height: 42px !important; }
-  .ig-dock .ai-fab-icon { width: 28px !important; height: 28px !important; font-size: 16px !important; }
+  body .ig-dock.tab-bar {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    border-radius: 0 !important;
+    padding: 0 0 env(safe-area-inset-bottom, 0px) !important;
+  }
+  body .ig-dock .tab-bar-inner { height: 49px !important; padding: 2px 2px 0 !important; }
+  body .ig-dock .tab-item .tab-icon { width: 25px !important; height: 25px !important; }
+  body .ig-dock .ai-fab { flex: 0 0 44px !important; width: 44px !important; min-width: 44px !important; height: 44px !important; }
+  body.report-active #p2Scroll { padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px)) !important; }
 }
 @media (max-width: 380px) {
-  .ig-dock .tab-item { font-size: 10px !important; padding: 6px 2px !important; }
-  .ig-dock .ai-fab { flex: 0 0 38px !important; width: 38px !important; min-width: 38px !important; height: 38px !important; }
+  body .ig-dock .tab-bar-inner { height: 46px !important; }
+  body .ig-dock .tab-item .tab-icon { width: 23px !important; height: 23px !important; }
+  body .ig-dock .ai-fab { flex: 0 0 40px !important; width: 40px !important; min-width: 40px !important; height: 40px !important; }
+}
+
+/* --- Glass-mode overrides --- */
+body[data-glass="clear"] .ig-dock.tab-bar,
+body[data-glass="standard"] .ig-dock.tab-bar,
+body[data-glass="tinted"] .ig-dock.tab-bar {
+  background: rgba(20, 20, 22, 0.82) !important;
+  border: none !important;
+  border-top: 0.5px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(40px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
+}
+
+/* --- iOS specific full-width --- */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 560px) {
+    body .ig-dock.tab-bar {
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      border-radius: 0 !important;
+      background: rgba(20, 20, 22, 0.82) !important;
+      border: none !important;
+      border-top: 0.5px solid rgba(255, 255, 255, 0.12) !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
+/* --- Print --- */
+@media print {
+  body .ig-dock.tab-bar { display: none !important; }
 }
