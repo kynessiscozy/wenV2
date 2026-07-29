@@ -1,61 +1,61 @@
-/* iOS 27 / Instagram-inspired floating Liquid Glass dock. */
-:root{--ig-dock-height:62px;--ig-glass-x:50%;--ig-glass-y:0%}
+/* Instagram iOS navigation language, adapted as a compact iOS glass dock. */
+:root { --ig-dock-height: 64px; --ig-ease: cubic-bezier(.2,.78,.25,1); }
 
-body .ig-dock.tab-bar{
-  position:fixed!important;z-index:90!important;display:none;left:50%!important;right:auto!important;
-  bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;width:min(430px,calc(100vw - 24px))!important;
-  height:var(--ig-dock-height)!important;margin:0!important;padding:5px!important;box-sizing:border-box!important;
-  transform:translateX(-50%)!important;overflow:visible!important;isolation:isolate;
-  border:1px solid rgba(255,255,255,.28)!important;border-radius:999px!important;
-  background:linear-gradient(118deg,rgba(255,255,255,.25) 0%,rgba(255,255,255,.10) 19%,rgba(24,23,28,.50) 54%,rgba(255,255,255,.13) 100%)!important;
-  box-shadow:0 18px 42px rgba(0,0,0,.38),0 4px 13px rgba(0,0,0,.18),inset 0 1px 1px rgba(255,255,255,.58),inset 0 -1px 1px rgba(0,0,0,.24)!important;
-  backdrop-filter:blur(30px) saturate(175%) brightness(1.12)!important;-webkit-backdrop-filter:blur(30px) saturate(175%) brightness(1.12)!important;
-  transition:width .42s cubic-bezier(.2,.8,.2,1),height .42s cubic-bezier(.2,.8,.2,1),bottom .42s cubic-bezier(.2,.8,.2,1),opacity .2s ease!important;
-  animation:igDockIn .48s cubic-bezier(.2,.8,.2,1) both!important;
+body .ig-dock.tab-bar {
+  position: fixed !important; z-index: 90 !important; display: none;
+  left: 50% !important; right: auto !important;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  width: min(430px, calc(100vw - 24px)) !important; height: var(--ig-dock-height) !important;
+  margin: 0 !important; padding: 6px !important; box-sizing: border-box !important;
+  overflow: visible !important; isolation: isolate; transform: translateX(-50%) !important;
+  border: 1px solid rgba(255,255,255,.16) !important; border-radius: 22px !important;
+  background: rgba(21,21,23,.74) !important;
+  box-shadow: 0 14px 38px rgba(0,0,0,.36), inset 0 1px rgba(255,255,255,.13), inset 0 -1px rgba(0,0,0,.2) !important;
+  backdrop-filter: blur(28px) saturate(155%) !important; -webkit-backdrop-filter: blur(28px) saturate(155%) !important;
+  animation: igDockEnter .42s var(--ig-ease) both !important;
 }
-body .ig-dock.tab-bar.show{display:block!important}
-/* Refracted highlight: moves with the finger via --ig-glass-x / --ig-glass-y. */
-body .ig-dock.tab-bar::before{content:''!important;display:block!important;position:absolute!important;z-index:-1!important;inset:1px!important;border-radius:inherit!important;pointer-events:none!important;opacity:.9!important;background:radial-gradient(ellipse 44% 120% at var(--ig-glass-x) var(--ig-glass-y),rgba(255,255,255,.52),rgba(255,255,255,.13) 38%,transparent 72%),linear-gradient(180deg,rgba(255,255,255,.17),transparent 43%)!important}
-body .ig-dock.tab-bar::after{content:''!important;display:block!important;position:absolute!important;pointer-events:none!important;left:17%!important;right:17%!important;top:1px!important;height:1px!important;border-radius:50%!important;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent)!important;opacity:.78!important}
-body.ig-keyboard .ig-dock.tab-bar{transform:translateX(-50%) translateY(120%)!important}
+body .ig-dock.tab-bar.show { display:block !important; }
+body .ig-dock.tab-bar::before { content:"" !important; position:absolute !important; inset:0 !important; display:block !important; pointer-events:none !important; border-radius:inherit !important; background:linear-gradient(112deg,rgba(255,255,255,.11),transparent 35%,rgba(255,255,255,.025) 72%) !important; }
+body .ig-dock.tab-bar::after { content:"" !important; position:absolute !important; display:block !important; top:0 !important; left:18% !important; right:18% !important; height:1px !important; background:linear-gradient(90deg,transparent,rgba(255,255,255,.46),transparent) !important; pointer-events:none !important; }
+body.ig-keyboard .ig-dock.tab-bar { transform:translateX(-50%) translateY(130%) !important; opacity:0 !important; }
 
-body .ig-dock .tab-bar-inner{position:relative!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;align-items:center!important;width:100%!important;max-width:none!important;height:50px!important;min-height:50px!important;margin:0!important;padding:0!important;box-sizing:border-box!important;gap:0!important}
-/* The icon weight is the selection state, like Instagram—no conventional tab strip. */
-body .ig-dock .tab-indicator{display:none!important}
-body .ig-dock .tab-item{position:relative!important;z-index:1!important;display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;height:50px!important;min-height:50px!important;margin:0!important;padding:0!important;color:rgba(255,255,255,.78)!important;background:transparent!important;border:0!important;border-radius:50%!important;transform:none!important;text-shadow:none!important;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;transition:color .2s ease,transform .2s cubic-bezier(.2,.9,.3,1.2),opacity .15s ease!important}
-body .ig-dock .tab-item.active{color:#fff!important;transform:translateY(-1px)!important;isolation:isolate}
-/* Active destination gets its own clear glass lens inside the main liquid dock. */
-body .ig-dock .tab-item.active::before{content:''!important;position:absolute!important;top:50%!important;left:50%!important;z-index:-1!important;width:clamp(58px,17vw,68px)!important;height:54px!important;border:1px solid rgba(255,255,255,.19)!important;border-radius:999px!important;background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.045))!important;box-shadow:inset 0 1px 1px rgba(255,255,255,.30),inset 0 -1px 1px rgba(0,0,0,.08),0 4px 10px rgba(0,0,0,.08)!important;backdrop-filter:blur(12px) saturate(132%)!important;-webkit-backdrop-filter:blur(12px) saturate(132%)!important;animation:igActiveLens .3s cubic-bezier(.2,.85,.3,1.2) both!important}
-body .ig-dock .tab-item:active{opacity:.7!important;transform:scale(.84)!important}
-body .ig-dock .ig-nav-icon{display:block!important;width:25px!important;height:25px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.75!important;stroke-linecap:round!important;stroke-linejoin:round!important;transition:transform .23s cubic-bezier(.2,.9,.3,1.25),stroke-width .18s ease,fill .18s ease!important}
-body .ig-dock .tab-item.active .ig-nav-icon{stroke-width:2.45!important;transform:scale(1.06)!important;filter:drop-shadow(0 1px 5px rgba(255,255,255,.18))}
-body .ig-dock .tab-item.active .ig-nav-icon.ig-heart{fill:currentColor!important}
-body .ig-dock .ig-nav-label{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+body .ig-dock .tab-bar-inner { position:relative !important; display:grid !important; grid-template-columns:repeat(5,1fr) !important; align-items:center !important; width:100% !important; height:50px !important; min-height:50px !important; margin:0 !important; padding:0 !important; gap:0 !important; }
+body .ig-dock .tab-indicator { display:none !important; }
+body .ig-dock .tab-item, body .ig-dock .ai-fab { position:relative !important; display:grid !important; place-items:center !important; width:100% !important; height:50px !important; min-height:50px !important; margin:0 !important; padding:0 !important; border:0 !important; border-radius:14px !important; background:transparent !important; color:rgba(255,255,255,.94) !important; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+body .ig-dock .tab-item { transition:transform .2s var(--ig-ease), opacity .16s ease !important; }
+body .ig-dock .tab-item:active, body .ig-dock .ai-fab:active { transform:scale(.87) !important; opacity:.68 !important; }
+body .ig-dock .tab-item.active { color:#fff !important; }
+body .ig-dock .ig-nav-icon { display:block !important; width:25px !important; height:25px !important; fill:none !important; stroke:currentColor !important; stroke-width:1.8 !important; stroke-linecap:round !important; stroke-linejoin:round !important; transition:stroke-width .16s ease,transform .22s var(--ig-ease),fill .16s ease !important; }
+body .ig-dock .tab-item.active .ig-nav-icon { stroke-width:2.65 !important; transform:scale(1.035) !important; }
+body .ig-dock .tab-item.active .ig-home { fill:currentColor !important; stroke:#171719 !important; stroke-width:1.25 !important; }
+body .ig-dock .tab-item.active .ig-heart { fill:currentColor !important; }
+body .ig-dock .ig-nav-label { position:absolute !important; width:1px !important; height:1px !important; margin:-1px !important; overflow:hidden !important; clip:rect(0 0 0 0) !important; white-space:nowrap !important; }
 
-/* The middle affordance sits above the liquid surface, matching Instagram's standout create action. */
-body .ig-dock .ai-fab{grid-column:3!important;grid-row:1!important;position:relative!important;z-index:3!important;justify-self:center!important;display:flex!important;align-items:center!important;justify-content:center!important;width:50px!important;min-width:50px!important;height:50px!important;min-height:50px!important;margin:0!important;padding:0!important;color:#fff!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;transition:transform .25s cubic-bezier(.2,.9,.3,1.25),filter .2s ease,opacity .16s ease!important}
-body .ig-dock .ai-fab:hover{filter:brightness(1.15)!important;transform:translateY(-1px) scale(1.04)!important}
-body .ig-dock .ai-fab:active{transform:scale(.86)!important;filter:brightness(.92)!important}
-body .ig-dock .ai-fab-icon{display:flex!important;align-items:center!important;justify-content:center!important;width:26px!important;height:26px!important;color:#fff!important;text-shadow:0 1px 5px rgba(0,0,0,.28)!important}.ig-dock .ig-ai-icon{display:block!important;width:27px!important;height:27px!important;fill:currentColor!important;stroke:none!important;filter:drop-shadow(0 1px 5px rgba(255,255,255,.28))}.ig-dock .ai-fab-text,.ig-dock .ai-badge,.ig-dock .ai-orbits{display:none!important}
+/* Instagram's profile destination is a portrait ring rather than a generic tab glyph. */
+body .ig-dock .ig-profile-icon { display:grid !important; place-items:center !important; width:26px !important; height:26px !important; overflow:hidden !important; border:1.6px solid currentColor !important; border-radius:50% !important; background:linear-gradient(145deg,#e5b18d,#8b627a 52%,#4e6f84) !important; color:#fff !important; transition:border-width .16s ease,transform .2s var(--ig-ease) !important; }
+body .ig-dock .ig-profile-icon svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; }
+body .ig-dock .tab-item.active .ig-profile-icon { border-width:2.6px !important; transform:scale(1.04); }
 
-/* Desktop hover labels: a small translucent name chip above the target. */
-@media (hover:hover) and (pointer:fine){
-  body .ig-dock .tab-item::after,body .ig-dock .ai-fab::after{position:absolute!important;left:50%!important;top:-33px!important;z-index:8!important;display:block!important;width:max-content!important;padding:5px 9px!important;border:1px solid rgba(255,255,255,.2)!important;border-radius:999px!important;background:rgba(27,27,30,.78)!important;box-shadow:0 6px 18px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.18)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;color:#fff!important;font:600 11px/1 var(--sf,system-ui)!important;letter-spacing:.1px!important;white-space:nowrap!important;pointer-events:none!important;opacity:0!important;transform:translate(-50%,4px) scale(.96)!important;transition:opacity .16s ease,transform .2s cubic-bezier(.2,.85,.3,1.15)!important}
-  body .ig-dock .tab-item::after{content:attr(aria-label)!important}
-  body .ig-dock .ai-fab::after{content:'问问大师'!important}
-  body .ig-dock .tab-item:hover::after,body .ig-dock .ai-fab:hover::after{opacity:1!important;transform:translate(-50%,0) scale(1)!important}
-}
+/* Center affordance follows Instagram's simple outlined create glyph; it still opens the in-app AI composer. */
+body .ig-dock .ai-fab { grid-column:3 !important; grid-row:1 !important; z-index:2 !important; color:#fff !important; transition:transform .2s var(--ig-ease),opacity .16s ease !important; }
+body .ig-dock .ai-fab-icon { display:grid !important; place-items:center !important; width:27px !important; height:27px !important; }
+body .ig-dock .ig-ai-icon { display:block !important; width:27px !important; height:27px !important; fill:none !important; stroke:currentColor !important; stroke-width:2.05 !important; stroke-linecap:round !important; stroke-linejoin:round !important; }
+body .ig-dock .ai-fab-text, body .ig-dock .ai-badge, body .ig-dock .ai-orbits, body .ig-dock .ai-fab::before, body .ig-dock .ai-fab::after { display:none !important; }
 
-/* Short, direct iOS-style transitions across report navigation. */
-#page2 .sec.active{animation:igPageIn .28s cubic-bezier(.2,.7,.2,1) both}#page2 .glass{transition:transform .2s ease,background-color .2s ease,border-color .2s ease}#page2 button:not(.tab-item),#page2 [role="button"]{transition:transform .16s ease,opacity .16s ease,background-color .18s ease!important}#page2 button:not(:disabled):active,#page2 [role="button"]:active{transform:scale(.975)}#page2 .p2-scroll{padding-bottom:calc(var(--ig-dock-height) + env(safe-area-inset-bottom,0px) + 35px)!important;scroll-behavior:smooth}@keyframes igDockIn{from{opacity:0;transform:translateX(-50%) translateY(20px) scale(.96)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}@keyframes igActiveLens{from{opacity:0;transform:translate(-50%,-50%) scale(.72)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}@keyframes igPageIn{from{opacity:.72;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+/* Motion system: short, deliberate iOS-like feedback; no decorative infinite movement. */
+#page2 .sec.active { animation:igSectionIn .26s var(--ig-ease) both !important; }
+#page2 .glass, #page2 .qr-card, #page2 .tool-tile { transition:transform .2s var(--ig-ease), border-color .2s ease, background-color .2s ease !important; }
+#page2 button:not(.tab-item):not(.ai-fab), #page2 [role="button"] { transition:transform .16s var(--ig-ease),opacity .16s ease,background-color .18s ease !important; }
+#page2 button:not(:disabled):active, #page2 [role="button"]:active { transform:scale(.975); }
+#page2 .p2-scroll { padding-bottom:calc(var(--ig-dock-height) + env(safe-area-inset-bottom,0px) + 36px) !important; scroll-behavior:smooth; }
+.ai-overlay.open { animation:igFade .2s ease both !important; }
+.ai-sheet.open { animation:igSheetIn .32s var(--ig-ease) both; }
 
-/* Mobile: preserve a 48px+ touch target, safe-area spacing, and a readable active lens. */
-@media(max-width:600px){
-  body .ig-dock.tab-bar{width:calc(100vw - 16px)!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;padding:5px 3px!important}
-  body .ig-dock .tab-bar-inner{height:50px!important;min-height:50px!important}
-  body .ig-dock .tab-item,body .ig-dock .ai-fab{height:50px!important;min-height:50px!important}
-  #page2 .p2-scroll{padding-bottom:calc(var(--ig-dock-height) + env(safe-area-inset-bottom,0px) + 30px)!important}
-}
-@media(max-width:420px){body .ig-dock.tab-bar{width:calc(100vw - 14px)!important}.ig-dock .ai-fab{width:47px!important;min-width:47px!important;height:47px!important;min-height:47px!important;border-radius:16px!important}}
-@media(max-width:350px){body .ig-dock.tab-bar{width:calc(100vw - 10px)!important}.ig-dock .ig-nav-icon{width:23px!important;height:23px!important}.ig-dock .ai-fab{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important}}
-@media(prefers-reduced-motion:reduce){body .ig-dock.tab-bar,body .ig-dock .tab-item,body .ig-dock .ig-nav-icon,body .ig-dock .ai-fab,#page2 .sec.active,#page2 button{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@keyframes igDockEnter { from { opacity:0; transform:translateX(-50%) translateY(14px) scale(.985); } to { opacity:1; transform:translateX(-50%) translateY(0) scale(1); } }
+@keyframes igSectionIn { from { opacity:.4; transform:translateY(8px); } to { opacity:1; transform:none; } }
+@keyframes igFade { from { opacity:0; } to { opacity:1; } }
+@keyframes igSheetIn { from { opacity:0; transform:translate(-50%,-48%) scale(.985); } to { opacity:1; transform:translate(-50%,-50%) scale(1); } }
+
+@media (max-width:600px) { body .ig-dock.tab-bar { width:calc(100vw - 16px) !important; bottom:calc(8px + env(safe-area-inset-bottom,0px)) !important; border-radius:19px !important; } }
+@media (max-width:360px) { body .ig-dock.tab-bar { width:calc(100vw - 12px) !important; } body .ig-dock .ig-nav-icon { width:23px !important; height:23px !important; } }
+@media (prefers-reduced-motion:reduce) { body .ig-dock.tab-bar,#page2 .sec.active,.ai-overlay.open,.ai-sheet.open { animation:none !important; } body .ig-dock .tab-item,body .ig-dock .ai-fab,#page2 .glass,#page2 button { transition:none !important; } #page2 .p2-scroll { scroll-behavior:auto !important; } }
