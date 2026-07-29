@@ -753,3 +753,18 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
   #s-adv .tool-tile{min-height:116px!important;padding:16px 14px!important}
   #s-adv .tool-tile b{font-size:.92em!important}
 }
+
+/* 每个工具均使用与其任务匹配的独立背景画面；不依赖图标也能快速辨识用途。 */
+#s-adv .tool-tile[data-tool="wealth"]{background-image:linear-gradient(145deg,rgba(4,10,24,.14),rgba(4,7,17,.70)),url('/tool-wealth.png')!important}
+#s-adv .tool-tile[data-tool="career"]{background-image:linear-gradient(145deg,rgba(7,16,33,.13),rgba(5,9,18,.70)),url('/tool-career.png')!important}
+#s-adv .tool-tile[data-tool="date"]{background-image:linear-gradient(145deg,rgba(5,32,36,.12),rgba(4,13,17,.72)),url('/tool-date.png')!important}
+#s-adv .tool-tile[data-tool="style"]{background-image:linear-gradient(145deg,rgba(40,27,16,.13),rgba(14,11,10,.70)),url('/tool-style.png')!important}
+#s-adv .tool-tile[data-tool="layoff"]{background-image:linear-gradient(145deg,rgba(42,8,13,.12),rgba(16,6,8,.72)),url('/tool-layoff.png')!important}
+#s-adv .tool-tile[data-tool="daily"]{background-image:linear-gradient(145deg,rgba(40,29,10,.10),rgba(10,12,22,.70)),url('/tool-daily.png')!important}
+#s-adv .tool-tile[data-tool="name"]{background-image:linear-gradient(145deg,rgba(12,19,34,.12),rgba(6,9,17,.72)),url('/tool-name.png')!important}
+#s-adv .tool-tile[data-tool="oracle"]{background-image:linear-gradient(145deg,rgba(33,10,42,.12),rgba(12,7,19,.72)),url('/tool-oracle.png')!important}
+#s-adv .tool-tile[data-tool="answerbook"]{background-image:linear-gradient(145deg,rgba(13,16,48,.12),rgba(5,7,19,.72)),url('/tool-answerbook.png')!important}
+#s-adv .tool-tile[data-tool="lottery"]{background-image:linear-gradient(145deg,rgba(8,23,48,.12),rgba(4,9,22,.72)),url('/tool-lottery.png')!important}
+/* 生肖与关系使用对应的关系主题图，并以不同裁切和染色区分。 */
+#s-adv .tool-tile[data-tool="zodiac"]{background-image:linear-gradient(145deg,rgba(8,38,38,.14),rgba(4,15,20,.72)),url('/tool-bg-relation.png')!important;background-position:left center!important}
+#s-adv .tool-tile[data-tool="relation"]{background-image:linear-gradient(145deg,rgba(39,9,38,.13),rgba(10,6,18,.72)),url('/tool-bg-relation.png')!important;background-position:right center!important}
