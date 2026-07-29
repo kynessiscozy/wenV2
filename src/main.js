@@ -1586,7 +1586,6 @@ Object.assign(window, {
   openFocusTool,
   openMonthModal,
   openSaveModal,
-  openToolPage,
   organizeMasterReportLayout,
   rdd,
   renderAll,
