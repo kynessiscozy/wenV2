@@ -1638,7 +1638,7 @@ Object.assign(window, {
   const scroll=document.getElementById('p2Scroll'),dock=document.getElementById('tabBar');
   if(!scroll||!dock)return;
   let timer=null,settle=null;
-  const realign=()=>{const active=dock.querySelector('.tab-item.active');if(active&&typeof window.moveTabIndicator==='function')window.moveTabIndicator(active)};
+  const realign=()=>{const active=dock.querySelector('.tab-item.active'),ind=dock.querySelector('.tab-indicator'),inner=dock.querySelector('.tab-bar-inner');if(!active||!ind||!inner)return;const x=active.offsetLeft,w=active.offsetWidth;ind.style.width=w+'px';ind.style.transform='translateX('+x+'px)';ind.classList.add('ready')};
   scroll.addEventListener('scroll',()=>{
     document.body.classList.toggle('ig-dock-scrolling',scroll.scrollTop>10);
     requestAnimationFrame(realign);
@@ -1647,4 +1647,6 @@ Object.assign(window, {
     settle=setTimeout(realign,430);
   },{passive:true});
   if(typeof ResizeObserver!=='undefined')new ResizeObserver(realign).observe(dock);
+  dock.addEventListener('click',()=>requestAnimationFrame(realign),{passive:true});
+  [0,120,300,520].forEach(ms=>setTimeout(realign,ms));
 })();
