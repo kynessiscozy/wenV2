@@ -20,3 +20,7 @@ body.ig-dock-scrolling .ig-dock.tab-bar{width:min(320px,calc(100vw - 70px))!impo
 #page2 .p2-scroll{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))!important}
 /* 取消底部导航激活圆点 */
 body .ig-dock .tab-item::after,body .ig-dock .tab-item.active::after{display:none!important;content:none!important}
+/* 收缩态保持胶囊高亮与导航按钮同心，避免下滑时上下错位 */
+body.ig-dock-scrolling .ig-dock .tab-indicator{top:2px!important;height:34px!important;border-radius:999px!important}
+body.ig-dock-scrolling .ig-dock .tab-item{align-self:center!important}
+body.ig-dock-scrolling .ig-dock .ai-fab{align-self:center!important}
