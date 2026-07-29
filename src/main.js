@@ -1687,3 +1687,27 @@ Object.assign(window, {
   };
   document.addEventListener('DOMContentLoaded',mount);const old=window.openAsk;window.openAsk=function(){if(old)old();setTimeout(mount,80)};
 })();
+
+/* Dock follows reading velocity: a restrained iOS-style shrink while scrolling, then settles back. */
+(function(){
+  const scroll=document.getElementById('p2Scroll');
+  const dock=document.getElementById('tabBar');
+  if(!scroll||!dock||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  let previous=scroll.scrollTop,frame=0,releaseTimer=0;
+  const settle=()=>{dock.style.setProperty('--ig-dock-scale','1');document.body.classList.remove('ig-dock-scrolling');};
+  scroll.addEventListener('scroll',()=>{
+    const current=scroll.scrollTop;
+    const distance=Math.abs(current-previous);
+    previous=current;
+    if(frame)return;
+    frame=requestAnimationFrame(()=>{
+      // Cap the response so the dock always remains easy to hit.
+      const scale=Math.max(.935,1-Math.min(distance,18)*.0036);
+      dock.style.setProperty('--ig-dock-scale',scale.toFixed(3));
+      document.body.classList.add('ig-dock-scrolling');
+      frame=0;
+    });
+    clearTimeout(releaseTimer);
+    releaseTimer=setTimeout(settle,150);
+  },{passive:true});
+})();

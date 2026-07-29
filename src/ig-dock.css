@@ -61,3 +61,13 @@ body .ig-dock .ai-fab:hover{background:transparent!important;filter:none!importa
 body .ig-dock .ai-fab:active{transform:scale(.88)!important}
 body .ig-dock .ai-fab-icon{color:rgba(255,255,255,.94)!important;text-shadow:none!important}
 body .ig-dock .ig-ai-icon{filter:none!important}
+
+/* 滚动时 Dock 轻微收拢，停下后自然回弹，避免遮挡阅读。 */
+body .ig-dock.tab-bar{
+  --ig-dock-scale:1;
+  transform:translateX(-50%) scale(var(--ig-dock-scale))!important;
+  transform-origin:center bottom;
+  transition:transform .26s var(--ig-dock-ease),opacity .2s ease!important;
+}
+body.ig-dock-scrolling .ig-dock.tab-bar{opacity:.9!important}
+@media(prefers-reduced-motion:reduce){body .ig-dock.tab-bar{transition:none!important}}
