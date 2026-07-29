@@ -1635,12 +1635,16 @@ Object.assign(window, {
 
 /* iOS Instagram-style dock: compact while the report is being scrolled. */
 (function(){
-  const scroll=document.getElementById('p2Scroll');
-  if(!scroll)return;
-  let timer=null;
+  const scroll=document.getElementById('p2Scroll'),dock=document.getElementById('tabBar');
+  if(!scroll||!dock)return;
+  let timer=null,settle=null;
+  const realign=()=>{const active=dock.querySelector('.tab-item.active');if(active&&typeof window.moveTabIndicator==='function')window.moveTabIndicator(active)};
   scroll.addEventListener('scroll',()=>{
     document.body.classList.toggle('ig-dock-scrolling',scroll.scrollTop>10);
-    clearTimeout(timer);
+    requestAnimationFrame(realign);
+    clearTimeout(timer);clearTimeout(settle);
     timer=setTimeout(()=>{if(scroll.scrollTop<18)document.body.classList.remove('ig-dock-scrolling')},180);
+    settle=setTimeout(realign,430);
   },{passive:true});
+  if(typeof ResizeObserver!=='undefined')new ResizeObserver(realign).observe(dock);
 })();
