@@ -1625,3 +1625,11 @@ Object.assign(window, {
   trueSolarTime,
   wrapProCollapsibles,
 });
+
+/* Ensure inline onclick functions survive tree-shaking */
+window.calc = calc;
+window.loadProfile = loadProfile;
+window.selChip = selChip;
+window.exportProfiles = exportProfiles;
+window.handleImport = handleImport;
+window.rdd = rdd;
