@@ -64,21 +64,7 @@ function _setModelLabel(modelId) {
   }
 }
 
-/* ============================================================
-   消息来源标签 — 显示在每条 AI 回复气泡底部
-   ============================================================ */
-function _sourceTag(type, detail) {
-  // type: 'ai' | 'kb' | 'fallback' | 'local'
-  const map = {
-    ai:       { icon: '⚡', label: 'AI' },
-    kb:       { icon: '📖', label: '信息库' },
-    fallback: { icon: '📴', label: '离线' },
-    local:    { icon: '💬', label: '本地' },
-  };
-  const cfg = map[type] || map.local;
-  const extra = detail ? ' · ' + detail : '';
-  return '<span class="chat-source">' + cfg.icon + ' ' + cfg.label + extra + '</span>';
-}
+
 
 /* ============================================================
    渲染函数
@@ -148,8 +134,8 @@ function _hideTyping(el) {
   if (indicator) indicator.remove();
 }
 
-// —— AI 回复气泡（含来源标签）——
-function _createAiBubble(el, sourceType, sourceDetail) {
+// —— AI 回复气泡 ——
+function _createAiBubble(el) {
   _hideTyping(el);
   const msgDiv = document.createElement('div');
   msgDiv.className = 'chat-msg chat-msg-ai chat-msg-appear';
@@ -157,12 +143,9 @@ function _createAiBubble(el, sourceType, sourceDetail) {
     '<div class="chat-avatar">✦</div>' +
     '<div class="chat-content">' +
       '<div class="chat-bubble chat-bubble-ai"><div class="chat-ai-text"></div></div>' +
-      '<div class="chat-bubble-footer">' +
-        _sourceTag(sourceType || 'local', sourceDetail || '') +
-        '<div class="chat-actions">' +
-          '<button type="button" data-act="copy" title="复制回答">复制</button>' +
-          '<button type="button" data-act="retry" title="重新回答">重试</button>' +
-        '</div>' +
+      '<div class="chat-actions">' +
+        '<button type="button" data-act="copy" title="复制回答">复制</button>' +
+        '<button type="button" data-act="retry" title="重新回答">重试</button>' +
       '</div>' +
       '<div class="chat-meta">' + _ts() + '</div>' +
     '</div>';
@@ -181,11 +164,8 @@ function _renderKbBubble(el, kbRes, q) {
     '<div class="chat-avatar">✦</div>' +
     '<div class="chat-content">' +
       '<div class="chat-bubble chat-bubble-ai chat-bubble-kb">' + kbHtml + '</div>' +
-      '<div class="chat-bubble-footer">' +
-        _sourceTag('kb', kbRes.kind === 'term' ? '术语' : '命中 FAQ') +
-        '<div class="chat-actions">' +
-          '<button type="button" data-act="copy" title="复制回答">复制</button>' +
-        '</div>' +
+      '<div class="chat-actions">' +
+        '<button type="button" data-act="copy" title="复制回答">复制</button>' +
       '</div>' +
       '<div class="chat-meta">' + _ts() + '</div>' +
     '</div>';
@@ -205,7 +185,6 @@ function _renderToolCallBubble(el, short, toolId) {
         '可以，直接开始这个小工具，填完后我再帮你看结果。' +
         '<button class="chat-tool-btn" type="button">开始 · ' + short + ' →</button>' +
       '</div>' +
-      '<div class="chat-bubble-footer">' + _sourceTag('local', '工具路由') + '</div>' +
       '<div class="chat-meta">' + _ts() + '</div>' +
     '</div>';
   msgDiv.querySelector('.chat-tool-btn').onclick = () => {
@@ -329,7 +308,7 @@ function _handleCasualChat(q, el) {
 
   _showTyping(el);
   _delay(300 + Math.random() * 300).then(() => {
-    const textEl = _createAiBubble(el, 'local', '快捷应答');
+    const textEl = _createAiBubble(el);
     textEl.textContent = reply;
     _scrollToBottom(el);
   });
@@ -434,7 +413,7 @@ export async function generateAnswer(q) {
     let textEl = null;
     const _mkBubble = () => {
       if (textEl) return textEl;
-      textEl = _createAiBubble(el, 'ai', modelLabel(usedModel));
+      textEl = _createAiBubble(el);
       return textEl;
     };
 
@@ -458,11 +437,6 @@ export async function generateAnswer(q) {
 
     clearTimeout(slowTimer);
 
-    // 更新来源标签
-    if (textEl) {
-      const footer = textEl.closest('.chat-msg')?.querySelector('.chat-source');
-      if (footer) footer.innerHTML = '⚡ AI · ' + modelLabel(result.model);
-    }
     _setModelLabel(result.model);
 
     conversation.push({ role: 'user', content: q });
@@ -490,7 +464,7 @@ export async function generateAnswer(q) {
 
 // —— Fallback 气泡渲染 ——
 function _generateAnswerFallbackChat(q, d, el) {
-  const textEl = _createAiBubble(el, 'fallback', '本地推算');
+  const textEl = _createAiBubble(el);
   const temp = document.createElement('div');
   generateAnswerFallback(q, d, temp);
   const fallbackText = temp.querySelector('.ai-dialogue-text')?.innerHTML

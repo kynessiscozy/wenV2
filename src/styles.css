@@ -1140,32 +1140,7 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
   50%      { opacity: 1;  transform: scale(1.1); }
 }
 
-/* —— 消息来源标签（气泡底部）—— */
-.chat-bubble-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 4px;
-}
-.chat-source {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px 7px;
-  border-radius: 6px;
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.06);
-  font-size: .58em;
-  color: rgba(255,255,255,.38);
-  letter-spacing: .2px;
-  white-space: nowrap;
-  user-select: none;
-  transition: color .2s;
-}
-.chat-msg:hover .chat-source {
-  color: rgba(255,255,255,.55);
-}
+
 
 /* —— Typing hint 文字 —— */
 .typing-hint {
@@ -1177,20 +1152,4 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
   transition: opacity .2s;
 }
 
-/* —— 操作按钮重构（放入 footer 行）—— */
-.chat-bubble-footer .chat-actions {
-  display: flex;
-  gap: 6px;
-  opacity: 0;
-  transition: opacity .2s;
-  margin-top: 0;
-}
-.chat-msg:hover .chat-bubble-footer .chat-actions,
-.chat-msg:focus-within .chat-bubble-footer .chat-actions {
-  opacity: .7;
-}
 
-/* 移动端：始终半透明显示操作 */
-@media (hover: none) {
-  .chat-bubble-footer .chat-actions { opacity: .45; }
-}
