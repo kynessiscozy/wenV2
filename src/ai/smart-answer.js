@@ -123,7 +123,7 @@ export function buildBaziContext(d){
     `【神煞】${d.shensha&&d.shensha.length?d.shensha.map(s=>s.n+'('+s.v+')').join(' '):'无'}`,
     d.zw&&d.zw.ps?`【紫微斗数】命宫${d.zw.mingGongZhi!=null?(DZ[d.zw.mingGongZhi]||d.zw.mingGongZhi):'-'}（${(d.zw.ps[d.zw.mingGongZhi]?.m||[]).join('、')||'无主星'}），身宫${d.zw.bodyGongZhi!=null?(DZ[d.zw.bodyGongZhi]||d.zw.bodyGongZhi):'-'}（${(d.zw.ps[d.zw.bodyGongZhi]?.m||[]).join('、')||'借对宫'}）`:'',
     d.qm&&d.qm.ps?`【奇门遁甲】${d.qm.yangDun?'阳遁':'阴遁'}${d.qm.ju}局；开门${(d.qm.ps.find(x=>x.d==='开门')||{}).p||'-'}；生门${(d.qm.ps.find(x=>x.d==='生门')||{}).p||'-'}；值符${(d.qm.ps.find(x=>x.g==='值符')||{}).p||'-'}`:'',
-    d.mh?`【梅花易数】本卦${d.mh.ug||'-'} / ${d.mh.lg||'-'}；${d.mh.cl||'-'}爻动；变卦${d.mh.mu||'-'} / ${d.mh.ml||'-'}`:'',
+    d.mh?`【梅花易数】本卦${d.mh.benName||'-'}（${d.mh.ug||'-'} / ${d.mh.lg||'-'}）；${d.mh.cl||'-'}爻动；体卦${d.mh.ti||'-'}（${d.mh.tiWx}）用卦${d.mh.yong||'-'}（${d.mh.yongWx}）；体用${d.mh.tyRel?.label||'-'}；互卦${d.mh.huName||'-'}；变卦${d.mh.bianName||'-'}（${d.mh.mu||'-'} / ${d.mh.ml||'-'}）`:'',
     cDy?`【当前大运】${cDy.g}${cDy.z}（${cDy.as}~${cDy.ae}岁，${cDy.ys}~${cDy.ye}年），大运十神：${dySS}`:'',
     cLn?`【${CURR_YEAR}流年】${cLn.g}${cLn.z} ${cLn.sx}年，流年十神：${lnSS}`:'',
     cLm?`【当前流月】${cLm.name} ${cLm.gz}（${cLm.jq}），流月十神：${lmSS}`:'',

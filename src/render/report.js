@@ -201,13 +201,28 @@ export function renderQiMenCard(qm){
 }
 export function renderMeiHuaCard(mh){
   if(!mh)return '';
-  const top=(mh.ul||[]).slice().reverse(),bottom=(mh.ll||[]).slice().reverse(),moveArea=mh.cl<=3?'内卦（基础、自己、近处）':'外卦（环境、他人、远处）';
-  const rel=_elementRelation(mh.ue,mh.le);
-  return '<div class="glass card-2" data-card="meihua"><div class="card-hd"><div class="card-ic">卦</div><div><div class="card-tt">梅花易数</div><div class="card-st">本卦、动爻、变卦与体用参考</div></div></div>'
+  const top=(mh.ul||[]).slice().reverse(),bottom=(mh.ll||[]).slice().reverse();
+  const moveArea=mh.cl<=3?'内卦（基础、自己、近处）':'外卦（环境、他人、远处）';
+  const tyColor=mh.tyRel?.score==='good'?'#7ab648':mh.tyRel?.score==='bad'?'#d4654a':mh.tyRel?.score==='caution'?'#d4a04a':'rgba(255,255,255,.65)';
+
+  return '<div class="glass card-2" data-card="meihua"><div class="card-hd"><div class="card-ic">卦</div><div><div class="card-tt">梅花易数</div><div class="card-st">本卦 · 互卦 · 变卦 · 体用生克</div></div></div>'
+
+    +'<div style="text-align:center;padding:12px 0 8px"><div style="font-family:var(--serif);font-size:1.5em;color:#fff;font-weight:700;letter-spacing:2px">'+(mh.benName||'')+'</div>'
+    +(mh.benHint?'<div style="font-size:.72em;color:rgba(255,255,255,.42);margin-top:4px">'+mh.benHint+'</div>':'')
+    +'</div>'
+
     +'<div style="display:grid;grid-template-columns:1.05fr .95fr;gap:12px;align-items:stretch">'
     +'<div style="padding:14px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div style="font-family:var(--serif);font-size:1.35em;color:var(--ac-text)">'+mh.ug+'</div><div style="font-family:var(--serif);font-size:1.35em;color:rgba(255,245,220,.86);margin-top:4px">'+mh.lg+'</div></div><div style="text-align:right;font-size:.72em;color:rgba(255,255,255,.42)">本卦<br><b style="color:#d4b85a;font-size:1.3em">'+mh.cl+'爻动</b></div></div><div style="display:grid;gap:2px;max-width:180px;margin:0 auto 6px">'+_hexLines(top,[6,5,4],mh.cl)+_hexLines(bottom,[3,2,1],mh.cl)+'</div></div>'
-    +'<div style="display:grid;gap:8px">'+_mysticNote('上卦 / 下卦',mh.ug+'（'+mh.ue+'） / '+mh.lg+'（'+mh.le+'）')+_mysticNote('动爻位置',mh.cl+'爻动，重点看 '+moveArea)+_mysticNote('变卦',mh.mu+' / '+mh.ml)+_mysticNote('体用关系',rel)+'</div></div>'
-    +'<div class="at" style="margin-top:10px"><p>梅花易数更适合回答“某件事的变化趋势”。本卦看当前局面，动爻看变化触发点，变卦看后续走向；若用于重大决策，仍建议结合现实信息与专业意见。</p></div></div>';
+    +'<div style="display:grid;gap:8px">'+_mysticNote('上卦 / 下卦',mh.ug+'（'+mh.ue+'）<br>'+mh.lg+'（'+mh.le+'）')+_mysticNote('动爻',mh.cl+'爻动 · '+moveArea)+_mysticNote('体卦 / 用卦','<span style="color:var(--ac-text)">'+(mh.ti||'-')+'</span>（体·'+mh.tiWx+'）<br>'+(mh.yong||'-')+'（用·'+mh.yongWx+'）')+'</div></div>'
+
+    +'<div style="margin-top:14px;padding:14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="padding:3px 9px;border-radius:6px;background:rgba(255,255,255,.06);font-size:.68em;color:rgba(255,255,255,.5)">体用生克</span><b style="font-size:.92em;color:'+tyColor+'">'+(mh.tyRel?.label||'-')+'</b></div><div style="font-size:.78em;line-height:1.75;color:rgba(255,245,220,.78)">'+(mh.tyRel?.desc||'')+'</div></div>'
+
+    +'<div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+    +_mysticNote('互卦 · '+(mh.huName||''),(mh.hu||'-')+'（'+mh.hue+'）/ '+(mh.hl||'-')+'（'+mh.hle+'）<br><span style="font-size:.88em;color:rgba(255,255,255,.38)">互卦看事情内在发展过程</span>')
+    +_mysticNote('变卦 · '+(mh.bianName||''),(mh.mu||'-')+'（'+mh.mue+'）/ '+(mh.ml||'-')+'（'+mh.mle+'）<br><span style="font-size:.88em;color:rgba(255,255,255,.38)">'+(mh.bianHint||'变卦看最终走向')+'</span>')
+    +'</div>'
+
+    +'<div class="at" style="margin-top:12px"><p>梅花易数适合回答某件事的变化趋势。本卦看当前局面，互卦看内在过程，动爻看变化触发点，变卦看后续走向。体用生克是断卦核心：用生体为吉、用克体需防守。若用于重大决策，仍建议结合现实信息与专业意见。</p></div></div>';
 }
 
 function _threeStyleInner(html){
