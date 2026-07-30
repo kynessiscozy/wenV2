@@ -6,181 +6,442 @@ import { generateAnswerFallback } from '../ai/fallback.js';
 import { streamAskAnswer } from '../ai/openrouter.js';
 import { renderSmartAnswer, renderRouteButtons, buildRelatedRoutes, formatStandardAnswer } from '../render/ai.js';
 
-export function openAsk(){
-  // The Dock icon is a toggle: it closes an already-open anchored chat panel.
-  if(document.getElementById('aiSheet')?.classList.contains('open')){
+/* ============================================================
+   问问大师 · 重构版 — 类 ChatGPT 气泡式对话
+   ============================================================ */
+
+// —— 时间格式 ——
+function _ts() {
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return hh + ':' + mm;
+}
+
+// —— 创建欢迎消息 ——
+function _renderWelcome(el) {
+  const ctx = window._ctx;
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting = hour < 6 ? '夜深了' : hour < 12 ? '早上好' : hour < 14 ? '中午好' : hour < 18 ? '下午好' : '晚上好';
+  let contextLine = '随时问我关于事业、关系、近期选择的问题。';
+  if (ctx) {
+    contextLine = '我已连接你的命盘（' + ctx.dg + ctx.dw + '），随时可以聊。';
+  }
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'chat-msg chat-msg-ai chat-welcome';
+  msgDiv.innerHTML =
+    '<div class="chat-avatar">✦</div>' +
+    '<div class="chat-content">' +
+      '<div class="chat-bubble chat-bubble-ai">' +
+        '<div class="chat-welcome-greeting">' + greeting + '！我是问问大师 ✦</div>' +
+        '<div class="chat-welcome-desc">' + contextLine + '</div>' +
+      '</div>' +
+      '<div class="chat-meta">' + _ts() + '</div>' +
+    '</div>';
+  el.appendChild(msgDiv);
+}
+
+// —— 渲染用户气泡 ——
+function _renderUserBubble(el, text) {
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'chat-msg chat-msg-user';
+  msgDiv.innerHTML =
+    '<div class="chat-content">' +
+      '<div class="chat-bubble chat-bubble-user">' + _escHtml(text) + '</div>' +
+      '<div class="chat-meta">' + _ts() + '</div>' +
+    '</div>';
+  el.appendChild(msgDiv);
+  _scrollToBottom(el);
+}
+
+// —— 渲染 typing indicator ——
+function _showTyping(el) {
+  let indicator = el.querySelector('.chat-typing');
+  if (indicator) return indicator;
+  indicator = document.createElement('div');
+  indicator.className = 'chat-msg chat-msg-ai chat-typing';
+  indicator.innerHTML =
+    '<div class="chat-avatar">✦</div>' +
+    '<div class="chat-content">' +
+      '<div class="chat-bubble chat-bubble-ai">' +
+        '<div class="typing-dots"><span></span><span></span><span></span></div>' +
+      '</div>' +
+    '</div>';
+  el.appendChild(indicator);
+  _scrollToBottom(el);
+  return indicator;
+}
+function _hideTyping(el) {
+  const indicator = el.querySelector('.chat-typing');
+  if (indicator) indicator.remove();
+}
+
+// —— 渲染 AI 回复气泡 ——
+function _createAiBubble(el) {
+  _hideTyping(el);
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'chat-msg chat-msg-ai chat-msg-appear';
+  msgDiv.innerHTML =
+    '<div class="chat-avatar">✦</div>' +
+    '<div class="chat-content">' +
+      '<div class="chat-bubble chat-bubble-ai"><div class="chat-ai-text"></div></div>' +
+      '<div class="chat-actions">' +
+        '<button type="button" data-act="copy" title="复制回答">复制</button>' +
+        '<button type="button" data-act="retry" title="重新回答">重试</button>' +
+      '</div>' +
+      '<div class="chat-meta">' + _ts() + '</div>' +
+    '</div>';
+  el.appendChild(msgDiv);
+  _scrollToBottom(el);
+  return msgDiv.querySelector('.chat-ai-text');
+}
+
+// —— 渲染 KB (信息库) 结果为气泡 ——
+function _renderKbBubble(el, kbRes, q) {
+  _hideTyping(el);
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'chat-msg chat-msg-ai chat-msg-appear';
+  const kbHtml = renderSmartAnswer(kbRes, q);
+  msgDiv.innerHTML =
+    '<div class="chat-avatar">✦</div>' +
+    '<div class="chat-content">' +
+      '<div class="chat-bubble chat-bubble-ai chat-bubble-kb">' + kbHtml + '</div>' +
+      '<div class="chat-actions">' +
+        '<button type="button" data-act="copy" title="复制回答">复制</button>' +
+      '</div>' +
+      '<div class="chat-meta">' + _ts() + '</div>' +
+    '</div>';
+  el.appendChild(msgDiv);
+  _scrollToBottom(el);
+}
+
+// —— 渲染工具调用气泡 ——
+function _renderToolCallBubble(el, short, toolId) {
+  _hideTyping(el);
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'chat-msg chat-msg-ai chat-msg-appear';
+  msgDiv.innerHTML =
+    '<div class="chat-avatar">✦</div>' +
+    '<div class="chat-content">' +
+      '<div class="chat-bubble chat-bubble-ai">' +
+        '可以，直接开始这个小工具，填完后我再帮你看结果。' +
+        '<button class="chat-tool-btn" type="button">开始 · ' + short + ' →</button>' +
+      '</div>' +
+      '<div class="chat-meta">' + _ts() + '</div>' +
+    '</div>';
+  msgDiv.querySelector('.chat-tool-btn').onclick = () => {
+    window._returnToAI = true;
+    closeAsk();
+    setTimeout(() => openToolPage(toolId), 180);
+  };
+  el.appendChild(msgDiv);
+  _scrollToBottom(el);
+}
+
+// —— 渲染无命盘提示 ——
+function _renderNeedChart(el) {
+  _hideTyping(el);
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'chat-msg chat-msg-ai chat-msg-appear';
+  msgDiv.innerHTML =
+    '<div class="chat-avatar">✦</div>' +
+    '<div class="chat-content">' +
+      '<div class="chat-bubble chat-bubble-ai">' +
+        '请先完成命盘排盘，我才能给出有针对性的建议。' +
+        '<button class="chat-tool-btn" type="button" onclick="closeAsk();goBack();">前往填写出生信息 →</button>' +
+      '</div>' +
+      '<div class="chat-meta">' + _ts() + '</div>' +
+    '</div>';
+  el.appendChild(msgDiv);
+  _scrollToBottom(el);
+}
+
+// —— 辅助函数 ——
+function _escHtml(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function _scrollToBottom(el) {
+  requestAnimationFrame(() => {
+    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+  });
+}
+
+// ============================================================
+//  公开 API
+// ============================================================
+
+export function openAsk() {
+  // Toggle: if already open, close it
+  if (document.getElementById('aiSheet')?.classList.contains('open')) {
     closeAsk();
     return;
   }
-  const fab=document.getElementById('aiFab');
-  if(fab){
-    fab.classList.remove('fab-pop');void fab.offsetWidth;fab.classList.add('fab-pop');
-    fab.addEventListener('animationend',()=>fab.classList.remove('fab-pop'),{once:true});
+  const fab = document.getElementById('aiFab');
+  if (fab) {
+    fab.classList.remove('fab-pop');
+    void fab.offsetWidth;
+    fab.classList.add('fab-pop');
+    fab.addEventListener('animationend', () => fab.classList.remove('fab-pop'), { once: true });
   }
   document.getElementById('aiOverlay').classList.add('open');
   document.getElementById('aiSheet').classList.add('open');
-  const context=document.getElementById('aiContext'),d=window._ctx;
-  if(context&&d){context.innerHTML='<span>✦ 当前命盘</span><b>'+d.dg+d.dw+' · '+(d.wx.st?'行动型节奏':'蓄力型节奏')+' · 可直接问事业、关系与近期选择</b>';}
-  // 自由提问：打开后直接聚焦输入框。
-  setTimeout(()=>document.getElementById('askInput').focus(),300);
+
+  // Update context line
+  const context = document.getElementById('aiContext');
+  const d = window._ctx;
+  if (context && d) {
+    context.innerHTML = '<span>✦ 当前命盘</span><b>' + d.dg + d.dw + ' · ' + (d.wx.st ? '行动型节奏' : '蓄力型节奏') + '</b>';
+  }
+
+  // First open: show welcome message
+  const body = document.getElementById('askResult');
+  if (body && !body.querySelector('.chat-msg')) {
+    _renderWelcome(body);
+  }
+
+  setTimeout(() => document.getElementById('askInput')?.focus(), 300);
 }
-export function closeAsk(){
+
+export function closeAsk() {
   document.getElementById('aiOverlay').classList.remove('open');
   document.getElementById('aiSheet').classList.remove('open');
-  document.getElementById('aiSuggest').classList.remove('show');
+  document.getElementById('aiSuggest')?.classList.remove('show');
 }
-export function newAskChat(){
-  window._aiConversation=[];
-  const result=document.getElementById('askResult'),input=document.getElementById('askInput'),sug=document.getElementById('aiSuggest');
-  if(result)result.innerHTML='';
-  if(input){input.value='';input.style.height='auto';input.focus();}
-  if(sug){sug.innerHTML='';sug.classList.remove('show');}
+
+export function newAskChat() {
+  window._aiConversation = [];
+  const result = document.getElementById('askResult');
+  const input = document.getElementById('askInput');
+  const sug = document.getElementById('aiSuggest');
+  if (result) {
+    result.innerHTML = '';
+    _renderWelcome(result);
+  }
+  if (input) {
+    input.value = '';
+    input.style.height = 'auto';
+    input.focus();
+  }
+  if (sug) { sug.innerHTML = ''; sug.classList.remove('show'); }
 }
-export function aiToolRequest(q){
-  const x=String(q||'').trim();
-  if(!/(打开|使用|开始|做一下|帮我|调用|进入|测一下|测评)/.test(x))return false;
-  const rules=[
-    [/财运|理财|现金流|财富/, 'wealth','财运与理财罗盘'],[/转行|副业|职业选择|换工作/, 'career','转行与副业测评'],[/裁员|失业|职场风险/, 'layoff','裁员风险检测'],[/关系沟通|伴侣沟通|感情沟通/, 'relation','关系沟通分析'],[/穿搭|工位|环境|颜色|风水/, 'style','能量穿搭与工位风水'],[/择日|重要事项|安排日期/, 'date','重要事项择日助手'],[/今日日签|今日提醒|日签/, 'daily','今日日签'],[/起名|取名|名字/, 'name','智能起名工具'],[/摇签|问卜|抽签/, 'oracle','摇签问卜'],[/彩票|双色球|大乐透|选号/, 'lottery','娱乐选号'],[/生肖合冲|生肖关系/, 'zodiac','生肖合冲分析']
+
+export function aiToolRequest(q) {
+  const x = String(q || '').trim();
+  if (!/(打开|使用|开始|做一下|帮我|调用|进入|测一下|测评)/.test(x)) return false;
+  const rules = [
+    [/财运|理财|现金流|财富/, 'wealth', '财运与理财罗盘'],
+    [/转行|副业|职业选择|换工作/, 'career', '转行与副业测评'],
+    [/裁员|失业|职场风险/, 'layoff', '裁员风险检测'],
+    [/关系沟通|伴侣沟通|感情沟通/, 'relation', '关系沟通分析'],
+    [/穿搭|工位|环境|颜色|风水/, 'style', '能量穿搭与工位风水'],
+    [/择日|重要事项|安排日期/, 'date', '重要事项择日助手'],
+    [/今日日签|今日提醒|日签/, 'daily', '今日日签'],
+    [/起名|取名|名字/, 'name', '智能起名工具'],
+    [/摇签|问卜|抽签/, 'oracle', '摇签问卜'],
+    [/彩票|双色球|大乐透|选号/, 'lottery', '娱乐选号'],
+    [/生肖合冲|生肖关系/, 'zodiac', '生肖合冲分析']
   ];
-  const hit=rules.find(([re])=>re.test(x));if(!hit)return false;
-  const el=document.getElementById('askResult');if(!el)return false;
-  const short={wealth:'财运',career:'转行',layoff:'职场风险',relation:'关系沟通',style:'环境',date:'择日',daily:'日签',name:'起名',oracle:'摇签',lottery:'选号',zodiac:'生肖'}[hit[1]]||'工具';
-  const card=document.createElement('div');card.className='ai-body-inner ai-tool-call';
-  card.innerHTML='<div class="ai-dialogue"><div class="ai-dialogue-line"><div class="ai-dialogue-avatar">✦</div><div class="ai-dialogue-text"><div class="ai-dialogue-label">问问大师</div><div>可以，直接开始这个小工具，填完后我再帮你看结果。</div><button class="ai-tool-call-btn" type="button">开始 · '+short+' →</button></div></div></div>';
-  card.querySelector('button').onclick=()=>{window._returnToAI=true;closeAsk();setTimeout(()=>openToolPage(hit[1]),180)};
-  el.appendChild(card);el.scrollTop=el.scrollHeight;return true;
+  const hit = rules.find(([re]) => re.test(x));
+  if (!hit) return false;
+
+  const el = document.getElementById('askResult');
+  if (!el) return false;
+  const short = {
+    wealth: '财运', career: '转行', layoff: '职场风险', relation: '关系沟通',
+    style: '环境', date: '择日', daily: '日签', name: '起名',
+    oracle: '摇签', lottery: '选号', zodiac: '生肖'
+  }[hit[1]] || '工具';
+
+  _renderToolCallBubble(el, short, hit[1]);
+  return true;
 }
-export function doAsk(q){
-  if(!document.getElementById('aiSheet').classList.contains('open'))openAsk();
-  const input=document.getElementById('askInput');
-  input.value='';input.style.height='auto';
-  const countEl=document.getElementById('aiCount');
-  if(countEl)countEl.textContent='0 / 500';
-  document.getElementById('aiSuggest').classList.remove('show');
-  try{sessionStorage.setItem('tj_ai_draft','')}catch(e){}
-  if(aiToolRequest(q))return;
+
+// —— 闲聊检测 ——
+function _handleCasualChat(q, el) {
+  const x = (q || '').trim();
+  if (!/^(你好|嗨|哈喽|在吗|有人吗|早上好|晚上好|晚安|谢谢|感谢|哈哈|好的|明白了)[！!。？?\s]*$/.test(x)) return false;
+
+  let reply;
+  if (/谢谢|感谢/.test(x)) reply = '不用客气。你想继续聊刚才的事，还是换一个话题？';
+  else if (/晚安|晚上好/.test(x)) reply = '晚上好。今天如果已经很累了，先把事情放一放，休息本身也是一种推进。';
+  else if (/好的|明白了/.test(x)) reply = '好。如果你之后想到新的细节，直接接着说就行，我会沿着当前话题继续。';
+  else reply = '我在。你可以先随便说说最近发生了什么，不一定要整理成一个正式问题。';
+
+  _showTyping(el);
+  _delay(300 + Math.random() * 300).then(() => {
+    const textEl = _createAiBubble(el);
+    textEl.textContent = reply;
+    _scrollToBottom(el);
+  });
+  return true;
+}
+
+export function doAsk(q) {
+  if (!document.getElementById('aiSheet').classList.contains('open')) openAsk();
+  const input = document.getElementById('askInput');
+  if (input) { input.value = ''; input.style.height = 'auto'; }
+  const countEl = document.getElementById('aiCount');
+  if (countEl) countEl.textContent = '0 / 500';
+  document.getElementById('aiSuggest')?.classList.remove('show');
+  try { sessionStorage.setItem('tj_ai_draft', ''); } catch (e) {}
+
+  const el = document.getElementById('askResult');
+  _renderUserBubble(el, q);
+
+  if (_handleCasualChat(q, el)) return;
+  if (aiToolRequest(q)) return;
   generateAnswer(q);
 }
-export function doAskCustom(){
-  const input=document.getElementById('askInput');
-  const q=input.value.trim();
-  if(!q)return;
-  input.value='';input.style.height='auto';
-  const countEl=document.getElementById('aiCount');
-  if(countEl)countEl.textContent='0 / 500';
-  document.getElementById('aiSuggest').classList.remove('show');
-  try{sessionStorage.setItem('tj_ai_draft','')}catch(e){}
-  if(aiToolRequest(q))return;
+
+export function doAskCustom() {
+  const input = document.getElementById('askInput');
+  const q = input?.value.trim();
+  if (!q) return;
+  input.value = '';
+  input.style.height = 'auto';
+  const countEl = document.getElementById('aiCount');
+  if (countEl) countEl.textContent = '0 / 500';
+  document.getElementById('aiSuggest')?.classList.remove('show');
+  try { sessionStorage.setItem('tj_ai_draft', ''); } catch (e) {}
+
+  const el = document.getElementById('askResult');
+  _renderUserBubble(el, q);
+
+  if (_handleCasualChat(q, el)) return;
+  if (aiToolRequest(q)) return;
   generateAnswer(q);
 }
+
 // —— 切换分类 ——
-export function aiSwitchCat(el){
-  document.querySelectorAll('.ai-cat').forEach(c=>c.classList.remove('active'));
+export function aiSwitchCat(el) {
+  document.querySelectorAll('.ai-cat').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   aiRefreshChips(el.dataset.cat);
 }
+
 // —— 刷新当前分类下的快捷问题 chips ——
-export function aiRefreshChips(cat){
-  const wrap=document.getElementById('aiChips');
-  if(!wrap)return;
-  let list=[];
-  if(cat==='hot'){
-    // 热门：每个意图各 1 条
-    const seen=new Set();
-    ['事业','财富','感情','健康','学业','居住','玄学'].forEach(it=>{
-      const f=KB.faqs.find(x=>x.intent===it&&!seen.has(x.id));
-      if(f){list.push(f);seen.add(f.id);}
+export function aiRefreshChips(cat) {
+  const wrap = document.getElementById('aiChips');
+  if (!wrap) return;
+  let list = [];
+  if (cat === 'hot') {
+    const seen = new Set();
+    ['事业', '财富', '感情', '健康', '学业', '居住', '玄学'].forEach(it => {
+      const f = KB.faqs.find(x => x.intent === it && !seen.has(x.id));
+      if (f) { list.push(f); seen.add(f.id); }
     });
-  }else if(cat==='玄学'){
-    // 玄学分类同时显示术语
-    list=KBSearch.byIntent('玄学');
-  }else{
-    list=KBSearch.byIntent(cat);
+  } else if (cat === '玄学') {
+    list = KBSearch.byIntent('玄学');
+  } else {
+    list = KBSearch.byIntent(cat);
   }
-  wrap.innerHTML=list.map(f=>`<div class="ai-chip" onclick="doAsk('${f.q.replace(/'/g,"\\'")}')">${f.q}</div>`).join('');
-  // 玄学分类附加术语速查
-  if(cat==='玄学'){
-    wrap.innerHTML+='<div class="ai-divider">术语速查</div>';
-    wrap.innerHTML+=KB.terms.slice(0,12).map(t=>`<div class="ai-chip term" onclick="doAsk('${t.t}')">${t.t}</div>`).join('');
+  wrap.innerHTML = list.map(f =>
+    `<div class="ai-chip" onclick="doAsk('${f.q.replace(/'/g, "\\'")}')">${f.q}</div>`
+  ).join('');
+  if (cat === '玄学') {
+    wrap.innerHTML += '<div class="ai-divider">术语速查</div>';
+    wrap.innerHTML += KB.terms.slice(0, 12).map(t =>
+      `<div class="ai-chip term" onclick="doAsk('${t.t}')">${t.t}</div>`
+    ).join('');
   }
-}
-// 自由提问模式：不展示预设问题或联想列表，保留用户自己的问题输入。
-export function aiOnInputSuggest(){
-  const sug=document.getElementById('aiSuggest');
-  if(sug){sug.innerHTML='';sug.classList.remove('show');}
 }
 
-export async function generateAnswer(q){
-  const d=getCtx();
-  const el=document.getElementById('askResult');
-  const conversation=window._aiConversation||(window._aiConversation=[]);
-  const aiPrefs=window.getAISettings?window.getAISettings():{natural:true,context:true,length:'short'};
-  const previousTurns=aiPrefs.context?conversation.slice(-6):[];
-  // Short, referential questions should continue the prior topic instead of matching an unrelated FAQ.
-  const contextualFollowUp=previousTurns.length>0&&(
-    q.trim().length<=18||/^(那|然后|所以|具体|继续|怎么办|怎么做|为什么|他|她|这个|那我|我呢|可以吗|要不要)/.test(q.trim())
+// 自由提问模式
+export function aiOnInputSuggest() {
+  const sug = document.getElementById('aiSuggest');
+  if (sug) { sug.innerHTML = ''; sug.classList.remove('show'); }
+}
+
+export async function generateAnswer(q) {
+  const d = getCtx();
+  const el = document.getElementById('askResult');
+  const conversation = window._aiConversation || (window._aiConversation = []);
+  const aiPrefs = window.getAISettings ? window.getAISettings() : { natural: true, context: true, length: 'short' };
+  const previousTurns = aiPrefs.context ? conversation.slice(-6) : [];
+
+  const contextualFollowUp = previousTurns.length > 0 && (
+    q.trim().length <= 18 || /^(那|然后|所以|具体|继续|怎么办|怎么做|为什么|他|她|这个|那我|我呢|可以吗|要不要)/.test(q.trim())
   );
-  if(!d){
-    
-    const div = document.createElement('div');
-    div.className = 'ai-body-inner';
-    div.innerHTML = '<div class="ai-empty">请先完成命盘排盘，再进行提问。<br><button class="ai-btn-go" onclick="closeAsk();goBack();">前往填写出生信息 →</button></div>';
-    const typing = el.querySelector('.loading-state');
-    if(typing) typing.remove();
-    el.appendChild(div);
-  
+
+  if (!d) {
+    _showTyping(el);
+    await _delay(600);
+    _renderNeedChart(el);
     return;
   }
+
   // —— 步骤 1：智能信息库匹配 ——
-  const kbRes=contextualFollowUp?null:smartAnswer(q,d);
-  if(kbRes){
-    
-    const div = document.createElement('div');
-    div.className = 'ai-body-inner';
-    div.innerHTML = renderSmartAnswer(kbRes, q);
-    conversation.push({role:'user',content:q});
-    conversation.push({role:'assistant',content:(kbRes.sections||[]).map(s=>s.content||'').join(' ').slice(0,180)});
-    const typing = el.querySelector('.loading-state');
-    if(typing) typing.remove();
-    el.appendChild(div);
-    requestAnimationFrame(()=>el.scrollIntoView({behavior:'smooth',block:'nearest'}));
+  const kbRes = contextualFollowUp ? null : smartAnswer(q, d);
+  if (kbRes) {
+    _showTyping(el);
+    await _delay(500 + Math.random() * 400);
+    _renderKbBubble(el, kbRes, q);
+    conversation.push({ role: 'user', content: q });
+    conversation.push({ role: 'assistant', content: (kbRes.sections || []).map(s => s.content || '').join(' ').slice(0, 180) });
     return;
-  
   }
-  // —— 步骤 2：调用 AI API（流式）——
-  // typing removed
-  const ctx=buildBaziContext(d);
-  const systemPrompt=`你是「问问」，像一位真正会倾听的朋友，而不是报告生成器。请用自然语言和用户说话：先用一句顺口的承接回应问题，例如“听起来你现在最在意的是……”或“这件事确实容易让人纠结”，但不要凭空猜测用户情绪；接着直接回答，再自然地落到一个现实行动。可以使用“我会建议你先……”“如果是我，我会先……”这类口语表达，让回答像真实对话，不要像数据报告。不要套模板，不要使用“根据命盘显示”“综合来看”“建议如下”等机械套话，也不要每次都把日主、大运、评分重新说一遍。命理只能作为轻量参考，只有和问题确实相关时才自然提一句，并说明现实选择更重要。请认真参考对话历史：如果用户说“那我呢”“继续说”“这个机会”“他/她”等省略表达，要结合上一轮内容理解，不要假装这是全新问题；只有确实无法判断时才追问。每次只抓住最关键的一点，给一个具体、容易开始的行动；不要罗列多条大道理，不要强行分成结论、原因、行动等小标题。信息不足时只问一个问题。语气像熟悉用户的朋友：有温度、坦诚，允许说“我不确定”。中文回复控制在80至180字，通常写成一到两段自然对话。`;
-  try{
-    let ans=null;
-    // 真正有内容返回前，保留“正在输入”动画；首字到达后再插入答案气泡。
-    const _mkAns=()=>{ if(ans)return ans; const t=el.querySelector('.loading-state'); if(t)t.remove(); ans=document.createElement('div'); ans.className='ai-body-inner'; el.appendChild(ans); return ans; };
-    const full=await streamAskAnswer({
-      apiKey:import.meta.env.VITE_API_KEY,
+
+  // —— 步骤 2：AI API 流式 ——
+  _showTyping(el);
+
+  const ctx = buildBaziContext(d);
+  const systemPrompt = `你是「问问」，像一位真正会倾听的朋友，而不是报告生成器。请用自然语言和用户说话：先用一句顺口的承接回应问题，例如"听起来你现在最在意的是……"或"这件事确实容易让人纠结"，但不要凭空猜测用户情绪；接着直接回答，再自然地落到一个现实行动。可以使用"我会建议你先……""如果是我，我会先……"这类口语表达，让回答像真实对话，不要像数据报告。不要套模板，不要使用"根据命盘显示""综合来看""建议如下"等机械套话，也不要每次都把日主、大运、评分重新说一遍。命理只能作为轻量参考，只有和问题确实相关时才自然提一句，并说明现实选择更重要。请认真参考对话历史：如果用户说"那我呢""继续说""这个机会""他/她"等省略表达，要结合上一轮内容理解，不要假装这是全新问题；只有确实无法判断时才追问。每次只抓住最关键的一点，给一个具体、容易开始的行动；不要罗列多条大道理，不要强行分成结论、原因、行动等小标题。信息不足时只问一个问题。语气像熟悉用户的朋友：有温度、坦诚，允许说"我不确定"。中文回复控制在80至180字，通常写成一到两段自然对话。`;
+
+  try {
+    let textEl = null;
+    const _mkBubble = () => {
+      if (textEl) return textEl;
+      textEl = _createAiBubble(el);
+      return textEl;
+    };
+
+    const full = await streamAskAnswer({
+      apiKey: import.meta.env.VITE_API_KEY,
       systemPrompt,
-      chartContext:ctx,
-      question:q,
+      chartContext: ctx,
+      question: q,
       aiPrefs,
       previousTurns,
-      onDelta:(partial)=>{_mkAns().innerHTML=formatStandardAnswer(partial);requestAnimationFrame(()=>{el.scrollTop=el.scrollHeight;});}
+      onDelta: (partial) => {
+        _mkBubble().innerHTML = formatStandardAnswer(partial);
+        _scrollToBottom(el);
+      }
     });
-    conversation.push({role:'user',content:q});
-    conversation.push({role:'assistant',content:full.slice(0,500)});
-    const intents=extractIntents(q);
-    const links=buildRelatedRoutes(intents);
-    if(links.length){_mkAns().innerHTML+=renderRouteButtons(links,'前往相关页面查看');}
-    requestAnimationFrame(()=>{el.scrollIntoView({behavior:'smooth',block:'nearest'});});
-  }catch(e){
-    generateAnswerFallback(q,d,el);
-    // Keep offline/fallback turns in the same session so the next question still has a topic.
-    conversation.push({role:'user',content:q});
-    conversation.push({role:'assistant',content:'已基于当前话题给出建议。'});
+
+    conversation.push({ role: 'user', content: q });
+    conversation.push({ role: 'assistant', content: full.slice(0, 500) });
+
+    const intents = extractIntents(q);
+    const links = buildRelatedRoutes(intents);
+    if (links.length && textEl) {
+      const routeHtml = renderRouteButtons(links, '前往相关页面查看');
+      textEl.closest('.chat-bubble').insertAdjacentHTML('beforeend', routeHtml);
+    }
+    _scrollToBottom(el);
+  } catch (e) {
+    _hideTyping(el);
+    generateAnswerFallbackChat(q, d, el);
+    conversation.push({ role: 'user', content: q });
+    conversation.push({ role: 'assistant', content: '已基于当前话题给出建议。' });
   }
 }
 
-// —— 渲染 KB 命中结果 ——
+// —— Fallback 以气泡形式渲染 ——
+function generateAnswerFallbackChat(q, d, el) {
+  // Reuse the old fallback logic but render into a chat bubble
+  const textEl = _createAiBubble(el);
+  // Create a temporary container to capture fallback HTML
+  const temp = document.createElement('div');
+  generateAnswerFallback(q, d, temp);
+  // Extract the text content from the fallback
+  const fallbackText = temp.querySelector('.ai-dialogue-text')?.innerHTML
+    || temp.textContent
+    || '抱歉，我暂时无法连接到 AI 服务。请稍后再试。';
+  textEl.innerHTML = fallbackText;
+  _scrollToBottom(el);
+}
 
-// —— 渲染跳转按钮组 ——
-
-// —— 根据意图自动推断相关页面 ——
-
+function _delay(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}

@@ -843,3 +843,246 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
 @media(max-width:480px){.tj-toast{bottom:calc(84px + env(safe-area-inset-bottom));font-size:.78em;padding:11px 16px}}
 .ai-session-clear.confirming{color:rgba(212,101,74,.92);font-weight:600}
 .ai-typing-hint{margin-top:8px;font-size:.72em;color:rgba(255,255,255,.32);letter-spacing:.3px}
+
+/* ============================================================
+   问问大师 · ChatGPT 风格气泡对话重构
+   ============================================================ */
+
+/* —— 对话容器 —— */
+#askResult {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 4px 20px !important;
+}
+
+/* —— 单条消息行 —— */
+.chat-msg {
+  display: flex;
+  gap: 8px;
+  max-width: 100%;
+  animation: chatFadeIn .32s cubic-bezier(.2,.8,.3,1) backwards;
+}
+.chat-msg-appear {
+  animation: chatSlideUp .38s cubic-bezier(.2,.8,.3,1) backwards;
+}
+
+/* AI 消息：左对齐 */
+.chat-msg-ai {
+  align-self: flex-start;
+  flex-direction: row;
+}
+
+/* 用户消息：右对齐 */
+.chat-msg-user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+/* —— 头像 —— */
+.chat-avatar {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ac1);
+  border: 1px solid var(--ac4);
+  font-size: .7em;
+  color: var(--ac-text);
+  margin-top: 2px;
+  user-select: none;
+}
+
+/* —— 内容列 —— */
+.chat-content {
+  display: flex;
+  flex-direction: column;
+  max-width: calc(100% - 40px);
+  min-width: 0;
+}
+
+/* —— 气泡 —— */
+.chat-bubble {
+  position: relative;
+  padding: 10px 13px;
+  font-size: .82em;
+  line-height: 1.8;
+  word-break: break-word;
+}
+.chat-bubble-ai {
+  background: rgba(255, 255, 255, .045);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 4px 16px 16px 16px;
+  color: rgba(255, 245, 220, .85);
+}
+.chat-bubble-user {
+  background: var(--ac1);
+  border: 1px solid var(--ac4);
+  border-radius: 16px 16px 4px 16px;
+  color: rgba(255, 255, 255, .92);
+}
+
+/* KB 信息库结果在气泡内 */
+.chat-bubble-kb {
+  padding: 12px 14px;
+}
+.chat-bubble-kb .ai-kb-head {
+  margin-bottom: 8px;
+}
+.chat-bubble-kb .ai-step {
+  margin-bottom: 6px;
+}
+
+/* —— 时间戳 —— */
+.chat-meta {
+  font-size: .58em;
+  color: rgba(255, 255, 255, .25);
+  margin-top: 3px;
+  letter-spacing: .3px;
+  user-select: none;
+}
+.chat-msg-user .chat-meta {
+  text-align: right;
+}
+.chat-msg-ai .chat-meta {
+  text-align: left;
+}
+
+/* —— 操作按钮（复制/重试）—— */
+.chat-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.chat-msg:hover .chat-actions,
+.chat-msg:focus-within .chat-actions {
+  opacity: .7;
+}
+.chat-actions button {
+  padding: 3px 8px;
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .03);
+  color: rgba(255, 255, 255, .48);
+  font: 500 .62em var(--sf);
+  cursor: pointer;
+  transition: all .18s;
+}
+.chat-actions button:hover {
+  color: var(--ac-text);
+  background: var(--ac1);
+  border-color: var(--ac4);
+}
+
+/* —— Typing indicator (三个跳动的点) —— */
+.typing-dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 2px;
+  min-height: 20px;
+}
+.typing-dots span {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ac-text);
+  opacity: .45;
+  animation: typingBounce .9s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: .15s; }
+.typing-dots span:nth-child(3) { animation-delay: .3s; }
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: .35; }
+  30% { transform: translateY(-5px); opacity: .85; }
+}
+
+/* —— 欢迎消息 —— */
+.chat-welcome .chat-bubble {
+  background: linear-gradient(135deg, var(--ac1), rgba(255, 255, 255, .035));
+  border-color: var(--ac4);
+}
+.chat-welcome-greeting {
+  font-size: 1em;
+  font-weight: 600;
+  color: var(--ac-text);
+  margin-bottom: 4px;
+}
+.chat-welcome-desc {
+  font-size: .85em;
+  color: rgba(255, 255, 255, .55);
+  line-height: 1.65;
+}
+
+/* —— 工具按钮 —— */
+.chat-tool-btn {
+  display: inline-flex;
+  margin-top: 10px;
+  padding: 8px 14px;
+  border: 1px solid var(--ac4);
+  border-radius: 999px;
+  background: var(--ac1);
+  color: var(--ac-text);
+  font: 600 .78em var(--sf);
+  cursor: pointer;
+  transition: all .2s;
+}
+.chat-tool-btn:hover {
+  background: var(--ac4);
+  color: #fff;
+}
+
+/* —— AI 文本内样式 —— */
+.chat-ai-text {
+  min-height: 1em;
+}
+.chat-ai-text p {
+  margin-bottom: 6px;
+}
+.chat-ai-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* —— 路由按钮在气泡内 —— */
+.chat-bubble .ai-routes {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, .06);
+}
+
+/* —— 动画 —— */
+@keyframes chatFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes chatSlideUp {
+  from { opacity: 0; transform: translateY(12px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* —— 隐藏旧的分类/chips 区（保留DOM兼容）—— */
+#aiSheet .ai-cat-bar,
+#aiSheet .ai-chips-wrap {
+  display: none !important;
+}
+
+/* —— 移动端适配 —— */
+@media (max-width: 520px) {
+  .chat-bubble { font-size: .8em; }
+  .chat-avatar { flex: 0 0 24px; width: 24px; height: 24px; font-size: .62em; }
+  .chat-content { max-width: calc(100% - 36px); }
+  .chat-msg-user .chat-bubble { max-width: 88%; }
+}
+
+/* —— 减弱运动 —— */
+@media (prefers-reduced-motion: reduce) {
+  .chat-msg, .chat-msg-appear { animation: none !important; }
+  .typing-dots span { animation: none !important; opacity: .5; }
+}

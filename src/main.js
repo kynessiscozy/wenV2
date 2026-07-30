@@ -1043,390 +1043,12 @@ window.ORACLE_SIGNS = {
  };
 })();
 
-/* 问问大师：快捷问题、用户气泡、上下文提示与更清晰的回答容器 */
-(function(){
- const prompts=['我现在适合换工作吗？','最近财运要注意什么？','什么是七杀？','今天适合推进什么？'];
- function mount(){const head=document.querySelector('#aiSheet .ai-head');if(!head||document.getElementById('aiSuggestBar'))return;const bar=document.createElement('div');bar.className='ai-suggest-bar';bar.id='aiSuggestBar';bar.innerHTML=prompts.map(q=>'<button type="button">'+q+'</button>').join('');bar.querySelectorAll('button').forEach(b=>b.onclick=()=>{document.getElementById('askInput').value=b.textContent;doAskCustom()});head.appendChild(bar)}
- const oldOpen=window.openAsk;window.openAsk=function(){if(oldOpen)oldOpen();setTimeout(mount,30)};
- const oldGenerate=window.generateAnswer;
- window.generateAnswer=function(q){if(oldGenerate)oldGenerate(q)};
-})();
-
-/* 对话化与白话化：专业概念只在必要时出现，并紧跟解释 */
-(function(){
- const plain={
-  '日主':'代表你自己的核心性格和能量','用神':'对你更有帮助的方向','身旺':'自身驱动力比较足','身弱':'更需要借助资源和支持','流年':'今年的整体环境','大运':'当前这十年阶段','十神':'命盘里的关系角色','官杀':'规则、压力和责任','财星':'收入、资源和现实回报','印星':'学习、支持和安全感','食伤':'表达、创意和输出','比劫':'自我意志与同伴关系','五行':'五种能量属性'
- };
- function human(t){let out=String(t||'');Object.keys(plain).forEach(k=>{out=out.replaceAll(k,k+'（'+plain[k]+'）')});return out.replace(/（[^）]+）（[^）]+）/g,m=>m.replace(/（[^）]+）(?=（)/,''));}
- function dialogue(sections){return '<div class="ai-dialogue">'+sections.map((x,i)=>'<div class="ai-dialogue-line"><div class="ai-dialogue-avatar">✦</div><div class="ai-dialogue-text"><div class="ai-dialogue-label">问问 · '+x.title+'</div>'+human(x.content).replace(/\n/g,'<br>')+'</div></div>').join('')+'</div>'}
- window.formatStandardAnswer=function(text){const titles=['结论','命理原因','当前阶段','行动建议'],arr=[];titles.forEach((t,i)=>{const m=String(text).match(new RegExp('【'+t+'】[:：]([\\s\\S]*?)(?=【'+(titles[i+1]||'END')+'】|$)'));if(m)arr.push({title:t==='结论'?'先说结论':t==='命理原因'?'我为什么这样判断':t==='当前阶段'?'放到你现在的处境':'你可以先这样做',content:m[1].trim()})});return arr.length?dialogue(arr):'<div class="ai-dialogue"><div class="ai-dialogue-line"><div class="ai-dialogue-avatar">✦</div><div class="ai-dialogue-text">'+human(text)+'</div></div></div>'};
- const oldSmart=window.renderSmartAnswer;
- window.renderSmartAnswer=function(res,q){if(!res)return oldSmart?oldSmart(res,q):'';const sections=(res.sections||[]).map((x,i)=>({title:i?'我再补充一点':'先说结论',content:x.content||''}));let html=dialogue(sections);if(res.related&&res.related.length)html+='<div class="ai-related"><div class="ai-related-h">你还可以继续问</div><div class="ai-related-list">'+res.related.map(r=>'<div class="ai-chip small" onclick="doAsk(\''+r.q.replace(/'/g,"\\'")+'\')">'+r.q+'</div>').join('')+'</div></div>';return html};
-})();
-
-/* 问问大师对话机制：不再使用 outerHTML 全量替换的暴力方式，而是安全追加元素 */
-(function(){
- let chat = [];
- let busy = false;
- function esc(x){return String(x||'').replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
- 
- const oldGenerate=window.generateAnswer;
- window.generateAnswer=function(q){
-   const el=document.getElementById('askResult');
-   if(!el||busy)return;
-   busy=true;
-   chat.push({role:'user',text:q});
-   
-   // Create and append user bubble directly
-   const bubble = document.createElement('div');
-   bubble.className = 'ai-user-bubble';
-   bubble.textContent = q;
-   el.appendChild(bubble);
-   
-   // Add typing indicator
-   const typingWrap = document.createElement('div');
-   typingWrap.className = 'ai-answer-wrap loading-state';
-   typingWrap.innerHTML = '<div class="ai-typing"><span></span><span></span><span></span></div>';
-   el.appendChild(typingWrap);
-   el.scrollTop=el.scrollHeight;
-   // 首选模型偶尔较慢或需要重试其他模型，7 秒后补一句安抚文案，避免用户以为卡住了。
-   const slowHintTimer=setTimeout(()=>{
-     if(!el.contains(typingWrap))return;
-     if(typingWrap.querySelector('.ai-typing-hint'))return;
-     const hint=document.createElement('div');
-     hint.className='ai-typing-hint';
-     hint.textContent='还在仔细想，请再等一下…';
-     typingWrap.appendChild(hint);
-   },7000);
-   
-   let settled=false;
-   const finish=()=>{
-     if(settled)return;
-     const typing=el.querySelector('.loading-state');
-     if(typing)return; // Still typing
-     
-     // Find the newly added element (not typing and not user)
-     const nodes = [...el.children];
-     const answer = nodes[nodes.length-1];
-     if(!answer || answer.className === 'ai-user-bubble') return;
-     
-     const html = answer.innerHTML;
-     chat=chat.filter((m,i)=>!(m.role==='answer'&&i===chat.length-1));
-     chat.push({role:'answer',html});
-     settled=true;
-     busy=false;
-     clearTimeout(slowHintTimer);
-   };
-   
-   const ob=new MutationObserver(()=>setTimeout(finish,80));
-   ob.observe(el,{childList:true,subtree:true});
-   
-   if(oldGenerate)oldGenerate(q);
-   setTimeout(()=>{if(!settled){ob.disconnect();busy=false;clearTimeout(slowHintTimer)}},30000);
- };
- const oldNew=window.newAskChat;
- window.newAskChat=function(){
-   chat=[];
-   busy=false;
-   const el=document.getElementById('askResult');
-   if(el)el.innerHTML='';
-   if(oldNew)oldNew();
- };
- 
- // Restore chat session logic when opening
- const oldOpen = window.openAsk;
- window.openAsk = function() {
-   if(oldOpen) oldOpen();
-   setTimeout(() => {
-     const el=document.getElementById('askResult');
-     if (el && chat.length > 0 && el.children.length === 0) {
-        // Restore from chat context
-        chat.forEach(m => {
-          if (m.role === 'user') {
-            const b = document.createElement('div');
-            b.className = 'ai-user-bubble';
-            b.textContent = m.text;
-            el.appendChild(b);
-          } else if (m.role === 'answer') {
-            const b = document.createElement('div');
-            b.className = 'ai-answer-wrap';
-            b.innerHTML = m.html;
-            el.appendChild(b);
-          }
-        });
-        el.scrollTop = el.scrollHeight;
-     }
-   }, 50);
- };
-})();
-
-/* 产品核心交互：会话状态、草稿、字符提示、自然输入 */
-(function(){
- function mountCore(){
-  const sheet=document.getElementById('aiSheet'),head=sheet&&sheet.querySelector('.ai-head'),row=document.getElementById('askInput')?.closest('.ai-input-row');if(!sheet||!head||!row||document.getElementById('aiSessionBar'))return;
-  const bar=document.createElement('div');bar.className='ai-session-bar';bar.id='aiSessionBar';bar.innerHTML='<span><i class="ai-session-dot"></i>当前对话 · 已结合命盘</span><button class="ai-session-clear" type="button">清空对话</button>';head.insertAdjacentElement('afterend',bar);
-  const clearBtn=bar.querySelector('button');let clearArm=false,clearTimer=null;
-  clearBtn.onclick=()=>{
-   if(!clearArm){
-    clearArm=true;clearBtn.textContent='再点一次确认清空';clearBtn.classList.add('confirming');
-    clearTimer=setTimeout(()=>{clearArm=false;clearBtn.textContent='清空对话';clearBtn.classList.remove('confirming')},2600);
-    return;
-   }
-   clearTimeout(clearTimer);clearArm=false;clearBtn.textContent='清空对话';clearBtn.classList.remove('confirming');
-   newAskChat();showToast('已清空当前对话');
-  };
-  const hint=document.createElement('div');hint.className='ai-compose-hint';hint.innerHTML='<span>Enter 发送 · Shift + Enter 换行</span><b id="aiCount">0 / 500</b>';row.insertAdjacentElement('afterend',hint);
-  const input=document.getElementById('askInput');input.setAttribute('maxlength','500');input.setAttribute('aria-label','输入你想咨询的问题');
-  const autoGrow=()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,110)+'px'};
-  input.addEventListener('input',()=>{document.getElementById('aiCount').textContent=input.value.length+' / 500';autoGrow();try{sessionStorage.setItem('tj_ai_draft',input.value)}catch(e){}});
-  try{input.value=sessionStorage.getItem('tj_ai_draft')||'';document.getElementById('aiCount').textContent=input.value.length+' / 500';autoGrow()}catch(e){}
-  input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doAskCustom()}});
- }
- const oldOpen=window.openAsk;window.openAsk=function(){if(oldOpen)oldOpen();setTimeout(mountCore,40)};
- document.addEventListener('DOMContentLoaded',mountCore);
-})();
-
-(function(){const old=window.openAsk;window.openAsk=function(){if(old)old();setTimeout(()=>{const d=window._ctx||window._baziData,c=document.getElementById('aiContext');if(c&&d)c.innerHTML='<span>✦ 已结合命盘</span><b>'+d.dg+d.dw+' · '+(d.wx?.st?'行动型节奏':'蓄力型节奏')+' · 可以直接聊事业、关系或近期选择</b>'},50)}})();
-
-(function(){const old=window.openAsk;window.openAsk=function(){if(old)old();setTimeout(()=>{const d=window._ctx||window._baziData,c=document.getElementById('aiContext');if(c&&d)c.innerHTML=d.isDemoPreview?'<span class="ai-demo-context">✦ 示例报告</span><b>'+d.dg+d.dw+' · 体验用示例命盘</b>':'<span>✦ 已结合命盘</span><b>'+d.dg+d.dw+'</b>'},50)}})();
-
-/* 回复提炼：把旧的四段式输出压缩成一条自然回应 */
-(function(){
- const oldFormat=window.formatStandardAnswer;
- function clean(x){return String(x||'').replace(/【[^】]+】[:：]?/g,'').replace(/\s+/g,' ').trim()}
- window.formatStandardAnswer=function(text){
-  const s=String(text||''),pick=t=>{const m=s.match(new RegExp('【'+t+'】[:：]([\\s\\S]*?)(?=【|$)'));return m?clean(m[1]):''};
-  const c=pick('结论'),r=pick('命理原因'),a=pick('行动建议');let body=[c,r,a].filter(Boolean).join(' ');if(!body&&oldFormat)return oldFormat(text);body=body.length>180?body.slice(0,177)+'…':body;return '<div class="ai-dialogue"><div class="ai-dialogue-line"><div class="ai-dialogue-avatar">✦</div><div class="ai-dialogue-text"><div class="ai-dialogue-label">问问</div>'+body+'</div></div></div>';
- };
- const oldSmart=window.renderSmartAnswer;
- window.renderSmartAnswer=function(res,q){if(!res)return oldSmart?oldSmart(res,q):'';let parts=(res.sections||[]).map(x=>String(x.content||'').replace(/\s+/g,' ').trim()).filter(Boolean);let body=parts.join(' ');body=body.length>180?body.slice(0,177)+'…':body;return '<div class="ai-dialogue"><div class="ai-dialogue-line"><div class="ai-dialogue-avatar">✦</div><div class="ai-dialogue-text"><div class="ai-dialogue-label">问问</div>'+body+'</div></div></div>'};
-})();
-
-/* 闲聊模式：日常问候不强行套用命理分析 */
-(function(){
- const old=window.generateAnswer;
- window.generateAnswer=function(q){const el=document.getElementById('askResult'),x=(q||'').trim();let reply='';
-  if(/^(你好|嗨|哈喽|在吗|有人吗|早上好|晚上好|晚安|谢谢|感谢|哈哈|好的|明白了)[！!。？?\s]*$/.test(x)){
-   if(/谢谢|感谢/.test(x))reply='不用客气。你想继续聊刚才的事，还是换一个话题？';
-   else if(/晚安|晚上好/.test(x))reply='晚上好。今天如果已经很累了，先把事情放一放，休息本身也是一种推进。';
-   else if(/好的|明白了/.test(x))reply='好。如果你之后想到新的细节，直接接着说就行，我会沿着当前话题继续。';
-   else reply='我在。你可以先随便说说最近发生了什么，不一定要整理成一个正式问题。';
-   
-   if(el) {
-     const div = document.createElement('div');
-     div.className = 'ai-body-inner';
-     div.innerHTML = '<div class="ai-dialogue"><div class="ai-dialogue-line"><div class="ai-dialogue-avatar">✦</div><div class="ai-dialogue-text"><div class="ai-dialogue-label">问问</div>'+reply+'</div></div></div>';
-     const typing = el.querySelector('.loading-state');
-     if(typing) typing.remove();
-     el.appendChild(div);
-   }
-   return;
-  
-  }
-  if(old)old(q)
- };
-})();
-
-/* 问问大师 × 小工具：根据当前话题给出真正可操作的工具入口 */
-(function(){
- const map=[[/财富|收入|赚钱|理财|投资/,[['打开财运罗盘','wealth'],['查看今日日签','daily']]],[/换工作|跳槽|转行|副业|事业/,[['开始转行测评','career'],['做职场风险预案','layoff']]],[/感情|恋爱|对象|伴侣|关系/,[['生成关系沟通方案','relation'],['做生肖合冲参考','zodiac']]],[/今天|今日|现在|当下/,[['生成今日日签','daily']]],[/摇签|纠结|选择/,[['摇签问卜','oracle']]]];
- function links(q){for(const [re,ls] of map)if(re.test(q))return ls;return[]}
- const old=window.generateAnswer;
- window.generateAnswer=function(q){
-  if(old)old(q);
-  setTimeout(()=>{
-   const el=document.getElementById('askResult');
-   if(!el)return;
-   const ls=links(q);if(!ls.length)return;
-   
-   // 不要在已有的最末尾直接 append，而是把 link 注入到最后一个气泡中
-   const nodes = [...el.children];
-   const lastAnswer = nodes[nodes.length - 1];
-   if (!lastAnswer || lastAnswer.className === 'ai-user-bubble') return;
-   
-   if(lastAnswer.querySelector('.ai-tool-links')) return;
-   
-   const box=document.createElement('div');
-   box.className='ai-tool-links';
-   box.innerHTML='<div class="ai-tool-links-title">如果你想继续做一步</div>'+ls.map(x=>'<button class="ai-tool-link" type="button">→ '+x[0]+'</button>').join('');
-   box.querySelectorAll('button').forEach((b,i)=>b.onclick=()=>{closeAsk();setTimeout(()=>openToolPage(ls[i][1]),180)});
-   
-   const inner = lastAnswer.querySelector('.ai-body-inner') || lastAnswer;
-   inner.appendChild(box);
-  }, 500);
- };
-})();
-
 /* 能量穿搭与工位风水：补充明确颜色建议 */
 (function(){
  const old=window.TJToolRun;
  window.TJToolRun=function(type){if(type!=='style'){if(old)old(type);return}const d=window._ctx||window._baziData||{},wx=d.wx||{},colors={木:'青绿色、墨绿色',火:'朱红色、珊瑚色、紫色',土:'米色、暖黄色、咖色',金:'白色、银灰色、香槟色',水:'深蓝色、黑色、雾蓝色'};const color=colors[wx.ys]||'米色、暖黄色';const scene=document.getElementById('v3_scene')?.value||'当前场景',space=document.getElementById('v3_space')?.value||'当前环境',out=document.getElementById('v3_result');if(!out)return;out.innerHTML='<div class="tj-result-head"><div class="tj-result-title">能量穿搭与工位方案</div><div class="tj-score">'+(wx.ys||'土')+'</div></div><div class="tj-result-body"><div class="tj-result-list"><div><b>推荐颜色</b><span>'+color+'</span></div><div><b>场景建议</b><span>'+scene+'：选择低饱和、舒适且容易长期使用的颜色，不必大面积铺陈。</span></div><div><b>工位调整</b><span>'+((space.includes('杂乱'))?'清理桌面，只保留当前任务物品。':space.includes('光线')?'优先改善光线和屏幕高度。':space.includes('久坐')?'每50分钟起身活动，调整座椅与显示器高度。':'保持简洁，减少不必要的视觉刺激。')+'</span></div></div></div><div class="tj-disclaimer">颜色与环境建议用于状态提醒，舒适、整洁和可持续使用优先。</div>';out.classList.add('show');out.closest('.tj-tool-v3')?.classList.add('result-mode');document.querySelector('#toolModal .tool-sheet')?.classList.add('result-open')};
 })();
 
-/* 修复连续问答：跳转问题 */
-(function(){
-  const oldFallback = window.generateAnswerFallback;
-
-  let chatContext = {
-    turn: 0,
-    lastTopic: '',
-    history: []
-  };
-
-  window.generateAnswerFallback = function(q, d, el) {
-    const age = d.age || 30;
-    const dg = d.dg || '日主';
-    const wx = d.wx || {ys: '未知'};
-    const cDy = d.cDy || {g:'', z:''};
-    const cLn = d.cLn || {g:'', z:''};
-
-    chatContext.turn++;
-    chatContext.history.push(q);
-
-    let realQ = q;
-    const keys = typeof _getGlossKeys === 'function' ? _getGlossKeys() : (typeof GLOSSARY !== 'undefined' ? Object.keys(GLOSSARY) : []);
-    let foundTerms = [];
-    for(const k of keys) {
-        if (q === k || q === `什么是${k}` || q === `${k}是什么` || q === `解释${k}` || q === `解释一下${k}`) {
-            if(!foundTerms.includes(k)) foundTerms.push(k);
-        }
-    }
-    if (foundTerms.length === 0) {
-        for(const k of keys) {
-            if (q.includes(k) && (q.includes('什么') || q.includes('意思') || q.includes('解释') || q.includes('啥'))) {
-                if(!foundTerms.includes(k)) foundTerms.push(k);
-            }
-        }
-    }
-    if(foundTerms.length > 0) {
-        let reply = foundTerms.map(k => `「<b>${k}</b>」：${GLOSSARY[k]}`).join('<br><br>');
-        reply += '<br><br><span style="font-size:0.85em;color:rgba(255,255,255,0.4)">（💡 提示：你可以结合自己的命盘继续问我，比如：“我命盘里的' + foundTerms[0] + '代表什么？”）</span>';
-        
-        let html = `<div class="ai-dialogue"><div class="ai-dialogue-line"><div class="ai-dialogue-avatar">✦</div><div class="ai-dialogue-text"><div class="ai-dialogue-label">问问大师</div>${reply}</div></div></div>`;
-        const div = document.createElement('div');
-        div.className = 'ai-body-inner';
-        div.innerHTML = html;
-        
-    const typing = el.querySelector('.loading-state') || el.querySelector('.ai-typing');
-    if(typing) {
-      if (typing.classList.contains('loading-state')) typing.remove();
-      else if (typing.parentElement) typing.parentElement.remove();
-    }
-  
-        el.appendChild(div);
-        requestAnimationFrame(() => { el.scrollIntoView({behavior:'smooth',block:'nearest'}); });
-        return;
-    }
-    let isFollowUp = false;
-    let topic = '';
-
-    if (q.includes('用户在继续追问上一话题')) {
-      isFollowUp = true;
-      let match = q.match(/「(.*?)」：(.*?)。请不要重复/);
-      if(match) {
-        topic = match[1];
-        realQ = match[2];
-      }
-    } else if (q.includes('当前对话主题是')) {
-      isFollowUp = true;
-      let match = q.match(/直接回答：(.*?)。/);
-      if(match) realQ = match[1];
-      let tMatch = q.match(/当前对话主题是「(.*?)」/);
-      if(tMatch) topic = tMatch[1];
-    } else {
-      if (/事业|工作|跳槽|职场|赚钱/.test(q)) topic = '事业';
-      else if (/感情|恋爱|婚姻|对象|复合/.test(q)) topic = '感情';
-      else if (/财运|钱|理财|投资/.test(q)) topic = '财运';
-    }
-
-    if(topic) chatContext.lastTopic = topic;
-    else topic = chatContext.lastTopic || '综合';
-
-    let reply = '';
-
-    if (isFollowUp || realQ.length < 6 || /具体|然后|怎么做|怎么办|那|例子/.test(realQ)) {
-      if (topic === '事业') {
-        const replies = [
-          `具体来说，你现在的流年气场提示“以守代攻”。比如，如果想跳槽，不要裸辞，而是先骑驴找马；如果想接新项目，先评估自己手头的资源够不够。先把当下的基础盘稳住。`,
-          `你可以试着把你现在最头疼的工作拆分成三件小事。命理上你走到这一步需要决断力，也就是学会做减法。推掉那些不核心的应酬，把精力聚焦在能出成绩的地方。`,
-          `从你的五行来看，接下来的两个月会有一些小波动。最落地的建议是：下周尝试主动向上司或客户汇报一次进度，把你的“需求”和“困难”摆到明面上，这会化解潜在的职场压力。`
-        ];
-        reply = replies[chatContext.turn % replies.length];
-      } else if (topic === '感情') {
-        const replies = [
-          `落实在行动上，就是先停止“过度猜测对方的想法”。你命盘里带着的特质，让你容易在关系中内耗。本周末不妨给自己安排一个独立放松的计划，不把注意力全放在对方身上，关系反而会松弛下来。`,
-          `比如在沟通时，试着用“我感觉到...”来代替“你总是...”。这在你的运势节奏里，能很好地化解口舌之争，让对方真正听懂你的诉求。`,
-          `现阶段不适合做“分手”或“结婚”这种不可逆的重大决定。感情就像你的流年流月一样在波动，不如把重点放在共同完成一件小事上，比如一起做顿饭或看场电影，用行动代替争吵。`
-        ];
-        reply = replies[chatContext.turn % replies.length];
-      } else if (topic === '财运') {
-        const replies = [
-          `现阶段的“防守”也是一种赚钱。比如，把接下来一个月的非必要支出列个清单砍掉一半。大运提示你现在不适合高杠杆，留足现金流就是最大的安全感。`,
-          `你可以开始关注主业之外的“微技能”变现。不需要投大钱，用你擅长的小技能先去赚第一块钱，这符合你目前点滴积累的运势特征。`,
-          `给你个具体的例子：如果你在犹豫要不要买某个大件或理财产品，强迫自己冷静 72 小时。这段时间的运势容易受情绪冲动影响，拖一拖往往能避开很多坑。`
-        ];
-        reply = replies[chatContext.turn % replies.length];
-      } else {
-        const replies = [
-          `顺着这个思路，我建议你今天就挑一件五分钟能做完的小事去执行。不管是打个关键电话，还是整理一下办公桌，行动能立刻打破你现在的凝滞感。`,
-          `其实你心里已经有隐约的答案了，对吧？命盘只是外在的参考，关键在于你要接受“不是所有事情都能立刻看到结果”的现实。给自己一点耐心。`,
-          `既然如此，不妨换个环境。周末去接触一下大自然，或者见一个很久没见的老朋友，外在环境的流动能很好地帮你梳理目前的思绪。`
-        ];
-        reply = replies[chatContext.turn % replies.length];
-      }
-    } else {
-      if (topic === '事业') {
-        reply = `看到你的日主是${dg}。结合当前大运，事业上你现在正处于一个“蓄能”向“爆发”过渡的阶段。不要急于立刻看到大回报，今年的流年提示你需要建立核心壁垒。如果有想转行或跳槽的念头，建议先用业余时间做测试，不要轻易做重大决定。`;
-      } else if (topic === '感情') {
-        reply = `你的命盘显示，今年的感情节奏偏向“需要经营和沟通”。如果你单身，容易遇到让你觉得有安全感的人；如果非单身，可能会因为现实压力产生摩擦。记住，今年化解矛盾最好的方式是“直白表达需求”，而不是让对方去猜。`;
-      } else if (topic === '财运') {
-        reply = `从你的八字来看，你本身具备担财的能力，但这十年的大运更倾向于“稳健积累”而非“暴富”。特别是今年，偏财机会会有，但切忌贪多嚼不烂。把注意力放在自己可控的收入上，先建立起充足的安全备用金。`;
-      } else {
-        reply = `看你的命盘，五行以${wx.ys}为用神。整体气场目前比较平和，没有特别剧烈的冲克。现阶段最重要的是找到生活的主心骨。如果感到迷茫，不妨从整理当下的环境、规律作息开始，把能量聚拢回来，再去想更长远的发展。`;
-      }
-    }
-
-    let html = `<div class="ai-dialogue"><div class="ai-dialogue-line"><div class="ai-dialogue-avatar">✦</div><div class="ai-dialogue-text"><div class="ai-dialogue-label">问问大师</div>${reply}</div></div></div>`;
-
-    let intents = [];
-    if(topic === '事业') intents.push('事业');
-    if(topic === '感情') intents.push('感情');
-    if(topic === '财运') intents.push('财运');
-    
-    if (typeof buildRelatedRoutes === 'function') {
-        const links = buildRelatedRoutes(intents);
-        if (links && links.length) {
-            html += `<div class="ai-tool-links"><div class="ai-tool-links-title">如果你想结合报告看一看</div>` + links.map(x => `<button class="ai-tool-link" type="button" onclick="closeAsk(); setTimeout(()=>jumpTo('${x.sec}','${x.card}'), 180)">→ ${x.name}</button>`).join('') + `</div>`;
-        }
-    }
-
-    const div = document.createElement('div');
-    div.className = 'ai-body-inner';
-    div.innerHTML = html;
-    
-    // Find the loading indicator and remove it, or just append
-    
-    const typing = el.querySelector('.loading-state') || el.querySelector('.ai-typing');
-    if(typing) {
-      if (typing.classList.contains('loading-state')) typing.remove();
-      else if (typing.parentElement) typing.parentElement.remove();
-    }
-  
-    
-    el.appendChild(div);
-    requestAnimationFrame(() => { el.scrollIntoView({behavior:'smooth',block:'nearest'}); });
-  };
-
-  if (typeof window.newAskChat !== 'undefined') {
-    const oldNewChat = window.newAskChat;
-    window.newAskChat = function() {
-      chatContext.turn = 0;
-      chatContext.lastTopic = '';
-      chatContext.history = [];
-      if (oldNewChat) oldNewChat();
-    };
-  }
-})();
 
 /* 工具中心最终版：问题入口与快捷筛选 */
 (function(){
@@ -1692,22 +1314,90 @@ Object.assign(window, {
   sync();
 })();
 
-/* 问问大师体验层：自适应输入框、答案操作、无障碍状态与快捷重试。 */
+/* 问问大师体验层：自适应输入框、气泡操作、键盘发送与无障碍。 */
 (function(){
   const mount=()=>{
     const sheet=document.getElementById('aiSheet'),input=document.getElementById('askInput'),send=document.querySelector('#aiSheet .ai-send'),result=document.getElementById('askResult');
     if(!sheet||!input||!result||sheet.dataset.uxMounted)return;
-    sheet.dataset.uxMounted='1';result.setAttribute('aria-live','polite');result.setAttribute('aria-label','问问大师对话内容');input.setAttribute('enterkeyhint','send');
-    const resize=()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px';if(send)send.disabled=!input.value.trim()};
-    input.addEventListener('input',resize);resize();
-    const addActions=()=>result.querySelectorAll('.ai-body-inner:not(.ai-tool-call):not([data-actions])').forEach(msg=>{
-      if(!msg.querySelector('.ai-dialogue'))return;msg.dataset.actions='1';
-      const bar=document.createElement('div');bar.className='ai-msg-actions';bar.innerHTML='<button type="button" data-act="copy" aria-label="复制回答">复制</button><button type="button" data-act="retry" aria-label="重新回答">再问一次</button>';msg.appendChild(bar);
+    sheet.dataset.uxMounted='1';
+    result.setAttribute('aria-live','polite');
+    result.setAttribute('aria-label','问问大师对话内容');
+    input.setAttribute('enterkeyhint','send');
+    input.setAttribute('maxlength','500');
+    input.setAttribute('aria-label','输入你想咨询的问题');
+
+    // 自适应输入框高度
+    const resize=()=>{
+      input.style.height='auto';
+      input.style.height=Math.min(input.scrollHeight,120)+'px';
+      if(send)send.disabled=!input.value.trim();
+    };
+    input.addEventListener('input',()=>{
+      resize();
+      const countEl=document.getElementById('aiCount');
+      if(countEl)countEl.textContent=input.value.length+' / 500';
     });
-    new MutationObserver(()=>{addActions();result.scrollTo({top:result.scrollHeight,behavior:'smooth'})}).observe(result,{childList:true,subtree:true});
-    result.addEventListener('click',e=>{const b=e.target.closest('.ai-msg-actions button');if(!b)return;const msg=b.closest('.ai-body-inner');if(b.dataset.act==='copy'){const text=msg?.innerText?.replace(/复制\n再问一次$/,'')||'';navigator.clipboard?.writeText(text).then(()=>{b.textContent='已复制';setTimeout(()=>b.textContent='复制',1200)}).catch(()=>{})}else{const bubbles=[...result.querySelectorAll('.ai-user-bubble')];const q=bubbles.at(-1)?.textContent?.trim();if(q)doAsk(q)}});
+    resize();
+
+    // 输入提示
+    const row=input.closest('.ai-input-row');
+    if(row&&!document.getElementById('aiCount')){
+      const hint=document.createElement('div');
+      hint.className='ai-compose-hint';
+      hint.innerHTML='<span>Enter 发送 · Shift + Enter 换行</span><b id="aiCount">0 / 500</b>';
+      row.insertAdjacentElement('afterend',hint);
+    }
+
+    // Enter 发送，Shift+Enter 换行
+    input.addEventListener('keydown',e=>{
+      if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){
+        e.preventDefault();
+        doAskCustom();
+      }
+    });
+
+    // 恢复草稿
+    try{
+      const draft=sessionStorage.getItem('tj_ai_draft')||'';
+      if(draft){input.value=draft;resize();}
+    }catch(e){}
+    input.addEventListener('input',()=>{try{sessionStorage.setItem('tj_ai_draft',input.value)}catch(e){}});
+
+    // 委托气泡操作（复制/重试）
+    result.addEventListener('click',e=>{
+      const btn=e.target.closest('.chat-actions button');
+      if(!btn)return;
+      const msg=btn.closest('.chat-msg');
+      if(btn.dataset.act==='copy'){
+        const text=msg?.querySelector('.chat-ai-text,.chat-bubble-kb,.chat-bubble-ai')?.innerText||'';
+        navigator.clipboard?.writeText(text).then(()=>{
+          btn.textContent='已复制';
+          setTimeout(()=>btn.textContent='复制',1200);
+        }).catch(()=>{});
+      }else if(btn.dataset.act==='retry'){
+        const bubbles=[...result.querySelectorAll('.chat-bubble-user')];
+        const q=bubbles.at(-1)?.textContent?.trim();
+        if(q)doAsk(q);
+      }
+    });
+
+    // 自动滚动到底部
+    new MutationObserver(()=>{
+      result.scrollTo({top:result.scrollHeight,behavior:'smooth'});
+    }).observe(result,{childList:true,subtree:true});
+
+    // 更新命盘上下文显示（含示例模式）
+    const d=window._ctx||window._baziData;
+    const c=document.getElementById('aiContext');
+    if(c&&d){
+      c.innerHTML=d.isDemoPreview
+        ?'<span class="ai-demo-context">✦ 示例报告</span><b>'+d.dg+d.dw+' · 体验用示例命盘</b>'
+        :'<span>✦ 已结合命盘</span><b>'+d.dg+d.dw+' · '+(d.wx?.st?'行动型节奏':'蓄力型节奏')+'</b>';
+    }
   };
-  document.addEventListener('DOMContentLoaded',mount);const old=window.openAsk;window.openAsk=function(){if(old)old();setTimeout(mount,80)};
+  document.addEventListener('DOMContentLoaded',mount);
+  const old=window.openAsk;
+  window.openAsk=function(){if(old)old();setTimeout(mount,80)};
 })();
 
 /* Dock follows reading velocity: a restrained iOS-style shrink while scrolling, then settles back. */

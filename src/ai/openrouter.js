@@ -1,10 +1,12 @@
 export const OPENROUTER_BASE = 'https://openrouter.ai/api/v1';
 export const ASK_MODELS = [
+  'inclusionai/ling-3.0-flash:free',
   'google/gemma-4-31b-it:free',
   'google/gemma-4-26b-a4b-it:free',
   'openai/gpt-oss-20b:free'
 ];
 export const TOOL_MODELS = [
+  'inclusionai/ling-3.0-flash:free',
   'google/gemma-4-31b-it:free',
   'openai/gpt-oss-20b:free'
 ];
