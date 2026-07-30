@@ -973,14 +973,14 @@ window.ORACLE_SIGNS = {
  document.addEventListener('click',e=>{const b=e.target.closest('.tj-result-actions .primary');if(!b)return;const r=document.querySelector('#toolModalContent .tj-result');if(!r)return;const text=r.innerText||'';navigator.clipboard?.writeText(text).then(()=>{const old=b.textContent;b.textContent='已复制结果';setTimeout(()=>b.textContent=old,1400)}).catch(()=>alert('复制失败，请手动选择结果文本'))});
 })();
 
-/* 修复三级页面返回：把返回按钮放到弹窗固定层，而不是依赖结果内容 */
+/* 修复三级页面返回：把返回按钮放到工具弹窗外部（.tool-modal），而非 .tool-sheet 内部 */
 (function(){
  function sync(){
-  const sheet=document.querySelector('#toolModal .tool-sheet'),tool=document.querySelector('#toolModalContent .tj-tool-v3');if(!sheet)return;
-  let b=sheet.querySelector('.tj-level-back');
-  if(!b){b=document.createElement('button');b.className='tj-level-back';b.type='button';b.textContent='‹';b.setAttribute('aria-label','返回工具输入页');sheet.insertBefore(b,sheet.firstChild);}
-  const open=!!(tool&&tool.classList.contains('result-mode'));sheet.classList.toggle('result-open',open);
-  b.onclick=()=>{if(!tool)return;const result=tool.querySelector('.tj-result');tool.classList.remove('result-mode');sheet.classList.remove('result-open');if(result){result.classList.remove('show');result.querySelector('.tj-result-page-head')?.remove();result.querySelector('.tj-result-actions')?.remove();}tool.querySelector('input,select,textarea')?.focus()};
+  const modal=document.getElementById('toolModal'),tool=document.querySelector('#toolModalContent .tj-tool-v3');if(!modal)return;
+  let b=modal.querySelector('.tj-level-back');
+  if(!b){b=document.createElement('button');b.className='tj-level-back';b.type='button';b.textContent='‹';b.setAttribute('aria-label','返回工具输入页');modal.appendChild(b);}
+  const open=!!(tool&&tool.classList.contains('result-mode'));modal.classList.toggle('result-open',open);
+  b.onclick=()=>{if(!tool)return;const result=tool.querySelector('.tj-result');tool.classList.remove('result-mode');modal.classList.remove('result-open');if(result){result.classList.remove('show');result.querySelector('.tj-result-page-head')?.remove();result.querySelector('.tj-result-actions')?.remove();}tool.querySelector('input,select,textarea')?.focus()};
  }
  setInterval(sync,100);document.addEventListener('DOMContentLoaded',sync);
 })();
