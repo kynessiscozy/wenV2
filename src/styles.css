@@ -1300,3 +1300,87 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
 .ai-key-note a:hover {
   color: var(--ac-text);
 }
+
+/* ============================================================
+   工具结果页扁平化：去掉多余方框
+   ============================================================ */
+
+/* 结果容器本身：result-mode 下已透明，非 result-mode 也去掉边框 */
+#toolModal .tj-result {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 结果子项：去掉每行的方框边框 */
+#toolModal .tj-result-list > div {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 10px 0 !important;
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+}
+#toolModal .tj-result-list > div:last-child {
+  border-bottom: 0 !important;
+}
+
+/* 日期选择卡片 */
+#toolModal .tj-date-choice {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 10px 0 !important;
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+}
+#toolModal .tj-date-choice:last-child {
+  border-bottom: 0 !important;
+}
+
+/* 工具介绍区在 result-mode 已被隐藏，但基础样式也降低视觉重量 */
+#toolModal .tj-tool-intro {
+  border: 1px solid rgba(255,255,255,.06) !important;
+  background: rgba(255,255,255,.02) !important;
+  box-shadow: none !important;
+}
+
+/* 输入字段区 */
+#toolModal .tj-fields {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 结果区的内层嵌套也不要额外框 */
+#toolModal .tj-result-body {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* AI 分析框保持简洁 */
+#toolModal .tj-ai-box {
+  border-radius: 0 !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(255,255,255,.06) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 命盘依据保持简洁 */
+#toolModal .tj-chart-basis {
+  border-radius: 0 !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(255,255,255,.06) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 日签结果保留特殊设计但内部子项扁平化 */
+#toolModal .daily-sign-result .tj-result-list > div {
+  background: rgba(255,255,255,.03) !important;
+  border: 1px solid rgba(255,255,255,.05) !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+}
