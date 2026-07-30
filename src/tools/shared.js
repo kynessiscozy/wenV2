@@ -1,9 +1,145 @@
-function toolPageShell(title,sub,body){return '<div class="tool-page-title">'+title+'</div><div class="tool-page-sub">'+sub+'</div>'+body;}
-function setToolOutput(html){
-  const out=document.getElementById('toolModalContent');if(!out)return;
-  const names={wealth:'财运与理财罗盘',career:'转行与副业测评',date:'重要事项择日助手',style:'能量穿搭与工位风水',layoff:'裁员风险检测',daily:'今日日签',name:'智能起名工具',oracle:'摇签问卜',lottery:'双色球 / 超级大乐透',zodiac:'生肖合冲分析',relation:'AI 关系分析'};
-  const name=names[window._activeTool]||'工具结果';
-  out.innerHTML='<div class="tool-result-page"><div class="tool-result-kicker">结果分析</div><div class="tool-page-title">'+name+'</div><div class="tool-page-sub">以下结果结合你的输入与当前命盘参考生成。</div><div class="tool-result-body">'+html+'</div><div class="tool-result-actions"><button class="tool-secondary" onclick="openToolPage(window._activeTool)">← 返回修改</button><button class="tool-primary" onclick="closeToolPage()">完成</button></div></div>';
+/* ============================================================
+   工具共享 · setToolOutput 结构化结果渲染
+   ============================================================ */
+
+function toolPageShell(title, sub, body) {
+  return '<div class="tool-page-title">' + title + '</div><div class="tool-page-sub">' + sub + '</div>' + body;
+}
+
+/**
+ * setToolOutput — 结构化工具结果
+ *
+ * 接受两种调用方式：
+ *   1. setToolOutput(htmlString)              — 兼容旧代码，自动排版纯文字
+ *   2. setToolOutput({ sections, note })      — 结构化数据，分区块展示
+ *
+ * sections: [{ label, value, type? }]
+ *   type: 'hero'    — 大字核心数据（如分数、结余）
+ *         'row'     — 标签+值的行（默认）
+ *         'text'    — 纯段落文本（建议、说明等）
+ *         'list'    — 编号列表
+ *         'tag'     — 标签组（字符串数组 value）
+ *         'divider' — 分隔线
+ *
+ * note: 底部灰色提醒文字
+ */
+function setToolOutput(data) {
+  const out = document.getElementById('toolModalContent');
+  if (!out) return;
+
+  const names = {
+    wealth: '财运与理财罗盘', career: '转行与副业测评',
+    date: '重要事项择日助手', style: '能量穿搭与工位风水',
+    layoff: '裁员风险检测', daily: '今日日签',
+    name: '智能起名工具', oracle: '摇签问卜',
+    lottery: '双色球 / 超级大乐透', zodiac: '生肖合冲分析',
+    relation: 'AI 关系分析'
+  };
+  const name = names[window._activeTool] || '工具结果';
+
+  let bodyHtml;
+
+  if (typeof data === 'string') {
+    // 兼容旧字符串调用 — 自动拆分成段落
+    bodyHtml = _autoFormat(data);
+  } else if (data && data.sections) {
+    // 结构化调用
+    bodyHtml = _renderSections(data.sections);
+    if (data.note) {
+      bodyHtml += '<div class="tr-note">' + data.note + '</div>';
+    }
+  } else {
+    bodyHtml = '<p style="color:rgba(255,255,255,.5)">暂无结果。</p>';
+  }
+
+  out.innerHTML =
+    '<div class="tool-result-page">' +
+      '<div class="tool-result-kicker">结果分析</div>' +
+      '<div class="tool-page-title">' + name + '</div>' +
+      '<div class="tool-page-sub">以下结果结合你的输入与当前命盘参考生成。</div>' +
+      '<div class="tool-result-body">' + bodyHtml + '</div>' +
+      '<div class="tool-result-actions">' +
+        '<button class="tool-secondary" onclick="openToolPage(window._activeTool)">← 返回修改</button>' +
+        '<button class="tool-primary" onclick="closeToolPage()">完成</button>' +
+      '</div>' +
+    '</div>';
+}
+
+/* —— 结构化 section 渲染 —— */
+function _renderSections(sections) {
+  return sections.map(s => {
+    const t = s.type || 'row';
+    switch (t) {
+      case 'hero':
+        return '<div class="tr-hero">' +
+          (s.label ? '<div class="tr-hero-label">' + s.label + '</div>' : '') +
+          '<div class="tr-hero-value">' + s.value + '</div>' +
+          (s.sub ? '<div class="tr-hero-sub">' + s.sub + '</div>' : '') +
+        '</div>';
+
+      case 'row':
+        return '<div class="tr-row">' +
+          '<span class="tr-row-label">' + (s.label || '') + '</span>' +
+          '<span class="tr-row-value">' + (s.value || '') + '</span>' +
+        '</div>';
+
+      case 'text':
+        return '<div class="tr-text">' +
+          (s.label ? '<div class="tr-text-label">' + s.label + '</div>' : '') +
+          '<div class="tr-text-body">' + (s.value || '') + '</div>' +
+        '</div>';
+
+      case 'list':
+        const items = Array.isArray(s.value) ? s.value : String(s.value).split(/\n/).filter(Boolean);
+        return '<div class="tr-list">' +
+          (s.label ? '<div class="tr-text-label">' + s.label + '</div>' : '') +
+          '<ol class="tr-list-items">' + items.map(x => '<li>' + x + '</li>').join('') + '</ol>' +
+        '</div>';
+
+      case 'tag':
+        const tags = Array.isArray(s.value) ? s.value : [s.value];
+        return '<div class="tr-tags">' +
+          (s.label ? '<div class="tr-text-label">' + s.label + '</div>' : '') +
+          '<div class="tr-tag-list">' + tags.map(t => '<span class="tr-tag">' + t + '</span>').join('') + '</div>' +
+        '</div>';
+
+      case 'divider':
+        return '<div class="tr-divider"></div>';
+
+      default:
+        return '<div class="tr-text"><div class="tr-text-body">' + (s.value || '') + '</div></div>';
+    }
+  }).join('');
+}
+
+/* —— 旧字符串自动排版 —— */
+function _autoFormat(html) {
+  // 拆分 <br> 为段落，识别序号、冒号等结构
+  let cleaned = html
+    .replace(/<br\s*\/?>\s*<br\s*\/?>/gi, '{{BREAK}}')
+    .replace(/<br\s*\/?>/gi, '{{NL}}');
+
+  const blocks = cleaned.split('{{BREAK}}').filter(b => b.trim());
+
+  if (blocks.length <= 1 && !cleaned.includes('{{NL}}')) {
+    // 单段纯文本
+    return '<div class="tr-text"><div class="tr-text-body">' + html + '</div></div>';
+  }
+
+  return blocks.map(block => {
+    const lines = block.split('{{NL}}').map(l => l.trim()).filter(Boolean);
+    if (lines.length === 1) {
+      return '<div class="tr-text"><div class="tr-text-body">' + lines[0] + '</div></div>';
+    }
+    // 多行：检测是否有编号结构
+    const hasNumbers = lines.every(l => /^[①②③④⑤⑥⑦⑧⑨⑩\d]/.test(l));
+    if (hasNumbers) {
+      return '<div class="tr-list"><ol class="tr-list-items">' +
+        lines.map(l => '<li>' + l.replace(/^[①②③④⑤⑥⑦⑧⑨⑩\d]+[.、\s:：]*/, '') + '</li>').join('') +
+      '</ol></div>';
+    }
+    return lines.map(l => '<div class="tr-text"><div class="tr-text-body">' + l + '</div></div>').join('');
+  }).join('');
 }
 
 export { toolPageShell, setToolOutput };

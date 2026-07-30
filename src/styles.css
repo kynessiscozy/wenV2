@@ -1384,3 +1384,213 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
   border-radius: 12px !important;
   padding: 12px !important;
 }
+
+/* ============================================================
+   工具结果页 · 结构化组件样式
+   ============================================================ */
+
+/* 结果页容器 */
+.tool-result-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.tool-result-kicker {
+  font-size: .6em;
+  letter-spacing: 1.6px;
+  color: var(--ac-text);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.tool-page-title {
+  font-size: 1.15em;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.tool-page-sub {
+  font-size: .72em;
+  color: rgba(255,255,255,.38);
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+.tool-result-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* —— Hero 核心数据 —— */
+.tr-hero {
+  text-align: center;
+  padding: 20px 12px;
+  margin-bottom: 4px;
+}
+.tr-hero-label {
+  font-size: .65em;
+  letter-spacing: 1px;
+  color: var(--ac-dim);
+  margin-bottom: 6px;
+}
+.tr-hero-value {
+  font-size: 2em;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+.tr-hero-sub {
+  margin-top: 6px;
+  font-size: .78em;
+  color: var(--ac-text);
+  font-weight: 500;
+}
+
+/* —— 数据行 —— */
+.tr-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 2px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  font-size: .82em;
+}
+.tr-row:last-child {
+  border-bottom: none;
+}
+.tr-row-label {
+  color: rgba(255,255,255,.42);
+  font-size: .88em;
+}
+.tr-row-value {
+  color: #fff;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* —— 文本段落 —— */
+.tr-text {
+  padding: 10px 2px;
+}
+.tr-text-label {
+  font-size: .68em;
+  font-weight: 600;
+  color: var(--ac-text);
+  letter-spacing: .5px;
+  margin-bottom: 6px;
+}
+.tr-text-body {
+  font-size: .82em;
+  line-height: 1.85;
+  color: rgba(255,245,220,.78);
+}
+
+/* —— 编号列表 —— */
+.tr-list {
+  padding: 10px 2px;
+}
+.tr-list-items {
+  list-style: none;
+  counter-reset: tr-step;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+.tr-list-items li {
+  counter-increment: tr-step;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: .8em;
+  line-height: 1.7;
+  color: rgba(255,245,220,.78);
+}
+.tr-list-items li::before {
+  content: counter(tr-step);
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ac1);
+  border: 1px solid var(--ac4);
+  color: var(--ac-text);
+  font-size: .72em;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+/* —— 标签组 —— */
+.tr-tags {
+  padding: 10px 2px;
+}
+.tr-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.tr-tag {
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: var(--ac1);
+  border: 1px solid var(--ac4);
+  color: #fff;
+  font-size: .88em;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* —— 分隔线 —— */
+.tr-divider {
+  height: 1px;
+  background: rgba(255,255,255,.06);
+  margin: 6px 0;
+}
+
+/* —— 底部提醒 —— */
+.tr-note {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  font-size: .62em;
+  color: rgba(255,255,255,.3);
+  line-height: 1.55;
+  text-align: center;
+}
+
+/* —— 操作按钮 —— */
+.tool-result-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 22px;
+}
+.tool-result-actions button {
+  flex: 1;
+  min-height: 46px;
+  border-radius: 12px;
+  font: 600 .8em var(--sf);
+  cursor: pointer;
+  transition: all .2s;
+}
+.tool-primary {
+  background: var(--ac1);
+  border: 1px solid var(--ac4);
+  color: var(--ac-text);
+}
+.tool-primary:hover {
+  background: var(--ac4);
+  color: #fff;
+}
+.tool-secondary {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.6);
+}
+.tool-secondary:hover {
+  background: rgba(255,255,255,.08);
+  color: #fff;
+}
