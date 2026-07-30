@@ -45,7 +45,7 @@ import {
   setGlassMode, toggleLgPanel, moveTabIndicator, initNavigationUI,
   openAsk, closeAsk, newAskChat, aiToolRequest, doAsk, doAskCustom,
   aiSwitchCat, aiRefreshChips, aiOnInputSuggest, generateAnswer,
-  getAISettings, toggleAISettings, initAISettings
+  getAISettings, getApiKey, toggleAISettings, initAISettings
 } from './ui/index.js';
 
 initNavigationUI();
@@ -1135,7 +1135,7 @@ window.ORACLE_SIGNS = {
     let answer='';
     try{
       answer=await askToolInsight({
-        apiKey:import.meta.env.VITE_API_KEY,
+        apiKey:getApiKey(),
         typeLabel:enabled[type],
         source,
         chartSummary:`日主${ctx.dg||'—'}，有利方向${ctx.wx?.ys||'—'}`
@@ -1208,6 +1208,7 @@ Object.assign(window, {
   getTimeline,
   getTodayGZ,
   getAISettings,
+  getApiKey,
   goBack,
   initDB,
   jqDate,

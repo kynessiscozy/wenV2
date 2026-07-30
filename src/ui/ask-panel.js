@@ -4,6 +4,7 @@ import { KB } from '../ai/kb.js';
 import { KBSearch, smartAnswer, extractIntents, buildBaziContext } from '../ai/smart-answer.js';
 import { generateAnswerFallback } from '../ai/fallback.js';
 import { streamAskAnswer, probeConnection, getConnState, onConnChange, modelLabel } from '../ai/openrouter.js';
+import { getApiKey } from './ai-settings.js';
 import { renderSmartAnswer, renderRouteButtons, buildRelatedRoutes, formatStandardAnswer } from '../render/ai.js';
 
 /* ============================================================
@@ -247,8 +248,7 @@ export function openAsk() {
   if (body && !body.querySelector('.chat-msg')) {
     _renderWelcome(body);
     // 启动连接探测
-    const apiKey = import.meta.env.VITE_API_KEY;
-    probeConnection(apiKey);
+    probeConnection(getApiKey());
   }
 
   setTimeout(() => document.getElementById('askInput')?.focus(), 300);
@@ -418,7 +418,7 @@ export async function generateAnswer(q) {
     };
 
     const result = await streamAskAnswer({
-      apiKey: import.meta.env.VITE_API_KEY,
+      apiKey: getApiKey(),
       systemPrompt,
       chartContext: ctx,
       question: q,

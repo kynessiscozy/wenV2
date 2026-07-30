@@ -1153,3 +1153,150 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
 }
 
 
+
+/* ============================================================
+   AI 设置面板 · API Key 配置区
+   ============================================================ */
+.ai-setting-section {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.ai-setting-section:last-of-type {
+  border-bottom: none;
+}
+.ai-setting-section-title {
+  font-size: .78em;
+  font-weight: 600;
+  color: rgba(255,255,255,.72);
+  margin-bottom: 8px;
+  letter-spacing: .3px;
+}
+
+/* Key 状态行 */
+.ai-key-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.025);
+  margin-bottom: 8px;
+  font-size: .74em;
+}
+.ai-key-badge {
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: .82em;
+  font-weight: 600;
+  letter-spacing: .3px;
+  flex-shrink: 0;
+}
+.ai-key-badge.builtin {
+  background: rgba(122,182,72,.12);
+  color: rgba(122,182,72,.9);
+  border: 1px solid rgba(122,182,72,.2);
+}
+.ai-key-badge.custom {
+  background: var(--ac1);
+  color: var(--ac-text);
+  border: 1px solid var(--ac4);
+}
+.ai-key-badge.none {
+  background: rgba(212,101,74,.12);
+  color: rgba(212,101,74,.9);
+  border: 1px solid rgba(212,101,74,.2);
+}
+.ai-key-masked {
+  color: rgba(255,255,255,.45);
+  font-family: monospace;
+  font-size: .92em;
+  letter-spacing: .5px;
+}
+.ai-key-hint {
+  color: rgba(255,255,255,.35);
+}
+
+/* Key 输入行 */
+.ai-key-input-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.ai-key-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(255,255,255,.04);
+  color: #fff;
+  font: .78em var(--sf);
+  font-family: monospace;
+  transition: border-color .2s;
+}
+.ai-key-input:focus {
+  outline: none;
+  border-color: var(--ac4);
+  background: rgba(255,255,255,.06);
+}
+.ai-key-input::placeholder {
+  color: rgba(255,255,255,.2);
+}
+.ai-key-save {
+  padding: 8px 14px;
+  border: 1px solid var(--ac4);
+  border-radius: 8px;
+  background: var(--ac1);
+  color: var(--ac-text);
+  font: 600 .76em var(--sf);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .2s;
+}
+.ai-key-save:hover {
+  background: var(--ac4);
+  color: #fff;
+}
+
+/* 操作按钮 */
+.ai-key-actions {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.ai-key-action {
+  padding: 5px 10px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  background: rgba(255,255,255,.03);
+  color: rgba(255,255,255,.55);
+  font: 500 .68em var(--sf);
+  cursor: pointer;
+  transition: all .2s;
+}
+.ai-key-action:hover {
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.8);
+}
+.ai-key-action.danger {
+  color: rgba(212,101,74,.75);
+  border-color: rgba(212,101,74,.15);
+}
+.ai-key-action.danger:hover {
+  background: rgba(212,101,74,.1);
+  color: rgba(212,101,74,.95);
+}
+
+/* 提示文字 */
+.ai-key-note {
+  font-size: .62em;
+  color: rgba(255,255,255,.28);
+  line-height: 1.55;
+}
+.ai-key-note a {
+  color: var(--ac-dim);
+}
+.ai-key-note a:hover {
+  color: var(--ac-text);
+}
