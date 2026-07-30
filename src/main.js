@@ -1,3 +1,4 @@
+import { showToast } from './ui/toast.js';
 import { CURR_YEAR, TG, DZ, SX, WX, GW, ZW, ZC, WC, NY, SS } from './engines/shared.js';
 import { CD, CG } from './engines/cities.js';
 import { _initJq, solarTermDate, jqDate, getMonthPillar, trueSolarTime, resolveBirthDateTime, getDayPillarIndex } from './engines/calendar.js';
@@ -51,7 +52,7 @@ initNavigationUI();
 initAISettings();
 
 async function calc(isDemoPreview=false){
-  const bd=document.getElementById('bDate').value;if(!bd)return alert('请选择出生日期');
+  const bd=document.getElementById('bDate').value;if(!bd)return showToast('请选择出生日期');
   const timeStr=document.getElementById('bTime').value||'09:00';const[hh,mm]=timeStr.split(':').map(Number);
   const bp=document.getElementById('bPlace').value||'beijing';const gen=document.getElementById('bGen').value;
   const q=document.getElementById('bQ').value;
@@ -90,7 +91,7 @@ async function calc(isDemoPreview=false){
   }catch(e){
     ld.classList.remove('on');document.getElementById('btnGo2').disabled=false;
     console.error(e);
-    alert('推演出错：'+e.message+'\n\n建议：请检查输入信息是否正确，或刷新页面重试。');
+    showToast('推演出错：'+e.message+'\n\n建议：请检查输入信息是否正确，或刷新页面重试。');
   }
 }
 
@@ -173,9 +174,9 @@ async function loadProfile(id){try{const list=await dbGetAll();const p=list.find
 async function deleteProfile(id){try{await dbDel(id);renderProfiles();}catch(e){console.log('deleteProfile',e);}}
 function openSaveModal(){document.getElementById('saveModal').classList.add('open');const n=document.getElementById('saveName');n.value='';n.focus();}
 function closeSaveModal(){document.getElementById('saveModal').classList.remove('open');}
-function confirmSaveProfile(){const name=document.getElementById('saveName').value.trim();if(!name){alert('请输入档案名称');return;}saveCurrentProfile(name).then(()=>{closeSaveModal();renderProfiles();alert('已保存到档案库');}).catch(e=>alert('保存失败：'+e));}
-async function exportProfiles(){try{const list=await dbGetAll();const blob=new Blob([JSON.stringify(list,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='问问大师档案_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);}catch(e){alert('导出失败');}}
-async function handleImport(input){const file=input.files[0];if(!file)return;try{const text=await file.text();const arr=JSON.parse(text);if(!Array.isArray(arr))throw new Error('格式错误');let count=0;for(const p of arr){if(p.bd&&p.bp&&p.gen){delete p.id;p.updatedAt=Date.now();await dbPut(p);count++;}}renderProfiles();alert(`成功导入 ${count} 条档案`);}catch(e){alert('导入失败：'+e.message);}input.value='';}
+function confirmSaveProfile(){const name=document.getElementById('saveName').value.trim();if(!name){showToast('请输入档案名称');return;}saveCurrentProfile(name).then(()=>{closeSaveModal();renderProfiles();showToast('已保存到档案库');}).catch(e=>showToast('保存失败：'+e));}
+async function exportProfiles(){try{const list=await dbGetAll();const blob=new Blob([JSON.stringify(list,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='问问大师档案_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);}catch(e){showToast('导出失败');}}
+async function handleImport(input){const file=input.files[0];if(!file)return;try{const text=await file.text();const arr=JSON.parse(text);if(!Array.isArray(arr))throw new Error('格式错误');let count=0;for(const p of arr){if(p.bd&&p.bp&&p.gen){delete p.id;p.updatedAt=Date.now();await dbPut(p);count++;}}renderProfiles();showToast(`成功导入 ${count} 条档案`);}catch(e){showToast('导入失败：'+e.message);}input.value='';}
 
 (function(){const inp=document.getElementById('cInp'),hid=document.getElementById('bPlace'),dd=document.getElementById('cDD');let ai=-1;
 function rdd(f){let h='',n=0;const q=(f||'').toLowerCase();CG.forEach(g=>{const m=g.c.filter(c=>!q||c.n.includes(q)||c.i.includes(q)||g.g.includes(q));if(!m.length)return;h+=`<div class="cg">${g.g}</div>`;m.forEach(c=>{h+=`<div class="co" data-i="${c.i}" data-n="${c.n}"><span>${c.n}</span><span class="cp">${g.g}</span></div>`;n++})});if(!n)h='<div style="padding:18px;text-align:center;color:rgba(255,255,255,0.3);font-size:.82em">未找到</div>';dd.innerHTML=h;ai=-1;dd.querySelectorAll('.co').forEach(el=>{el.addEventListener('mousedown',e=>{e.preventDefault();sel(el.dataset.i,el.dataset.n)})});}
@@ -719,7 +720,7 @@ function toggleUserMode(){setUserMode(document.body.classList.contains('beginner
  const chartTools=new Set(['wealth','career','date','style','layoff','name','zodiac','relation']);
  function result(title,body,score){const e=document.getElementById('v3_result'),d=window._ctx||window._baziData||{},wx=d.wx||{},chart=chartTools.has(window._activeTool)?'<div class="tj-chart-basis"><b>✦ 命盘依据</b><div><span>日主</span><strong>'+(d.dg||'—')+'</strong><span>有利方向</span><strong>'+(wx.ys||'—')+'</strong><span>事业评分</span><strong>'+(d.cs||'—')+'/100</strong><span>财富评分</span><strong>'+(d.ws||'—')+'/100</strong></div><p>以上信息用于校正工具建议的节奏与侧重点；现实信号、个人选择和专业意见优先。</p></div>':' ';e.innerHTML='<div class="tj-result-head"><div class="tj-result-title">'+title+'</div>'+(score?'<div class="tj-score">'+score+'</div>':'')+'</div><div class="tj-result-body">'+body+'</div>'+chart;e.classList.add('show');e.scrollIntoView({behavior:'smooth',block:'nearest'});}
  function run(type){const d=window._ctx||window._baziData||{},wx=d.wx||{},scoreBase=d.cs||60;
-  if(type==='wealth'){let income=+val('income'),cost=+val('cost'),cash=+val('cash');if(!income||cost<0){alert('请填写收入和支出');return}let surplus=Math.max(0,income-cost),months=cost?Math.floor(cash/cost):0;result('现金流优先级','每月结余约 <strong>'+surplus+'</strong>，结余率约 <strong>'+Math.round(surplus/income*100)+'%</strong>。储蓄可覆盖约 <strong>'+months+'个月</strong>固定支出。<div class="tj-result-list"><div><b>第一步</b><span>'+(months<3?'先补足3—6个月应急金，暂缓高波动投入。':'把应急金与长期资金分开管理。')+'</span></div><div><b>第二步</b><span>'+(surplus/income<.2?'优先优化固定支出或增加稳定收入。':'为长期目标设定自动化储蓄比例。')+'</span></div></div>');return}
+  if(type==='wealth'){let income=+val('income'),cost=+val('cost'),cash=+val('cash');if(!income||cost<0){showToast('请填写收入和支出');return}let surplus=Math.max(0,income-cost),months=cost?Math.floor(cash/cost):0;result('现金流优先级','每月结余约 <strong>'+surplus+'</strong>，结余率约 <strong>'+Math.round(surplus/income*100)+'%</strong>。储蓄可覆盖约 <strong>'+months+'个月</strong>固定支出。<div class="tj-result-list"><div><b>第一步</b><span>'+(months<3?'先补足3—6个月应急金，暂缓高波动投入。':'把应急金与长期资金分开管理。')+'</span></div><div><b>第二步</b><span>'+(surplus/income<.2?'优先优化固定支出或增加稳定收入。':'为长期目标设定自动化储蓄比例。')+'</span></div></div>');return}
   if(type==='career'){let ready=val('ready'),goal=val('goal');let s=Math.round(scoreBase+(ready==='已有技能和作品'?18:ready.includes('方向')?5:-12));result('准备度评估','目标：<strong>'+goal+'</strong>。当前准备度约 <strong>'+Math.max(35,Math.min(92,s))+' / 100</strong>。<div class="tj-result-list"><div><b>建议路径</b><span>'+(ready==='已有技能和作品'?'用真实项目、投递或试单验证，不必先等到完美。':ready.includes('方向')?'安排3次行业访谈，补齐作品或案例后再决定。':'先选择一个细分方向，完成一次低成本体验。')+'</span></div><div><b>底线</b><span>保留现金流，不建议在没有退出方案时裸辞或重投入。</span></div></div>');return}
   if(type==='date'){result('事项准备方案','事项：<strong>'+val('event')+'</strong>，日期：<strong>'+val('date')+'</strong>。<div class="tj-result-list"><div><b>必须确认</b><span>时间、对象、金额或交付边界，以及不可逆后果。</span></div><div><b>行动建议</b><span>提前准备备选方案；若现实条件不成熟，先准备而不是强行执行。</span></div></div>');return}
   if(type==='style'){let scene=val('scene'),space=val('space');result('环境行动方案','场景：<strong>'+scene+'</strong>。优先使用 '+(wx.ys||'当前有利元素')+' 的小面积颜色提示。<div class="tj-result-list"><div><b>马上调整</b><span>'+(space==='杂乱、注意力分散'?'清空桌面，只保留当前任务相关物品。':space==='光线不足'?'先改善光线和屏幕高度，再谈摆件。':space==='久坐疲劳'?'设置每50分钟起身的提醒。':'保持现有环境，减少额外布置。')+'</span></div><div><b>原则</b><span>舒适、整洁、可持续，比复杂风水布置更重要。</span></div></div>');return}
@@ -736,7 +737,7 @@ function toggleUserMode(){setUserMode(document.body.classList.contains('beginner
   if(type==='relation'){result('下一次沟通脚本','关系类型：<strong>'+val('focus')+'</strong>。<div class="tj-result-list"><div><b>开场</b><span>“我想把这件事说清楚，不是为了争输赢，而是希望我们更好配合。”</span></div><div><b>表达</b><span>描述事实 → 说出感受 → 提出一个具体请求：'+esc(val('goal'))+'</span></div><div><b>边界</b><span>如果现在不适合沟通，约定一个明确的回看时间，而不是无限等待。</span></div></div>');return}
  }
  window.TJAnswerBookAgain=function(){run('answerbook')};
- window.TJAnswerBookSave=function(){const card=document.querySelector('.answer-book-card');if(!card)return;const text=card.querySelector('.answer-book-answer')?.textContent||'';try{const old=JSON.parse(localStorage.getItem('tj_answerbook_saved')||'[]');old.unshift({text,at:Date.now()});localStorage.setItem('tj_answerbook_saved',JSON.stringify(old.slice(0,20)));const b=card.querySelector('.answer-book-actions button:last-child');if(b){b.textContent='♥ 已收藏';b.disabled=true}}catch(e){alert('暂时无法保存，请稍后再试')}};
+ window.TJAnswerBookSave=function(){const card=document.querySelector('.answer-book-card');if(!card)return;const text=card.querySelector('.answer-book-answer')?.textContent||'';try{const old=JSON.parse(localStorage.getItem('tj_answerbook_saved')||'[]');old.unshift({text,at:Date.now()});localStorage.setItem('tj_answerbook_saved',JSON.stringify(old.slice(0,20)));const b=card.querySelector('.answer-book-actions button:last-child');if(b){b.textContent='♥ 已收藏';b.disabled=true}}catch(e){showToast('暂时无法保存，请稍后再试')}};
  window.TJToolRun=run;
  window.openToolPage=function(type){const d=document.getElementById('toolModal'),out=document.getElementById('toolModalContent');if(!d||!out||!T[type])return;window._activeTool=type;out.innerHTML=base(type);d.classList.add('open');setTimeout(()=>out.querySelector('input,select,textarea')?.focus(),120)};
 })();
@@ -963,14 +964,14 @@ window.ORACLE_SIGNS = {
  const esc=x=>String(x||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
  function read(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return[]}}
  function save(type){const root=document.getElementById('toolModalContent');const title=root?.querySelector('.tj-tool-title')?.textContent||type;let a=read().filter(x=>x.type!==type);a.unshift({type,title:title.replace(/^\S+\s/,''),at:Date.now()});try{localStorage.setItem(KEY,JSON.stringify(a.slice(0,8)))}catch(e){}}
- function validate(type){const root=document.getElementById('toolModalContent');if(!root)return false;const fields=[...root.querySelectorAll('.tj-field input,.tj-field textarea')];for(const el of fields){if(el.type==='date'&&!el.value){alert('请先选择目标日期');el.focus();return false}if(el.tagName==='TEXTAREA'&&type!=='oracle'&&type!=='relation'&&type!=='answerbook'&&!el.value.trim()){alert('请补充具体问题或限制条件');el.focus();return false}}if(type==='wealth'){const income=+document.getElementById('v3_income')?.value,cost=+document.getElementById('v3_cost')?.value;if(!income||cost<0||cost>income*10){alert('请检查收入与支出数据');return false}}return true}
+ function validate(type){const root=document.getElementById('toolModalContent');if(!root)return false;const fields=[...root.querySelectorAll('.tj-field input,.tj-field textarea')];for(const el of fields){if(el.type==='date'&&!el.value){showToast('请先选择目标日期');el.focus();return false}if(el.tagName==='TEXTAREA'&&type!=='oracle'&&type!=='relation'&&type!=='answerbook'&&!el.value.trim()){showToast('请补充具体问题或限制条件');el.focus();return false}}if(type==='wealth'){const income=+document.getElementById('v3_income')?.value,cost=+document.getElementById('v3_cost')?.value;if(!income||cost<0||cost>income*10){showToast('请检查收入与支出数据');return false}}return true}
  function historyHtml(){const a=read();if(!a.length)return '';return '<div class="tj-history"><div class="tj-history-title">最近使用</div>'+a.slice(0,4).map(x=>'<div class="tj-history-item"><span>'+esc(x.title)+'</span><time>'+new Date(x.at).toLocaleDateString('zh-CN')+'</time></div>').join('')+'</div>'}
  function addMeta(type){const result=document.querySelector('#toolModalContent .tj-result');if(!result||result.querySelector('.tj-result-meta'))return;const meta=document.createElement('div');meta.className='tj-result-meta';meta.innerHTML='<span>已完成分析</span><span>结果仅供决策参考</span>';result.insertBefore(meta,result.firstChild);const hist=document.createElement('div');hist.innerHTML=historyHtml();result.appendChild(hist.firstElementChild||hist)}
  const oldRun=window.TJToolRun;
  window.TJToolRun=function(type){if(!validate(type))return;save(type);if(oldRun)oldRun(type);[120,500,1200,3800].forEach(ms=>setTimeout(()=>addMeta(type),ms));};
  const oldOpen=window.openToolPage;
  window.openToolPage=function(type){if(oldOpen)oldOpen(type);setTimeout(()=>{const root=document.getElementById('toolModalContent');if(root&&!root.querySelector('.tj-history')){const h=document.createElement('div');h.className='tj-history';h.innerHTML=historyHtml();root.querySelector('.tj-tool-v3')?.appendChild(h)}} ,100)};
- document.addEventListener('click',e=>{const b=e.target.closest('.tj-result-actions .primary');if(!b)return;const r=document.querySelector('#toolModalContent .tj-result');if(!r)return;const text=r.innerText||'';navigator.clipboard?.writeText(text).then(()=>{const old=b.textContent;b.textContent='已复制结果';setTimeout(()=>b.textContent=old,1400)}).catch(()=>alert('复制失败，请手动选择结果文本'))});
+ document.addEventListener('click',e=>{const b=e.target.closest('.tj-result-actions .primary');if(!b)return;const r=document.querySelector('#toolModalContent .tj-result');if(!r)return;const text=r.innerText||'';navigator.clipboard?.writeText(text).then(()=>{const old=b.textContent;b.textContent='已复制结果';setTimeout(()=>b.textContent=old,1400)}).catch(()=>showToast('复制失败，请手动选择结果文本'))});
 })();
 
 /* 修复三级页面返回：把返回按钮放到工具弹窗外部（.tool-modal），而非 .tool-sheet 内部 */
@@ -1019,7 +1020,7 @@ window.ORACLE_SIGNS = {
 
 /* 今日日签增强：更完整内容 + 原生分享 / 复制兜底 */
 (function(){
- function share(){const r=document.getElementById('v3_result');const text='问问大师今日日签\n'+(r?.innerText||'');if(navigator.share){navigator.share({title:'问问大师今日日签',text}).catch(()=>{})}else if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>alert('今日日签已复制，可分享给朋友'))}else alert(text)}
+ function share(){const r=document.getElementById('v3_result');const text='问问大师今日日签\n'+(r?.innerText||'');if(navigator.share){navigator.share({title:'问问大师今日日签',text}).catch(()=>{})}else if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>showToast('今日日签已复制，可分享给朋友'))}else showToast(text)}
  window.shareDailySign=share;
  const old=window.TJDailyRun;
  window.TJDailyRun=function(){

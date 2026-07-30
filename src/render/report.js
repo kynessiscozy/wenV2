@@ -5,6 +5,7 @@ import { TJ } from '../state/tj.js';
 import { getCtx } from '../state/context.js';
 import { buildContext } from '../state/context.js';
 import { getLayoffAstroRisk } from '../ai/risk.js';
+import { showToast } from '../ui/toast.js';
 
 export function getPersona(dg,wx,st,ss){const P={甲:{思维:'目标导向，擅长搭建框架',情绪:'直来直去，不喜绕弯',人际:'领袖型，易成核心',决策:'果断，但易武断',压力:'目标未达成时焦躁'},乙:{思维:'灵活变通，善于借力',情绪:'细腻敏感，易内耗',人际:'润滑剂型，人缘好',决策:'犹豫但周全',压力:'被否定、被忽视时低落'},丙:{思维:'发散创意，喜新厌旧',情绪:'来得快去得快',人际:'阳光型，感染力强',决策:'凭直觉，敢赌',压力:'无聊、被束缚时崩溃'},丁:{思维:'深度钻研，追根究底',情绪:'内敛深沉，积压型',人际:'少而精，重质量',决策:'谨慎，谋定后动',压力:'不确定性、失控感'},戊:{思维:'务实落地，重可行性',情绪:'稳定迟缓，不易波动',人际:'可靠型，但略显沉闷',决策:'保守，厌恶风险',压力:'变动频繁、计划被打乱'},己:{思维:'调和矛盾，八面玲珑',情绪:'隐忍包容，自我消化',人际:'老好人，边界模糊',决策:'折中，和稀泥',压力:'冲突场面、被当工具人'},庚:{思维:'逻辑清晰，黑白分明',情绪:'刚硬直接，易冲突',人际:'义气型，兄弟多',决策:'快刀斩乱麻',压力:'不公平、被算计时暴怒'},辛:{思维:'精致挑剔，追求细节',情绪:'含蓄压抑，表面冷静',人际:'高冷型，慢热',决策:'反复比较，宁缺毋滥',压力:'粗制滥造、审美被毁'},壬:{思维:'宏观视野，系统思考',情绪:'随境而转，适应力强',人际:'广泛交际，三教九流',决策:'顺势而为，灵活调整',压力:'被困住、重复枯燥时抑郁'},癸:{思维:'洞察人心，直觉敏锐',情绪:'深沉暗涌，不易外露',人际:'倾听者型，易成知己',决策:'凭感觉，重视精神契合',压力:'被误解、精神孤立时低落'}};const base=P[dg]||P['甲'];const mode=st?'（偏主动型）':'（偏内敛型）';return{思维:base.思维+mode,情绪:base.情绪,人际:base.人际,决策:base.决策,压力:base.压力};}
 export function getTimeline(dy,by,wx,b,dg,gen,age){
@@ -667,7 +668,7 @@ export function buildAISummary(b,wx,ss,dy,ln,pa,P,gen,si,age){
 export function calcRelation(){
   const d=window._baziData;if(!d)return;
   const rd=document.getElementById('rDate').value,rt=document.getElementById('rTime').value||'06:00',rg=document.getElementById('rGen').value;
-  if(!rd)return alert('请填写对方出生日期');
+  if(!rd)return showToast('请填写对方出生日期');
   const [y2,m2,d02]=rd.split('-').map(Number),[hh2,mm2]=rt.split(':').map(Number);
   const r2=resolveBirthDateTime(y2,m2,d02,hh2,mm2,false);
   const b2=mkBazi(r2.year,r2.month,r2.day,r2.hourZhi);
@@ -713,7 +714,7 @@ export function drawCurve(data,dys,age){
 }
 
 export function copyReport(){
-  const d=getCtx();if(!d){alert('暂无可复制的报告');return;}
+  const d=getCtx();if(!d){showToast('暂无可复制的报告');return;}
   const cDy=d.cDy,cLn=d.cLn;
   const lines=[
     '【问问大师·八字命理报告】',
@@ -728,7 +729,7 @@ export function copyReport(){
     '',
     '— 由问问大师·东方人生决策系统生成'
   ].filter(Boolean).join('\n');
-  navigator.clipboard.writeText(lines).then(()=>alert('报告摘要已复制'),()=>alert('复制失败，请手动选择文本'));
+  navigator.clipboard.writeText(lines).then(()=>showToast('报告摘要已复制'),()=>showToast('复制失败，请手动选择文本'));
 }
 
 

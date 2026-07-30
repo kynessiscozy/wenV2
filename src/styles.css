@@ -706,10 +706,10 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
   opacity:1!important;
   background:linear-gradient(145deg,rgba(7,9,14,.18),rgba(7,9,14,.68) 78%)!important;
 }
-#s-adv .tool-tile[data-group="money"]{background-image:linear-gradient(145deg,rgba(6,13,28,.15),rgba(6,9,18,.58)),url('/tool-bg-wealth.png')!important}
-#s-adv .tool-tile[data-group="life"]{background-image:linear-gradient(145deg,rgba(8,34,37,.12),rgba(5,14,18,.62)),url('/tool-bg-life.png')!important}
-#s-adv .tool-tile[data-group="relation"]{background-image:linear-gradient(145deg,rgba(36,10,34,.12),rgba(13,7,18,.64)),url('/tool-bg-relation.png')!important}
-#s-adv .tool-tile[data-group="play"]{background-image:linear-gradient(145deg,rgba(11,14,41,.12),rgba(7,9,22,.62)),url('/tool-bg-inspire.png')!important}
+#s-adv .tool-tile[data-group="money"]{background-image:linear-gradient(145deg,rgba(6,13,28,.15),rgba(6,9,18,.58)),url('/tool-bg-wealth.webp')!important}
+#s-adv .tool-tile[data-group="life"]{background-image:linear-gradient(145deg,rgba(8,34,37,.12),rgba(5,14,18,.62)),url('/tool-bg-life.webp')!important}
+#s-adv .tool-tile[data-group="relation"]{background-image:linear-gradient(145deg,rgba(36,10,34,.12),rgba(13,7,18,.64)),url('/tool-bg-relation.webp')!important}
+#s-adv .tool-tile[data-group="play"]{background-image:linear-gradient(145deg,rgba(11,14,41,.12),rgba(7,9,22,.62)),url('/tool-bg-inspire.webp')!important}
 #s-adv .tool-tile[data-group]:hover{
   background-position:center!important;
   border-color:hsla(var(--accent-h),var(--accent-s),76%,.42)!important;
@@ -773,19 +773,19 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
 }
 
 /* 每个工具均使用与其任务匹配的独立背景画面；不依赖图标也能快速辨识用途。 */
-#s-adv .tool-tile[data-tool="wealth"]{background-image:linear-gradient(145deg,rgba(4,10,24,.14),rgba(4,7,17,.70)),url('/tool-wealth.png')!important}
-#s-adv .tool-tile[data-tool="career"]{background-image:linear-gradient(145deg,rgba(7,16,33,.13),rgba(5,9,18,.70)),url('/tool-career.png')!important}
-#s-adv .tool-tile[data-tool="date"]{background-image:linear-gradient(145deg,rgba(5,32,36,.12),rgba(4,13,17,.72)),url('/tool-date.png')!important}
-#s-adv .tool-tile[data-tool="style"]{background-image:linear-gradient(145deg,rgba(40,27,16,.13),rgba(14,11,10,.70)),url('/tool-style.png')!important}
-#s-adv .tool-tile[data-tool="layoff"]{background-image:linear-gradient(145deg,rgba(42,8,13,.12),rgba(16,6,8,.72)),url('/tool-layoff.png')!important}
-#s-adv .tool-tile[data-tool="daily"]{background-image:linear-gradient(145deg,rgba(40,29,10,.10),rgba(10,12,22,.70)),url('/tool-daily.png')!important}
-#s-adv .tool-tile[data-tool="name"]{background-image:linear-gradient(145deg,rgba(12,19,34,.12),rgba(6,9,17,.72)),url('/tool-name.png')!important}
-#s-adv .tool-tile[data-tool="oracle"]{background-image:linear-gradient(145deg,rgba(33,10,42,.12),rgba(12,7,19,.72)),url('/tool-oracle.png')!important}
-#s-adv .tool-tile[data-tool="answerbook"]{background-image:linear-gradient(145deg,rgba(13,16,48,.12),rgba(5,7,19,.72)),url('/tool-answerbook.png')!important}
-#s-adv .tool-tile[data-tool="lottery"]{background-image:linear-gradient(145deg,rgba(8,23,48,.12),rgba(4,9,22,.72)),url('/tool-lottery.png')!important}
+#s-adv .tool-tile[data-tool="wealth"]{background-image:linear-gradient(145deg,rgba(4,10,24,.14),rgba(4,7,17,.70)),url('/tool-wealth.webp')!important}
+#s-adv .tool-tile[data-tool="career"]{background-image:linear-gradient(145deg,rgba(7,16,33,.13),rgba(5,9,18,.70)),url('/tool-career.webp')!important}
+#s-adv .tool-tile[data-tool="date"]{background-image:linear-gradient(145deg,rgba(5,32,36,.12),rgba(4,13,17,.72)),url('/tool-date.webp')!important}
+#s-adv .tool-tile[data-tool="style"]{background-image:linear-gradient(145deg,rgba(40,27,16,.13),rgba(14,11,10,.70)),url('/tool-style.webp')!important}
+#s-adv .tool-tile[data-tool="layoff"]{background-image:linear-gradient(145deg,rgba(42,8,13,.12),rgba(16,6,8,.72)),url('/tool-layoff.webp')!important}
+#s-adv .tool-tile[data-tool="daily"]{background-image:linear-gradient(145deg,rgba(40,29,10,.10),rgba(10,12,22,.70)),url('/tool-daily.webp')!important}
+#s-adv .tool-tile[data-tool="name"]{background-image:linear-gradient(145deg,rgba(12,19,34,.12),rgba(6,9,17,.72)),url('/tool-name.webp')!important}
+#s-adv .tool-tile[data-tool="oracle"]{background-image:linear-gradient(145deg,rgba(33,10,42,.12),rgba(12,7,19,.72)),url('/tool-oracle.webp')!important}
+#s-adv .tool-tile[data-tool="answerbook"]{background-image:linear-gradient(145deg,rgba(13,16,48,.12),rgba(5,7,19,.72)),url('/tool-answerbook.webp')!important}
+#s-adv .tool-tile[data-tool="lottery"]{background-image:linear-gradient(145deg,rgba(8,23,48,.12),rgba(4,9,22,.72)),url('/tool-lottery.webp')!important}
 /* 生肖与关系使用对应的关系主题图，并以不同裁切和染色区分。 */
-#s-adv .tool-tile[data-tool="zodiac"]{background-image:linear-gradient(145deg,rgba(8,38,38,.14),rgba(4,15,20,.72)),url('/tool-bg-relation.png')!important;background-position:left center!important}
-#s-adv .tool-tile[data-tool="relation"]{background-image:linear-gradient(145deg,rgba(39,9,38,.13),rgba(10,6,18,.72)),url('/tool-bg-relation.png')!important;background-position:right center!important}
+#s-adv .tool-tile[data-tool="zodiac"]{background-image:linear-gradient(145deg,rgba(8,38,38,.14),rgba(4,15,20,.72)),url('/tool-bg-relation.webp')!important;background-position:left center!important}
+#s-adv .tool-tile[data-tool="relation"]{background-image:linear-gradient(145deg,rgba(39,9,38,.13),rgba(10,6,18,.72)),url('/tool-bg-relation.webp')!important;background-position:right center!important}
 
 /* 工具详情页复用入口插画，在标题区延续同一视觉语义。 */
 #toolModal .tj-tool-v3[data-tool-art] .tj-tool-intro{
@@ -805,23 +805,23 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
   z-index:-1;
   background:linear-gradient(110deg,rgba(7,8,15,.34),rgba(7,8,15,.76) 75%);
 }
-#toolModal .tj-tool-v3[data-tool-art="wealth"] .tj-tool-intro{background-image:url('/tool-wealth.png')!important}
-#toolModal .tj-tool-v3[data-tool-art="career"] .tj-tool-intro{background-image:url('/tool-career.png')!important}
-#toolModal .tj-tool-v3[data-tool-art="date"] .tj-tool-intro{background-image:url('/tool-date.png')!important}
-#toolModal .tj-tool-v3[data-tool-art="style"] .tj-tool-intro{background-image:url('/tool-style.png')!important}
-#toolModal .tj-tool-v3[data-tool-art="layoff"] .tj-tool-intro{background-image:url('/tool-layoff.png')!important}
-#toolModal .tj-tool-v3[data-tool-art="daily"] .tj-tool-intro{background-image:url('/tool-daily.png')!important}
-#toolModal .tj-tool-v3[data-tool-art="name"] .tj-tool-intro{background-image:url('/tool-name.png')!important}
-#toolModal .tj-tool-v3[data-tool-art="oracle"] .tj-tool-intro{background-image:url('/tool-oracle.png')!important}
-#toolModal .tj-tool-v3[data-tool-art="answerbook"] .tj-tool-intro{background-image:url('/tool-answerbook.png')!important}
-#toolModal .tj-tool-v3[data-tool-art="lottery"] .tj-tool-intro{background-image:url('/tool-lottery.png')!important}
-#toolModal .tj-tool-v3[data-tool-art="zodiac"] .tj-tool-intro{background-image:url('/tool-bg-relation.png')!important;background-position:left center!important}
-#toolModal .tj-tool-v3[data-tool-art="relation"] .tj-tool-intro{background-image:url('/tool-bg-relation.png')!important;background-position:right center!important}
+#toolModal .tj-tool-v3[data-tool-art="wealth"] .tj-tool-intro{background-image:url('/tool-wealth.webp')!important}
+#toolModal .tj-tool-v3[data-tool-art="career"] .tj-tool-intro{background-image:url('/tool-career.webp')!important}
+#toolModal .tj-tool-v3[data-tool-art="date"] .tj-tool-intro{background-image:url('/tool-date.webp')!important}
+#toolModal .tj-tool-v3[data-tool-art="style"] .tj-tool-intro{background-image:url('/tool-style.webp')!important}
+#toolModal .tj-tool-v3[data-tool-art="layoff"] .tj-tool-intro{background-image:url('/tool-layoff.webp')!important}
+#toolModal .tj-tool-v3[data-tool-art="daily"] .tj-tool-intro{background-image:url('/tool-daily.webp')!important}
+#toolModal .tj-tool-v3[data-tool-art="name"] .tj-tool-intro{background-image:url('/tool-name.webp')!important}
+#toolModal .tj-tool-v3[data-tool-art="oracle"] .tj-tool-intro{background-image:url('/tool-oracle.webp')!important}
+#toolModal .tj-tool-v3[data-tool-art="answerbook"] .tj-tool-intro{background-image:url('/tool-answerbook.webp')!important}
+#toolModal .tj-tool-v3[data-tool-art="lottery"] .tj-tool-intro{background-image:url('/tool-lottery.webp')!important}
+#toolModal .tj-tool-v3[data-tool-art="zodiac"] .tj-tool-intro{background-image:url('/tool-bg-relation.webp')!important;background-position:left center!important}
+#toolModal .tj-tool-v3[data-tool-art="relation"] .tj-tool-intro{background-image:url('/tool-bg-relation.webp')!important;background-position:right center!important}
 
 /* 答案之书 v2：从提问、翻页到收藏的一次完整安静阅读体验。 */
 #toolModal .answerbook-v2{display:grid;gap:16px;padding-top:2px}
-#toolModal .answerbook-hero{position:relative;overflow:hidden;padding:22px 19px 20px;border:1px solid rgba(255,255,255,.13);border-radius:18px;background:linear-gradient(120deg,rgba(7,10,30,.35),rgba(8,9,19,.72)),url('/tool-answerbook.png') center/cover;color:#fff}
-#toolModal .answerbook-hero.compact{padding:17px 18px;background:linear-gradient(120deg,rgba(7,10,30,.42),rgba(8,9,19,.76)),url('/tool-answerbook.png') center/cover}
+#toolModal .answerbook-hero{position:relative;overflow:hidden;padding:22px 19px 20px;border:1px solid rgba(255,255,255,.13);border-radius:18px;background:linear-gradient(120deg,rgba(7,10,30,.35),rgba(8,9,19,.72)),url('/tool-answerbook.webp') center/cover;color:#fff}
+#toolModal .answerbook-hero.compact{padding:17px 18px;background:linear-gradient(120deg,rgba(7,10,30,.42),rgba(8,9,19,.76)),url('/tool-answerbook.webp') center/cover}
 .answerbook-eyebrow{display:block;margin-bottom:7px;color:rgba(255,244,213,.74);font-size:.6em;letter-spacing:1.6px}.answerbook-hero h2{font-size:1.34em;letter-spacing:.8px}.answerbook-hero p{max-width:320px;margin-top:8px;color:rgba(255,255,255,.7);font-size:.76em;line-height:1.7}
 .answerbook-compose{display:grid;gap:8px}.answerbook-compose label{font-size:.72em;color:rgba(255,255,255,.62)}.answerbook-compose textarea{width:100%;min-height:108px;padding:14px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.045);color:#fff;font:inherit;font-size:.86em;line-height:1.65;resize:vertical;transition:border-color .2s,background .2s}.answerbook-compose textarea:focus{outline:0;border-color:var(--ac4);background:rgba(255,255,255,.07);box-shadow:0 0 0 3px var(--ac3)}.answerbook-compose textarea.is-invalid{border-color:#dc7570;animation:answerBookNudge .35s ease}.answerbook-count{display:flex;justify-content:space-between;gap:10px;color:rgba(255,255,255,.37);font-size:.62em}.answerbook-count b{font-weight:400;color:var(--ac-dim);white-space:nowrap}
 .answerbook-mode{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:4px;border:1px solid rgba(255,255,255,.08);border-radius:13px;background:rgba(0,0,0,.16)}.answerbook-mode-btn{min-height:38px;padding:6px;border:1px solid transparent;border-radius:10px;background:transparent;color:rgba(255,255,255,.5);font:600 .68em var(--sf);cursor:pointer}.answerbook-mode-btn.active{border-color:var(--ac4);background:var(--ac1);color:var(--ac-text)}
@@ -836,3 +836,8 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
 /* 答案之书：全屏翻书过场。 */
 .answerbook-fullscreen{position:fixed;inset:0;z-index:600;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 43%,rgba(61,53,105,.42),rgba(4,5,13,.98) 65%);opacity:0;transition:opacity .22s ease}.answerbook-fullscreen.opening{opacity:1}.answerbook-fullscreen.leaving{opacity:0}.answerbook-fullscreen-glow{position:absolute;width:min(92vw,540px);height:min(92vw,540px);border-radius:50%;background:radial-gradient(circle,hsla(var(--accent-h),var(--accent-s),70%,.24),transparent 64%);filter:blur(8px);transform:scale(.8);transition:transform .9s cubic-bezier(.2,.8,.2,1)}.answerbook-fullscreen.opening .answerbook-fullscreen-glow{transform:scale(1.15)}.answerbook-fullscreen-book{position:relative;width:min(76vw,390px);height:min(52vw,260px);max-height:42vh;perspective:1200px;transform-style:preserve-3d}.answerbook-cover-left,.answerbook-cover-right,.answerbook-fullscreen-page{position:absolute;top:0;bottom:0;width:50%;border:1px solid rgba(255,236,176,.35)}.answerbook-cover-left{left:0;border-radius:9px 0 0 9px;background:linear-gradient(115deg,#17142d,#59446a);transform-origin:right center;box-shadow:inset 0 1px rgba(255,255,255,.16),-16px 14px 34px rgba(0,0,0,.36)}.answerbook-cover-right{right:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:0 9px 9px 0;background:linear-gradient(125deg,#7e5d72,#2b244b);box-shadow:inset 0 1px rgba(255,255,255,.2),16px 14px 34px rgba(0,0,0,.36);color:#fff;transform-origin:left center;transition:transform .78s cubic-bezier(.2,.8,.18,1)}.answerbook-cover-right span{font-family:var(--serif);font-size:clamp(1.1em,4vw,1.55em);letter-spacing:4px}.answerbook-cover-right small{font:500 .48em var(--sf);letter-spacing:2px;color:rgba(255,255,255,.58)}.answerbook-fullscreen-page{left:25%;display:grid;place-content:center;gap:8px;text-align:center;border-radius:4px;background:linear-gradient(135deg,#e8dcc3,#bba982);color:#3b2b28;opacity:0;transform:scaleX(.72);transition:opacity .3s ease .43s,transform .6s cubic-bezier(.2,.8,.2,1) .4s;box-shadow:0 10px 32px rgba(0,0,0,.3)}.answerbook-fullscreen-page i{font-style:normal;color:#8e6b41;font-size:1.25em}.answerbook-fullscreen-page b{font:600 .86em var(--serif);letter-spacing:1px}.answerbook-fullscreen-page em{font-style:normal;font-size:.6em;color:rgba(59,43,40,.65)}.answerbook-fullscreen.opening .answerbook-cover-right{transform:rotateY(-155deg)}.answerbook-fullscreen.opening .answerbook-fullscreen-page{opacity:1;transform:scaleX(1)}
 @media(prefers-reduced-motion:reduce){.answerbook-fullscreen{display:none!important}}
+.tj-toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(12px);z-index:9998;max-width:min(88vw,360px);padding:12px 18px;border-radius:100px;background:hsla(var(--accent-h),20%,8%,0.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid hsla(var(--accent-h),var(--accent-s),65%,0.22);color:rgba(255,255,255,0.92);font-family:var(--sf);font-size:.82em;line-height:1.6;text-align:center;box-shadow:0 16px 40px -12px rgba(0,0,0,0.6);opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s cubic-bezier(.2,.8,.3,1.2);white-space:pre-line}
+.tj-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.tj-toast-error{border-color:hsla(6,70%,60%,0.35);color:rgba(255,225,220,0.95)}
+.tj-toast-success{border-color:hsla(100,45%,55%,0.35)}
+@media(max-width:480px){.tj-toast{bottom:calc(84px + env(safe-area-inset-bottom));font-size:.78em;padding:11px 16px}}
