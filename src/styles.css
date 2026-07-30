@@ -1594,3 +1594,98 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
   background: rgba(255,255,255,.08);
   color: #fff;
 }
+
+/* ============================================================
+   工具弹窗 · 关闭按钮 + 结果页顶部返回
+   ============================================================ */
+
+/* 工具弹窗右上角关闭 × */
+.tool-sheet {
+  position: relative;
+}
+.tool-sheet-close {
+  position: absolute !important;
+  top: 14px;
+  right: 14px;
+  z-index: 50;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.6);
+  font-size: 1.15em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+}
+.tool-sheet-close:hover {
+  background: rgba(255,255,255,.14);
+  color: #fff;
+  border-color: rgba(255,255,255,.25);
+}
+
+/* 结果页顶部行：← 返回 + 标题 */
+.tool-result-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+  padding-right: 40px; /* 给右上角 × 留空间 */
+}
+.tool-back-btn {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.65);
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+}
+.tool-back-btn:hover {
+  background: var(--ac1);
+  border-color: var(--ac4);
+  color: var(--ac-text);
+}
+.tool-result-top-info {
+  flex: 1;
+  min-width: 0;
+}
+.tool-result-top-title {
+  font-size: 1.05em;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 工具输入页也给右上角 × 留 padding */
+#toolModalContent {
+  padding-top: 8px;
+}
+
+/* 移动端适配 */
+@media (max-width: 560px) {
+  .tool-sheet-close {
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+  }
+  .tool-back-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .tool-result-top {
+    padding-right: 36px;
+  }
+}

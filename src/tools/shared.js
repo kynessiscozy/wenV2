@@ -54,8 +54,13 @@ function setToolOutput(data) {
 
   out.innerHTML =
     '<div class="tool-result-page">' +
-      '<div class="tool-result-kicker">结果分析</div>' +
-      '<div class="tool-page-title">' + name + '</div>' +
+      '<div class="tool-result-top">' +
+        '<button class="tool-back-btn" type="button" onclick="openToolPage(window._activeTool)" title="返回修改">←</button>' +
+        '<div class="tool-result-top-info">' +
+          '<div class="tool-result-kicker">结果分析</div>' +
+          '<div class="tool-result-top-title">' + name + '</div>' +
+        '</div>' +
+      '</div>' +
       '<div class="tool-page-sub">以下结果结合你的输入与当前命盘参考生成。</div>' +
       '<div class="tool-result-body">' + bodyHtml + '</div>' +
       '<div class="tool-result-actions">' +
