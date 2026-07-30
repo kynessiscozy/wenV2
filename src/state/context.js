@@ -51,4 +51,5 @@ function buildContext(args){
   };
 }
 
-export { buildContext };
+function getCtx(){return window._ctx||null;}
+export { buildContext, getCtx };

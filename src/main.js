@@ -7,7 +7,7 @@ import { mkQm } from './engines/qimen.js';
 import { mkMh } from './engines/meihua.js';
 import { mkSi } from './engines/sizhi.js';
 import { TJ } from './state/tj.js';
-import { getCtx } from './state/ctx.js';
+import { getCtx } from './state/context.js';
 import { toolPageShell, setToolOutput } from './tools/shared.js';
 import { closeToolPage, openToolPage } from './tools/center.js';
 import { getDecisionAdvice, openDecisionTool, runDecisionTool } from './tools/decision.js';
