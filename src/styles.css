@@ -1086,3 +1086,111 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
   .chat-msg, .chat-msg-appear { animation: none !important; }
   .typing-dots span { animation: none !important; opacity: .5; }
 }
+
+/* ============================================================
+   问问大师 · 连接状态栏 + 模型来源标签
+   ============================================================ */
+
+/* —— 连接状态栏（嵌入 ai-head 底部）—— */
+.ai-conn-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.025);
+  font-size: .62em;
+  color: rgba(255,255,255,.45);
+  transition: all .3s;
+  user-select: none;
+}
+.ai-conn-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background .3s, box-shadow .3s;
+}
+.ai-conn-text {
+  flex: 0 0 auto;
+}
+.ai-conn-model {
+  margin-left: auto;
+  color: var(--ac-dim);
+  font-weight: 500;
+  letter-spacing: .2px;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 状态颜色 */
+.conn-unknown .ai-conn-dot  { background: rgba(255,255,255,.25); }
+.conn-checking .ai-conn-dot { background: #d4b85a; box-shadow: 0 0 6px #d4b85a; animation: connPulse 1.2s ease-in-out infinite; }
+.conn-online .ai-conn-dot   { background: #7ab648; box-shadow: 0 0 8px #7ab648; }
+.conn-offline .ai-conn-dot  { background: #d4654a; box-shadow: 0 0 6px #d4654a; }
+
+.conn-online  { color: rgba(122,182,72,.85); }
+.conn-offline { color: rgba(212,101,74,.85); }
+
+@keyframes connPulse {
+  0%, 100% { opacity: .5; transform: scale(.85); }
+  50%      { opacity: 1;  transform: scale(1.1); }
+}
+
+/* —— 消息来源标签（气泡底部）—— */
+.chat-bubble-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+.chat-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+  font-size: .58em;
+  color: rgba(255,255,255,.38);
+  letter-spacing: .2px;
+  white-space: nowrap;
+  user-select: none;
+  transition: color .2s;
+}
+.chat-msg:hover .chat-source {
+  color: rgba(255,255,255,.55);
+}
+
+/* —— Typing hint 文字 —— */
+.typing-hint {
+  font-size: .65em;
+  color: rgba(255,255,255,.3);
+  margin-top: 3px;
+  letter-spacing: .2px;
+  min-height: 1em;
+  transition: opacity .2s;
+}
+
+/* —— 操作按钮重构（放入 footer 行）—— */
+.chat-bubble-footer .chat-actions {
+  display: flex;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity .2s;
+  margin-top: 0;
+}
+.chat-msg:hover .chat-bubble-footer .chat-actions,
+.chat-msg:focus-within .chat-bubble-footer .chat-actions {
+  opacity: .7;
+}
+
+/* 移动端：始终半透明显示操作 */
+@media (hover: none) {
+  .chat-bubble-footer .chat-actions { opacity: .45; }
+}
