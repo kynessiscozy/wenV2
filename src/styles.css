@@ -1689,3 +1689,112 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
     padding-right: 36px;
   }
 }
+
+/* ============================================================
+   工具页 · 配图横幅 Banner
+   ============================================================ */
+
+/* —— 通用横幅 —— */
+.tool-banner {
+  position: relative;
+  height: 160px;
+  margin: -26px -22px 18px;  /* 出血到 tool-sheet padding 外 */
+  border-radius: 24px 24px 0 0;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center 35%;
+  display: flex;
+  align-items: flex-end;
+}
+.tool-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,9,7,.92) 0%, rgba(10,9,7,.5) 45%, rgba(10,9,7,.15) 100%);
+}
+.tool-banner-text {
+  position: relative;
+  z-index: 2;
+  padding: 16px 22px 14px;
+  width: 100%;
+}
+.tool-banner-kicker {
+  font-size: .58em;
+  letter-spacing: 1.6px;
+  color: var(--ac-text);
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+.tool-banner-title {
+  font-size: 1.15em;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0,0,0,.4);
+}
+
+/* —— 结果页小横幅 —— */
+.tool-banner-sm {
+  height: 120px;
+  margin: -26px -22px 14px;
+}
+.tool-banner-sm .tool-banner-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 22px 10px;
+}
+.tool-back-on-banner {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+}
+.tool-back-on-banner:hover {
+  background: rgba(255,255,255,.2);
+  border-color: rgba(255,255,255,.4);
+}
+
+/* 输入页正文区 */
+.tool-page-body {
+  padding: 0 2px;
+}
+
+/* 结果页内容区 */
+.tool-result-content {
+  padding: 0 2px;
+}
+
+/* —— 移动端适配 —— */
+@media (max-width: 560px) {
+  .tool-banner {
+    height: 135px;
+    margin: -26px -14px 14px;
+    border-radius: 24px 24px 0 0;
+  }
+  .tool-banner-sm {
+    height: 105px;
+    margin: -26px -14px 10px;
+  }
+  .tool-banner-text {
+    padding: 12px 14px 10px;
+  }
+  .tool-banner-title {
+    font-size: 1.02em;
+  }
+}
+
+/* —— 有横幅时关闭按钮提升可见度 —— */
+.tool-result-page .tool-sheet-close,
+.tool-banner ~ .tool-sheet-close {
+  z-index: 60;
+}
