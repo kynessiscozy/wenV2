@@ -37,7 +37,7 @@ function buildContext(args){
     dySS,lnSS,lmSS,
     scores:sc,
     cs:sc.career,ws:sc.wealth,ls:sc.love,hs:sc.health,
-    ssOf:g=>TJ.ssOf(dg,g),
+    ssOf: g => TJ.ssOf(dg, g),
     /* —— TJX 精算内核派生量（复用 _tjxPre 避免重算）—— */
     tjx: (function(){
       try{

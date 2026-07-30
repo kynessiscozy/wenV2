@@ -485,6 +485,15 @@ button,input,select,textarea{font:inherit;-webkit-tap-highlight-color:transparen
   background:rgba(255,255,255,.07) !important;
   box-shadow:0 0 0 3px var(--ac3) !important;
 }
+
+/* 工具首次打开页面更紧凑 */
+.tool-page.compact .tool-page-title{margin-bottom:2px}
+.tool-page.compact .tool-page-sub{margin-bottom:10px;font-size:.68em}
+.tool-page-data.compact{gap:5px}
+.tool-page-data.compact>div{padding:8px 10px}
+.tool-page-data.compact span{font-size:.58em;margin-bottom:2px}
+.tool-page-data.compact b{font-size:.76em}
+.tool-form-row{margin-top:8px;gap:6px}
 #aiSheet .ai-send {
   width:44px !important;
   height:44px !important;
