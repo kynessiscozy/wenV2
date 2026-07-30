@@ -494,6 +494,15 @@ button,input,select,textarea{font:inherit;-webkit-tap-highlight-color:transparen
 .tool-page-data.compact span{font-size:.58em;margin-bottom:2px}
 .tool-page-data.compact b{font-size:.76em}
 .tool-form-row{margin-top:8px;gap:6px}
+
+/* Dock 调整：总宽度 -3%，安全位置下移 5% */
+.tab-bar {
+  width: 97% !important;
+  max-width: 97% !important;
+  left: 1.5% !important;
+  right: 1.5% !important;
+  bottom: calc(18px + env(safe-area-inset-bottom) + 5%) !important;
+}
 #aiSheet .ai-send {
   width:44px !important;
   height:44px !important;
