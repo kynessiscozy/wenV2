@@ -1,5 +1,5 @@
 import { setToolOutput } from './shared.js';
-import { getCtx } from '../state/ctx.js';
+import { getCtx } from '../state/context.js';
 
 function runNameTool(){const s=document.getElementById('nameSurname').value.trim()||'你的姓氏',style=document.getElementById('nameStyle').value,d=getCtx();const chars={木:['栩','森','苒'],火:['昭','昕','晗'],土:['安','屹','予'],金:['知','钰','书'],水:['澄','泓','沅']}[d.wx.ys];const tails=style==='温润典雅'?['宁','言','清']:style==='大气坚定'?['远','承','衡']:['然','一','可'];const options=chars.map((x,i)=>s+x+tails[i]).join('、');setToolOutput('用字方向：'+d.wx.ys+' 属性。为「'+style+'」生成 3 个灵感：'+options+'。请进一步核对读音、重名、字义、家族习惯及当地命名规范。');}
 

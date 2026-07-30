@@ -2,7 +2,7 @@ import { CURR_YEAR, TG, DZ, WX, GW, ZW, ZC, WC, SS } from '../engines/shared.js'
 import { resolveBirthDateTime } from '../engines/calendar.js';
 import { mkBazi, mkWx, mkSs, getShenShaLabels, getTodayGZ } from '../engines/bazi.js';
 import { TJ } from '../state/tj.js';
-import { getCtx } from '../state/ctx.js';
+import { getCtx } from '../state/context.js';
 import { buildContext } from '../state/context.js';
 import { getLayoffAstroRisk } from '../ai/risk.js';
 

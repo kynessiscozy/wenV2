@@ -1,4 +1,4 @@
-import { getCtx } from '../state/ctx.js';
+import { getCtx } from '../state/context.js';
 import { openToolPage } from '../tools/center.js';
 import { KB } from '../ai/kb.js';
 import { KBSearch, smartAnswer, extractIntents, buildBaziContext } from '../ai/smart-answer.js';

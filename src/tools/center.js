@@ -1,4 +1,4 @@
-import { getCtx } from '../state/ctx.js';
+import { getCtx } from '../state/context.js';
 import { getTodayGZ } from '../engines/bazi.js';
 import { toolPageShell, setToolOutput } from './shared.js';
 
