@@ -1089,6 +1089,15 @@ window.ORACLE_SIGNS = {
    typingWrap.innerHTML = '<div class="ai-typing"><span></span><span></span><span></span></div>';
    el.appendChild(typingWrap);
    el.scrollTop=el.scrollHeight;
+   // 首选模型偶尔较慢或需要重试其他模型，7 秒后补一句安抚文案，避免用户以为卡住了。
+   const slowHintTimer=setTimeout(()=>{
+     if(!el.contains(typingWrap))return;
+     if(typingWrap.querySelector('.ai-typing-hint'))return;
+     const hint=document.createElement('div');
+     hint.className='ai-typing-hint';
+     hint.textContent='还在仔细想，请再等一下…';
+     typingWrap.appendChild(hint);
+   },7000);
    
    let settled=false;
    const finish=()=>{
@@ -1106,13 +1115,14 @@ window.ORACLE_SIGNS = {
      chat.push({role:'answer',html});
      settled=true;
      busy=false;
+     clearTimeout(slowHintTimer);
    };
    
    const ob=new MutationObserver(()=>setTimeout(finish,80));
    ob.observe(el,{childList:true,subtree:true});
    
    if(oldGenerate)oldGenerate(q);
-   setTimeout(()=>{if(!settled){ob.disconnect();busy=false}},30000);
+   setTimeout(()=>{if(!settled){ob.disconnect();busy=false;clearTimeout(slowHintTimer)}},30000);
  };
  const oldNew=window.newAskChat;
  window.newAskChat=function(){
@@ -1155,11 +1165,21 @@ window.ORACLE_SIGNS = {
  function mountCore(){
   const sheet=document.getElementById('aiSheet'),head=sheet&&sheet.querySelector('.ai-head'),row=document.getElementById('askInput')?.closest('.ai-input-row');if(!sheet||!head||!row||document.getElementById('aiSessionBar'))return;
   const bar=document.createElement('div');bar.className='ai-session-bar';bar.id='aiSessionBar';bar.innerHTML='<span><i class="ai-session-dot"></i>当前对话 · 已结合命盘</span><button class="ai-session-clear" type="button">清空对话</button>';head.insertAdjacentElement('afterend',bar);
-  bar.querySelector('button').onclick=()=>{if(confirm('清空当前对话？'))newAskChat()};
+  const clearBtn=bar.querySelector('button');let clearArm=false,clearTimer=null;
+  clearBtn.onclick=()=>{
+   if(!clearArm){
+    clearArm=true;clearBtn.textContent='再点一次确认清空';clearBtn.classList.add('confirming');
+    clearTimer=setTimeout(()=>{clearArm=false;clearBtn.textContent='清空对话';clearBtn.classList.remove('confirming')},2600);
+    return;
+   }
+   clearTimeout(clearTimer);clearArm=false;clearBtn.textContent='清空对话';clearBtn.classList.remove('confirming');
+   newAskChat();showToast('已清空当前对话');
+  };
   const hint=document.createElement('div');hint.className='ai-compose-hint';hint.innerHTML='<span>Enter 发送 · Shift + Enter 换行</span><b id="aiCount">0 / 500</b>';row.insertAdjacentElement('afterend',hint);
   const input=document.getElementById('askInput');input.setAttribute('maxlength','500');input.setAttribute('aria-label','输入你想咨询的问题');
-  input.addEventListener('input',()=>{document.getElementById('aiCount').textContent=input.value.length+' / 500';try{sessionStorage.setItem('tj_ai_draft',input.value)}catch(e){}});
-  try{input.value=sessionStorage.getItem('tj_ai_draft')||'';document.getElementById('aiCount').textContent=input.value.length+' / 500'}catch(e){}
+  const autoGrow=()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,110)+'px'};
+  input.addEventListener('input',()=>{document.getElementById('aiCount').textContent=input.value.length+' / 500';autoGrow();try{sessionStorage.setItem('tj_ai_draft',input.value)}catch(e){}});
+  try{input.value=sessionStorage.getItem('tj_ai_draft')||'';document.getElementById('aiCount').textContent=input.value.length+' / 500';autoGrow()}catch(e){}
   input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doAskCustom()}});
  }
  const oldOpen=window.openAsk;window.openAsk=function(){if(oldOpen)oldOpen();setTimeout(mountCore,40)};

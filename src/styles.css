@@ -841,3 +841,5 @@ body[data-glass="tinted"] .ai-sheet { background-color:rgba(10,9,7,.94) !importa
 .tj-toast-error{border-color:hsla(6,70%,60%,0.35);color:rgba(255,225,220,0.95)}
 .tj-toast-success{border-color:hsla(100,45%,55%,0.35)}
 @media(max-width:480px){.tj-toast{bottom:calc(84px + env(safe-area-inset-bottom));font-size:.78em;padding:11px 16px}}
+.ai-session-clear.confirming{color:rgba(212,101,74,.92);font-weight:600}
+.ai-typing-hint{margin-top:8px;font-size:.72em;color:rgba(255,255,255,.32);letter-spacing:.3px}

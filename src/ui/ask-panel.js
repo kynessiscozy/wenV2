@@ -33,7 +33,7 @@ export function newAskChat(){
   window._aiConversation=[];
   const result=document.getElementById('askResult'),input=document.getElementById('askInput'),sug=document.getElementById('aiSuggest');
   if(result)result.innerHTML='';
-  if(input){input.value='';input.focus();}
+  if(input){input.value='';input.style.height='auto';input.focus();}
   if(sug){sug.innerHTML='';sug.classList.remove('show');}
 }
 export function aiToolRequest(q){
@@ -53,7 +53,7 @@ export function aiToolRequest(q){
 export function doAsk(q){
   if(!document.getElementById('aiSheet').classList.contains('open'))openAsk();
   const input=document.getElementById('askInput');
-  input.value='';
+  input.value='';input.style.height='auto';
   const countEl=document.getElementById('aiCount');
   if(countEl)countEl.textContent='0 / 500';
   document.getElementById('aiSuggest').classList.remove('show');
@@ -65,7 +65,7 @@ export function doAskCustom(){
   const input=document.getElementById('askInput');
   const q=input.value.trim();
   if(!q)return;
-  input.value='';
+  input.value='';input.style.height='auto';
   const countEl=document.getElementById('aiCount');
   if(countEl)countEl.textContent='0 / 500';
   document.getElementById('aiSuggest').classList.remove('show');
