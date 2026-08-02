@@ -4,7 +4,7 @@ const OUT='/tmp/shots2'; fs.mkdirSync(OUT,{recursive:true});
 const b=await puppeteer.launch({headless:'new',args:['--no-sandbox']});
 const p=await b.newPage(); await p.setViewport({width:430,height:932,deviceScaleFactor:2});
 for(const theme of ['light','dark']){
-  await p.goto('http://localhost:4173/',{waitUntil:'networkidle0'});
+  await p.goto('http://localhost:5173/wenV2/',{waitUntil:'networkidle0'});
   await p.evaluate(t=>localStorage.setItem('tj_theme',t),theme);
   await p.reload({waitUntil:'networkidle0'});
   await p.evaluate(()=>window.calc(true));

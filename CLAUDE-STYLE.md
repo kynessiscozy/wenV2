@@ -92,3 +92,40 @@ node tools/contrast.mjs  # WCAG AA 对比度审计
 git checkout main          # 回到改造前
 git diff main claude-style # 查看全部改动
 ```
+
+---
+
+## 七、细节精修（`src/claude-refine.css`）
+
+首轮改造只统一了「配色」，第二轮针对**排版系统与交互尺寸**做了收口。
+
+### 发现的问题（实测数据）
+
+| 问题 | 改造前 | 改造后 |
+|---|---|---|
+| 字号种类 | 17 种，最小 **8.7px**（中文糊成一团） | 8 种，最小 **11px** |
+| 圆角种类 | 9 种（6/8/12/15/16/17/50%/100/999px） | 4 种（12 / 16 / 999px / 50%） |
+| 卡片内距 | 14~28px 混用 | 20 / 24px 两档 |
+| 触控目标 | AI 面板按钮仅 **29×29** | 全部 ≥ 40×40 |
+
+### 根因与解法
+
+**字号失控**：旧设计用 `em` 层层相乘 —— `.qr-summary{.84em} > b{.74em}` 或
+`.structure-mini-bd{.84em} > .fine-table{.7em}`，15px 基准经两三层就压到 8~9px。
+解法是引入 **px 字阶**（`--fs-micro` 11px ~ `--fs-3xl` 30px），
+并在中间层容器上重置 `font-size`，**阻断 em 相乘链**。
+
+**触控目标**：`styles.css` 里有 `#aiSheet .ai-new{width:29px!important}` 这类
+ID + `!important` 的窄屏规则，普通类选择器改不动，需同等特异性覆盖。
+
+**中文排版**：原设计大量使用 `letter-spacing: 1.5px` 与 `text-transform: uppercase` ——
+这两者都是为拉丁文设计的，中文加宽字距会破坏词组感，`uppercase` 更是无效。已统一归零。
+
+### 顺带修复的 Bug
+- `💾` emoji 在无 emoji 字体的环境下渲染为豆腐块 → 换成线性 SVG 图标
+- 首页浮动主题按钮因通用 `display:inline-flex` 覆盖，在报告页泄漏出第二个月亮图标 → 补 `body:not(.home)` 规则
+
+### 验证
+```
+node tools/contrast.mjs   # 明暗双主题均 0 处低对比
+```

@@ -25,6 +25,7 @@
 <link rel="stylesheet" href="/src/styles.css">
 <link rel="stylesheet" href="/src/ig-dock.css">
 <link rel="stylesheet" href="/src/claude-ui.css">
+<link rel="stylesheet" href="/src/claude-refine.css">
 </head>
 <body>
 
@@ -102,7 +103,7 @@
     </button>
     <div class="mode-top-group" role="tablist" aria-label="报告阅读模式"><button class="mode-top-switch" id="modeBeginner" type="button" role="tab" aria-selected="true" onclick="setUserMode('beginner')">新手</button><button class="mode-top-switch" id="modeMaster" type="button" role="tab" aria-selected="false" onclick="setUserMode('master')">大师</button></div>
     <div class="p2-actions"><div class="p2-act" id="lgFab" onclick="toggleLgPanel()" title="玻璃质感强度">◐</div>
-      <div class="p2-act" onclick="openSaveModal()" title="保存档案">💾</div>
+      <button class="p2-act" type="button" onclick="openSaveModal()" title="保存档案" aria-label="保存档案"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></button>
     </div>
   </div>
   <div class="p2-scroll" id="p2Scroll"><button class="back-to-top" id="backToTop" onclick="document.getElementById('p2Scroll').scrollTo({top:0,behavior:'smooth'})"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg></button>

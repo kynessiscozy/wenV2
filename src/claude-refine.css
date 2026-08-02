@@ -1,0 +1,329 @@
+/* ============================================================
+   Claude 风格 · 细节精修层（最后加载）
+   ------------------------------------------------------------
+   解决改造后暴露的四类系统性问题：
+     1. 字号失控 —— 原设计用 em 层层相乘，最小到 8.7px（中文不可读）
+     2. 触控目标 —— 多处按钮 < 44×44（iOS HIG / WCAG 2.5.8 标准）
+     3. 圆角混乱 —— 同屏出现 9 种圆角（6/8/12/15/16/17/50%/100/999px）
+     4. 节奏不齐 —— 卡片内距 14~28px 混用，栅格间距不统一
+   ============================================================ */
+
+/* ---------- 1. 字阶：统一为 px，杜绝 em 相乘 ---------- */
+:root {
+  --fs-micro: 11px;   /* 徽章、角标——中文可读下限 */
+  --fs-xs:    12px;   /* 辅助标签 */
+  --fs-sm:    13px;   /* 次要正文、元信息 */
+  --fs-base:  14px;   /* 正文 */
+  --fs-md:    15px;   /* 强调正文 */
+  --fs-lg:    17px;   /* 卡片标题 */
+  --fs-xl:    20px;   /* 区块标题 */
+  --fs-2xl:   24px;   /* 页面标题 */
+  --fs-3xl:   30px;   /* 命盘天干地支等展示型数字 */
+
+  /* 间距刻度（8pt 栅格） */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px;
+}
+
+body { font-size: var(--fs-md); line-height: 1.6; }
+
+/* 微型标签：原先 .58em~.68em → 统一 11~12px，并收窄 CJK 字距 */
+.qr-badge, .ai-kb-badge, .adv-tag, .tool-tag, .tr-tag, .mm-tag,
+.ai-sugg-tag, .tl-ms-pill, .sstag, .risk-pill, .ai-conn-text,
+.bb-eyebrow, .tj-tool-kicker, .tj-result-page-kicker, .tool-banner-kicker,
+.ai-sum-label, .fine-section-label, .tools-intro-sub, .recent-hd-title {
+  font-size: var(--fs-micro) !important;
+  letter-spacing: .02em !important;   /* 中文不宜大字距 */
+  text-transform: none !important;    /* 中文无大小写，uppercase 无意义 */
+  line-height: 1.5 !important;
+}
+
+/* 数据标签（命盘一览、信息格）：原 .6em/.62em → 12px */
+.qr-l, .il, .port-label, .tr-row-label, .mm-label, .pl-l,
+.tl-meta, .tl-ss, .tl-stage, .god-location, .lym-jq, .basic-term,
+.beginner-basic span, .card-st, .ai-subtitle, .r-meta,
+.tj-history-item, .layoff-period, .layoff-method-weight {
+  font-size: var(--fs-xs) !important;
+  letter-spacing: .01em !important;
+  line-height: 1.55 !important;
+}
+
+/* 说明性小字：原 .66em~.72em → 13px */
+.demo-report-note, .demo-report-note b, .demo-report-note em,
+.mini-note, .tj-disclaimer, .god-disclaimer, .layoff-disclaimer,
+.ai-settings-note, .ai-free-prompt, .ai-compose-hint, .tj-oracle-hint,
+.tool-page-note, .tool-panel-note, .three-styles-note, .god-method-note,
+.tj-chart-basis, .answerbook-disclaimer, .tj-date-note {
+  font-size: var(--fs-sm) !important;
+  line-height: 1.7 !important;
+}
+
+/* 正文 */
+.at, .at p, .ai-sum-body, .tj-tool-desc, .bb-text, .port-val,
+.god-meaning, .reason-list span, .tr-text-body, .beginner-intro {
+  font-size: var(--fs-base) !important;
+  line-height: 1.75 !important;
+}
+
+/* 数值 / 标题 */
+.qr-v, .iv, .tr-row-value, .mm-value, .bb-label { font-size: var(--fs-base) !important; }
+.card-tt, .qr-title, .tool-page-title, .tj-tool-title { font-size: var(--fs-lg) !important; }
+.bb-title, .tr-hero-value, .tj-result-title { font-size: var(--fs-xl) !important; }
+.modal-title, .mm-title, .ai-title { font-size: var(--fs-xl) !important; }
+.pl-g, .pl-z { font-size: var(--fs-3xl) !important; line-height: 1.15 !important; }
+
+/* 分数类大数字保持视觉重量，但收敛字重 */
+.tj-score, .layoff-index, .y-hero-score, .bs-score-grid b {
+  font-family: var(--display) !important;
+  font-weight: 500 !important;
+}
+
+/* 顶栏模式切换：原 10.5px → 13px */
+.mode-top-switch { font-size: var(--fs-sm) !important; }
+.p2-back, .tool-back-btn { font-size: var(--fs-sm) !important; }
+
+/* 藏干等密集小字保底 11px */
+.pl-xd, .pl-xd *, .fine-hidden, .fine-table td, .fine-table th,
+.god-table td, .god-table th {
+  font-size: var(--fs-micro) !important;
+  line-height: 1.6 !important;
+}
+
+/* ---------- 2. 触控目标（iOS HIG 44pt / WCAG 2.5.8） ---------- */
+/* 图标按钮给到 40px 实体尺寸，再靠间距保证有效热区 ≥44px */
+.theme-toggle, .p2-act, .ai-new, .ai-settings, .ai-close,
+.modal-close, .tool-sheet-close, .back-to-top,
+.tj-level-back, .tj-result-back {
+  width: 40px !important; min-width: 40px !important;
+  height: 40px !important; min-height: 40px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto;
+}
+.ai-send {
+  width: 40px !important; min-width: 40px !important;
+  height: 40px !important; min-height: 40px !important;
+}
+/* 覆盖 styles.css 中 #aiSheet 高优先级的 29/30px 收缩规则 */
+#aiSheet .ai-new, #aiSheet .ai-settings, #aiSheet .ai-close,
+.ai-sheet .ai-new, .ai-sheet .ai-settings, .ai-sheet .ai-close {
+  width: 40px !important; min-width: 40px !important;
+  height: 40px !important; min-height: 40px !important;
+}
+@media (max-width: 560px) {
+  #aiSheet .ai-new, #aiSheet .ai-settings, #aiSheet .ai-close,
+  .ai-sheet .ai-new, .ai-sheet .ai-settings, .ai-sheet .ai-close {
+    width: 40px !important; min-width: 40px !important;
+    height: 40px !important; min-height: 40px !important;
+  }
+}
+
+/* 图标按钮相邻时留 8px，避免误触 */
+.ai-actions, .p2-actions { gap: var(--sp-2) !important; }
+
+/* 分段控件与胶囊按钮给足高度 */
+.mode-top-switch { min-height: 34px !important; padding: 0 14px !important; }
+.mode-top-group  { min-height: 40px !important; }
+.chip { min-height: 40px !important; display: inline-flex; align-items: center; }
+.p2-back { min-height: 40px !important; }
+.ai-fab { min-width: 56px !important; }
+
+/* 开关滑块放大到易点尺寸 */
+.switch { width: 44px !important; height: 26px !important; border-radius: 999px !important; }
+.switch::after, .switch span {
+  width: 20px !important; height: 20px !important;
+  border-radius: 50% !important;
+}
+.switch-row { gap: 10px !important; align-items: center; }
+.switch-row span { font-size: var(--fs-sm) !important; line-height: 1.5; }
+
+/* ---------- 3. 圆角：收敛为 4 档 ---------- */
+.glass, .home-card, .modal-sheet, .mm-sheet, .tool-sheet,
+.qr-card, .ai-sum, .beginner-brief, .tool-panel, .ai-settings-panel {
+  border-radius: var(--c-r-lg) !important;   /* 16px 容器 */
+}
+.ii, .pl, .port-item, .qr-item, .qr-summary, .tl-card, .tl-q,
+.y-hero-item, .rel-mode-item, .adv-card, .relation-block, .god-item,
+.layoff-result-box, .tj-result-list > div, .tj-date-choice,
+.r-card, .pf-card, .tool-tile, .lym-item, .beginner-basic,
+.ai-context, .tj-ai-box, .ai-user-bubble, .tool-banner {
+  border-radius: var(--c-r) !important;      /* 12px 内容块 */
+}
+input, select, textarea, .ai-input-row, .tools-search input,
+.cta, .tj-submit, .tool-primary, .ai-btn-go, .ai-send, .bb-master {
+  border-radius: 10px !important;            /* 10px 控件 */
+}
+.chip, .preview-cta, .p2-back, .lg-opt, .structure-tab, .focus-tab,
+.ai-cat, .ai-chip, .mode-top-switch, .ai-route-btn, .ai-tool-link,
+.sstag, .tg, .tg2, .adv-tag, .tool-tag, .tr-tag, .mm-tag,
+.qr-badge, .tl-ms-pill, .risk-pill, .ai-sugg-tag {
+  border-radius: 999px !important;           /* 全圆胶囊 */
+}
+.card-ic, .r-ava, .ai-dialogue-avatar, .chat-avatar {
+  border-radius: 10px !important;
+}
+.theme-toggle, .p2-act, .ai-new, .ai-settings, .ai-close,
+.modal-close, .tool-sheet-close, .back-to-top { border-radius: 50% !important; }
+
+/* ---------- 4. 间距节奏：统一到 8pt 栅格 ---------- */
+.card-1 { padding: var(--sp-6) !important; margin-bottom: var(--sp-4) !important; }
+.card-2 { padding: var(--sp-5) !important; margin-bottom: var(--sp-3) !important; }
+.card-3 { padding: var(--sp-4) !important; margin-bottom: var(--sp-3) !important; }
+.home-card { padding: var(--sp-6) !important; margin-bottom: var(--sp-5) !important; }
+
+.card-hd { margin-bottom: var(--sp-4) !important; gap: var(--sp-3) !important; }
+.form-grid { gap: var(--sp-4) !important; }
+.chip-wrap { gap: var(--sp-2) !important; margin-top: var(--sp-2) !important; }
+.ig, .qr-grid, .portrait-grid, .structure-grid { gap: var(--sp-2) !important; }
+.cta-row { gap: var(--sp-3) !important; margin-top: var(--sp-5) !important; }
+.ii, .qr-item, .port-item { padding: var(--sp-3) !important; }
+.pl { padding: var(--sp-4) var(--sp-2) var(--sp-3) !important; }
+
+/* 报告页左右留白与安全区 */
+.p2-inner { padding-left: var(--sp-4) !important; padding-right: var(--sp-4) !important; }
+
+/* ---------- 5. 中文排版细节 ---------- */
+/* 中文不适用大字距；仅拉丁文与数字保留轻微字距 */
+body, p, span, div, b, em, h1, h2, h3, button, input, select, textarea {
+  letter-spacing: 0;
+}
+.pl-g, .pl-z, .tj-score, .layoff-index, .y-hero-score { letter-spacing: .01em; }
+
+/* 段落之间留呼吸，Claude 的长文可读性来自行高与段距 */
+.at p + p, .ai-sum-body p + p, .bb-text + .bb-text { margin-top: var(--sp-3); }
+
+/* 数字使用等宽字形，避免跳动 */
+.tj-score, .layoff-index, .y-hero-score, .qr-v, .iv,
+.wxv, .bs-score-grid, .tl-year-r, .tl-age-r {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ---------- 6. 交互反馈：轻、快、一致 ---------- */
+button, .chip, .tab-item, .tool-tile, .r-card, .pf-card, .ii, .pl {
+  transition: background-color .15s ease, border-color .15s ease,
+              color .15s ease, opacity .15s ease !important;
+}
+button:active, .chip:active, .tool-tile:active, .r-card:active {
+  opacity: .85;
+}
+.cta:active, .tj-submit:active, .tool-primary:active { opacity: .9; }
+
+/* 禁用态统一 */
+button:disabled, .cta:disabled, .tj-submit:disabled {
+  opacity: .4 !important; cursor: not-allowed !important;
+}
+
+/* ---------- 7. 细节修补 ---------- */
+/* 卡片标题与副标题的基线对齐 */
+.card-hd > div:last-child { display: flex; flex-direction: column; gap: 2px; }
+.card-st { margin-top: 0 !important; }
+
+/* 分隔线统一淡度 */
+hr, .tr-divider, .ai-divider { border: 0; border-top: 1px solid var(--c-border); }
+
+/* 术语下划线：改为更细、更淡的虚线，减少噪点 */
+.glossary-term, .term, .basic-term {
+  text-decoration: none !important;
+  border-bottom: 1px dashed var(--c-border-3) !important;
+  padding-bottom: 1px;
+}
+
+/* 顶栏按钮组间距 */
+.p2-actions { gap: var(--sp-2) !important; align-items: center; }
+.p2-top { gap: var(--sp-3) !important; padding: 10px var(--sp-4) !important; }
+
+/* 首页浮动按钮只在首页出现：必须放在通用 display:inline-flex 之后 */
+body:not(.home) .theme-toggle-home { display: none !important; }
+
+/* 首页浮动主题按钮：保持固定定位（通用图标按钮规则会覆盖 position） */
+.theme-toggle-home {
+  position: fixed !important;
+  top: max(14px, env(safe-area-inset-top)) !important;
+  right: 14px !important;
+  z-index: 60 !important;
+  width: 40px !important; height: 40px !important;
+  background: var(--c-surface) !important;
+  box-shadow: var(--c-shadow-1) !important;
+}
+
+/* 底栏图标视觉重量一致 */
+body .ig-dock .ig-nav-icon { stroke-width: 1.8 !important; }
+body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; transform: none !important; }
+
+/* 滚动条在浅色下过重，收细 */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+
+/* 空状态文案居中留白 */
+.pf-empty, .tool-empty, .ai-empty, .focus-empty {
+  padding: var(--sp-6) var(--sp-4) !important;
+  font-size: var(--fs-sm) !important;
+  color: var(--c-text-3) !important;
+}
+
+/* ---------- 8. 收口：残余的非标字号与圆角 ---------- */
+/* 这些元素被内联 em 或旧规则遗漏，逐项归位到字阶 */
+.qr-act            { font-size: var(--fs-xs) !important; border-radius: 999px !important; }
+.qr-card           { border-radius: var(--c-r-lg) !important; }
+.mode-top-switch   { border-radius: 999px !important; }
+.p2-act            { font-size: var(--fs-base) !important; }
+.glossary-term, .term { font-size: inherit !important; }
+
+/* 命盘一览的强调值与新手页基础项 */
+.qr-summary b, .qr-summary span,
+.beginner-basic b, .beginner-basic > div > b { font-size: var(--fs-base) !important; }
+.beginner-basic .basic-term i,
+.basic-term i { font-size: var(--fs-micro) !important; }
+
+/* 示例徽标 */
+.demo-report-note span, .demo-report-note .qr-badge { font-size: var(--fs-micro) !important; }
+
+/* 更高优先级收口：这些选择器在 styles.css 中带 !important */
+.p2-top .mode-top-switch,
+.mode-top-switch, .mode-top-switch.active { border-radius: 999px !important; }
+.p2-top .mode-top-group, .mode-top-group  { border-radius: 999px !important; }
+.glass .qr-card, .qr-card                 { border-radius: var(--c-r-lg) !important; }
+
+/* 新手报告 / 速读卡内的说明性文字 */
+.bb-note, .bs-head, .bs-head *, .tj-score small,
+.beginner-score, .beginner-score * { font-size: var(--fs-sm) !important; }
+.qr-act, .sstag, .glossary-term.sstag { font-size: var(--fs-micro) !important; }
+
+/* 五行能量条：标签与百分比 */
+.wxl { font-size: var(--fs-base) !important; }
+.wxv { font-size: var(--fs-xs) !important; }
+.wxf { font-size: var(--fs-micro) !important; }
+
+/* 术语在小字容器内不再二次缩小 */
+.glossary-term, .term, .basic-term { font-size: inherit !important; }
+
+/* ---------- 9. 阻断 em 相乘链 ----------
+   旧设计里 .qr-summary(.84em) > b(.74em)、.structure-mini-bd(.84em) > .fine-table(.7em)
+   这类嵌套会把中文压到 8~9px。这里把「中间层容器」重置为 rem 基准，
+   使其子元素的 em 从固定基线计算，而不是层层相乘。                     */
+.qr-summary, .structure-mini-bd, .fine-table-wrap, .god-table-wrap,
+.pro-wrap, .reason-list, .tool-page-data, .tool-answer,
+.relation-data, .flow-now, .fine-summary, .fine-extra, .god-core-grid {
+  font-size: var(--fs-base) !important;
+}
+
+/* 这些块内的所有后代不得低于 11px（中文可读下限） */
+.qr-summary *, .structure-mini-bd *, .fine-table *, .god-table *,
+.pl-i, .pl-i *, .tg, .tg2, .full-gods-btn, .structure-tab,
+.structure-mini-tt, .fine-section-label, .qr-act, .sstag {
+  font-size: var(--fs-micro) !important;
+}
+/* 但表格与摘要中的「值」保持正文大小，形成层级 */
+.qr-summary b, .fine-summary b, .fine-extra b,
+.structure-mini-bd b:not(.fine-hidden) { font-size: var(--fs-sm) !important; }
+
+/* ---------- 10. 图标按钮统一为线性 SVG ---------- */
+.p2-act svg, .theme-toggle svg, .back-to-top svg {
+  width: 18px; height: 18px;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+}
+/* 主题按钮的图标略小，与相邻保存图标视觉等重 */
+.theme-toggle svg { width: 17px; height: 17px; }
