@@ -534,7 +534,30 @@ const GLOSSARY={
   '神煞':'命理中用于补充观察的特殊符号体系，常作为辅助参考，不单独决定结论。',
   '日主':'日柱天干，也就是代表你自己的那个字，是整张命盘的核心参照点。',
   '喜用':'对命局有帮助、值得借力的五行或十神，方向大致等同于"扬长"。',
-  '十二长生':'把人生比作植物从萌芽到衰亡的十二个阶段，用来描述某个五行在不同地支上的强弱状态。'
+  '十二长生':'把人生比作植物从萌芽到衰亡的十二个阶段，用来描述某个五行在不同地支上的强弱状态。',
+
+  /* —— 补齐：以下词此前在报告中出现但没有解释入口 —— */
+  '命盘':'把出生时间换算成干支后排出的那张表，是后面所有分析的原始依据。',
+  '命局':'你这张命盘的整体格局与结构，可以理解为「你这盘牌大致是什么样」。',
+  '格局':'命盘的整体类型，用来概括你这个人最突出的能量走向。它只描述特点，不分高低好坏。',
+  '旺衰':'衡量日主（代表你自己的那个字）力量是偏强还是偏弱，决定你更适合主动发力，还是先补足资源。',
+  '身旺':'代表你自己的那个字力量偏强，通常更适合主动出击、承担事情，也要注意别把担子全揽在自己身上。',
+  '喜神':'仅次于用神、同样对你有帮助的五行，可以理解为「第二顺位的助力方向」。',
+  '印绶':'十神中「正印 + 偏印」的合称，代表支持、学习与被照顾的力量。',
+  '食神格':'格局的一种：擅长把想法变成具体作品或成果，通常表达顺畅、生活节奏偏松弛。',
+  '伤官格':'格局的一种：表达欲和创造力强，不太受既有规则束缚，容易带来新意也容易带来摩擦。',
+  '正官格':'格局的一种：重视规则与责任，适合在有秩序的环境里稳定发展。',
+  '七杀格':'格局的一种：抗压能力强、有闯劲，适合啃硬骨头，但需要注意节奏和恢复。',
+  '正财格':'格局的一种：务实、按部就班积累，重视可控和稳定的回报。',
+  '偏财格':'格局的一种：机会敏感、路子灵活，适合对外拓展，但要留意别把摊子铺太大。',
+  '印绶格':'格局的一种：善于学习吸收，容易获得他人支持，适合需要专业积累的方向。',
+  '比肩格':'格局的一种：自我意志强、独立性高，适合自己主导的事，也要留意与人合作时的边界。',
+  '劫财格':'格局的一种：行动力强、敢争取，涉及分配与合作时建议提前把规则讲清楚。',
+  '建禄格':'格局的一种：自身根基扎实，靠自己的力量推进事情，独立性较强。',
+  '三式':'紫微斗数、奇门遁甲、梅花易数三种传统术数的合称，在这里作为八字之外的补充参考。',
+  '紫微':'紫微斗数，另一套用十二宫位描述人生不同面向的传统体系，可与八字互相印证。',
+  '奇门':'奇门遁甲，传统上用于观察「当下局势」和行动时机的一套体系。',
+  '梅花':'梅花易数，一种针对具体某件事起卦、看变化趋势的传统方法。'
 };
 let _glossKeys=null;
 let _annotatedTerms=new Set();
@@ -1669,4 +1692,47 @@ Object.assign(window, {
       setTimeout(()=>{ if(window.openToolPage)openToolPage('daily'); },700);
     }
   };
+})();
+
+/* ============================================================
+   术语引导：首次进入报告时告知「带下划线的词可以点开看解释」
+   只出现一次，用户关闭或点过任意术语后不再打扰。
+   ============================================================ */
+(function(){
+  const KEY='tj_gloss_hint_seen';
+  function seen(){ try{ return localStorage.getItem(KEY)==='1'; }catch(e){ return true; } }
+  function markSeen(){ try{ localStorage.setItem(KEY,'1'); }catch(e){} 
+    document.getElementById('glossHint')?.remove(); }
+
+  function mount(){
+    if(seen())return;
+    const sec=document.getElementById('s-ming');
+    if(!sec||document.getElementById('glossHint'))return;
+    if(!sec.querySelector('.glossary-term'))return;      // 还没标注完，等下一次
+    const anchor=sec.querySelector('.beginner-brief,.qr-card,.glass');
+    if(!anchor)return;
+    const el=document.createElement('div');
+    el.id='glossHint'; el.className='gloss-hint';
+    el.innerHTML='<span>看到不懂的词？带虚线的术语都可以点开看白话解释。</span>'+
+                 '<button type="button" class="gloss-hint-close" aria-label="知道了">×</button>';
+    el.querySelector('.gloss-hint-close').addEventListener('click',markSeen);
+    anchor.parentNode.insertBefore(el,anchor);
+  }
+
+  // 用户点过任意术语，说明已经理解，不再引导
+  document.addEventListener('click',e=>{
+    if(e.target.closest&&e.target.closest('.glossary-term'))markSeen();
+  },true);
+
+  // 注意：calc() 内部调用的是 import 进来的 showPage2，
+  // 包装 window.showPage2 不会生效；改为监听 body 上的 report-active 类。
+  const obs=new MutationObserver(()=>{
+    if(document.body.classList.contains('report-active')){
+      [300,900,1700].forEach(ms=>setTimeout(mount,ms));
+    }else{
+      document.getElementById('glossHint')?.remove();
+    }
+  });
+  obs.observe(document.body,{attributes:true,attributeFilter:['class']});
+  window.TJMountGlossHint=mount;
 })();

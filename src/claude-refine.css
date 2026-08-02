@@ -458,3 +458,80 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
    改用 auto margin 实现居中——内容不足时依然居中，超高时正常从顶部开始。 */
 .p1-scroll { justify-content: flex-start !important; }
 .p1-scroll > .p1-inner { margin-top: auto !important; margin-bottom: auto !important; }
+
+/* ---------- 13. 术语可供性：让用户知道「这里能点」 ----------
+   原设计只有 1px 虚线 + cursor:help，移动端没有 hover，
+   用户根本不知道术语可以点开解释。 */
+.glossary-term, .term, .basic-term {
+  position: relative;
+  display: inline;
+  color: var(--c-accent-text) !important;
+  border-bottom: 1px dashed color-mix(in srgb, var(--c-accent) 55%, transparent) !important;
+  cursor: pointer !important;
+  padding-bottom: 1px;
+  /* 触控目标：中文字号偏小，扩大可点区域 */
+  -webkit-tap-highlight-color: color-mix(in srgb, var(--c-accent) 18%, transparent);
+}
+.glossary-term::after {
+  content: '?';
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 12px; height: 12px;
+  margin-left: 2px;
+  vertical-align: super;
+  font-size: 8px; font-weight: 700; line-height: 1;
+  border-radius: 50%;
+  background: var(--c-accent-soft);
+  color: var(--c-accent-text);
+  opacity: .9;
+}
+/* 标签/胶囊内的术语不加问号，避免把小标签撑变形 */
+.sstag::after, .tg::after, .tg2::after,
+.qr-badge .glossary-term::after,
+.tl-ms-pill .glossary-term::after { content: none !important; }
+
+.glossary-term:active { background: var(--c-accent-soft); border-radius: 3px; }
+
+/* 首次进入报告时的一次性引导 */
+.gloss-hint {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 var(--sp-3);
+  padding: 10px var(--sp-3);
+  background: var(--c-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--c-accent) 26%, transparent);
+  border-radius: var(--c-r);
+  font-size: var(--fs-sm);
+  color: var(--c-accent-text);
+  line-height: 1.6;
+}
+.gloss-hint-close {
+  margin-left: auto; flex: 0 0 auto;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 50%;
+  background: transparent; color: var(--c-accent-text);
+  font-size: 16px; line-height: 1; cursor: pointer;
+}
+.gloss-hint-close:hover { background: color-mix(in srgb, var(--c-accent) 16%, transparent); }
+
+/* ---------- 14. 新手首屏数据位：值 + 一句话含义 ---------- */
+.beginner-basic { align-items: stretch !important; }
+.beginner-basic > div {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: var(--sp-3) var(--sp-2) !important;
+  text-align: center;
+}
+.beginner-basic > div > span { font-size: var(--fs-micro) !important; color: var(--c-text-3) !important; }
+.beginner-basic > div > b   { font-size: var(--fs-base) !important; color: var(--c-text) !important; font-weight: 600; }
+.bb-cell-note {
+  display: block;
+  font-style: normal;
+  font-size: var(--fs-micro);
+  line-height: 1.5;
+  color: var(--c-text-3);
+  margin-top: 2px;
+}
+/* 四列在窄屏挤成两列，保证每格能放下一句说明 */
+@media (max-width: 480px) {
+  .beginner-basic { grid-template-columns: 1fr 1fr !important; }
+}

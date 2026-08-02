@@ -470,7 +470,41 @@ export function renderBeginnerBrief(sec,d){
     action='选一件拖延的小事，在 20 分钟内开始；晚上花 5 分钟写下明天最重要的一件事。';
     tip='提醒：情绪上头时，暂缓消费、争论和重要决定。';
   }
-  const basicHtml=sec==='ming'?`<div class="beginner-basic"><div><span>生肖</span><b>${d.b?.sx||'—'}</b></div><div><span class="basic-term" title="日主代表你自己的核心能量与性格底色">日主 <i>?</i></span><b>${d.dg||'—'}</b></div><div><span>有利方向</span><b>${d.wx?.ys||'—'}元素</b></div><div><span>当前大运</span><b>${d.dw?.g||''}${d.dw?.z||'—'}</b></div></div>`:'';
+  // 新手首屏的四个数据位：每个值都附一句「这是什么意思」，
+  // 避免出现「日主=辛」这类对小白毫无信息量的孤立符号。
+  const YS_MEANING={
+    木:'多接触成长、学习和创造性的事',
+    火:'多表达、多与人连接',
+    土:'把节奏放稳，重视积累',
+    金:'把标准和边界定清楚',
+    水:'保持灵活，多观察再动'
+  };
+  const DG_TRAIT={
+    甲:'像大树，有主见、认准方向就往前',
+    乙:'像藤蔓，柔韧、擅长借力',
+    丙:'像太阳，热情、有感染力',
+    丁:'像烛火，细腻、专注',
+    戊:'像高山，稳重、扛得住事',
+    己:'像田土，包容、善于照顾人',
+    庚:'像金属，果断、执行力强',
+    辛:'像珠玉，精致、对细节要求高',
+    壬:'像江河，开阔、适应力强',
+    癸:'像雨露，敏感、洞察力好'
+  };
+  const _dg=d.dg||'', _ys=d.wx?.ys||'';
+  // 注意：ctx.dw 是日主五行（如「金」），不是大运；当前大运在 ctx.cDy。
+  // 旧代码误用 d.dw，导致这一格恒为空。
+  const _dy=d.cDy||null;
+  const _dyLabel=_dy?((_dy.g||'')+(_dy.z||'')):'';
+  const _dyNote=_dy&&(_dy.as!=null)?`${_dy.as}–${_dy.ae}岁这十年`:'这十年的整体基调';
+  const _cell=(label,value,note,termAttr='')=>
+    `<div><span${termAttr}>${label}</span><b>${value||'—'}</b>${note?`<em class="bb-cell-note">${note}</em>`:''}</div>`;
+  const basicHtml=sec==='ming'?`<div class="beginner-basic">`+
+    _cell('生肖',d.b?.sx||'—','')+
+    _cell('我是什么样的人',_dg?_dg+'（'+(GW[_dg]||'')+'）':'—',DG_TRAIT[_dg]||'')+
+    _cell('对我有利的方向',_ys?_ys+'元素':'—',YS_MEANING[_ys]||'')+
+    _cell('当前人生阶段',_dyLabel||'—',_dy?_dyNote:'')+
+  `</div>`:'';
   return `<div class="beginner-brief"><div class="bb-eyebrow">新手解读报告</div>${basicHtml}<div class="bb-title">${title}</div>${scoreHtml}<div class="bb-row"><div class="bb-label">你现在的状态</div><div class="bb-text">${portrait}</div></div><div class="bb-row"><div class="bb-label">对你有利的方向</div><div class="bb-text">${opportunity}</div></div><div class="bb-row"><div class="bb-label">接下来怎么做</div><div class="bb-text bb-action">${action}</div></div><div class="bb-note">${tip}</div><button class="bb-master" type="button" onclick="setUserMode('master')">查看完整专业依据　→</button></div>`;
 }
 export function organizeMasterReportLayout(ctx){
