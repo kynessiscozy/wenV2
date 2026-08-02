@@ -72,7 +72,7 @@ function setToolOutput(data) {
       bodyHtml += '<div class="tr-note">' + data.note + '</div>';
     }
   } else {
-    bodyHtml = '<p style="color:rgba(255,255,255,.5)">暂无结果。</p>';
+    bodyHtml = '<p style="color:var(--c-text-3)">暂无结果。</p>';
   }
 
   // 结果页顶部带图横幅

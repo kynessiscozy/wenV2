@@ -5,8 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>问问大师 · 东方人生决策系统</title>
 
+<meta name="theme-color" content="#faf9f5">
+<meta name="description" content="问问大师 · 东方人生决策系统">
+
+<script>
+  /* 首屏前置写入主题，避免明暗闪烁 */
+  (function () {
+    try {
+      var p = localStorage.getItem('tj_theme') || 'system';
+      var m = (p === 'light' || p === 'dark') ? p
+            : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', m);
+      document.documentElement.style.colorScheme = m;
+    } catch (e) {}
+  })();
+</script>
+
+<link rel="stylesheet" href="/src/theme-claude.css">
 <link rel="stylesheet" href="/src/styles.css">
 <link rel="stylesheet" href="/src/ig-dock.css">
+<link rel="stylesheet" href="/src/claude-ui.css">
 </head>
 <body>
 
@@ -59,15 +77,15 @@
 
       <div id="profileZone" style="margin-bottom:24px;display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <div style="font-size:.78em;color:rgba(255,245,220,0.35);letter-spacing:1px">命盘档案</div>
+          <div style="font-size:.78em;color:var(--c-text-3);letter-spacing:1px">命盘档案</div>
           <div style="display:flex;gap:8px">
-            <button onclick="exportProfiles()" style="padding:5px 12px;border-radius:100px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);font-size:.72em;font-family:var(--sf);cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">导出</button>
-            <button onclick="document.getElementById('impFile').click()" style="padding:5px 12px;border-radius:100px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);font-size:.72em;font-family:var(--sf);cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">导入</button>
+            <button onclick="exportProfiles()" style="padding:5px 12px;border-radius:100px;background:var(--c-surface-3);border:1px solid var(--c-border-2);color:var(--c-text-2);font-size:.72em;font-family:var(--sf);cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">导出</button>
+            <button onclick="document.getElementById('impFile').click()" style="padding:5px 12px;border-radius:100px;background:var(--c-surface-3);border:1px solid var(--c-border-2);color:var(--c-text-2);font-size:.72em;font-family:var(--sf);cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">导入</button>
             <input type="file" id="impFile" style="display:none" accept=".json" onchange="handleImport(this)">
           </div>
         </div>
         <div id="profileGrid" class="recent-grid"></div>
-        <div id="profileEmpty" class="pf-empty" style="display:none;color:rgba(255,255,255,0.25);font-size:.78em;text-align:center;padding:14px 0">暂无档案，推算后点击「保存」即可收藏命盘</div>
+        <div id="profileEmpty" class="pf-empty" style="display:none;color:var(--c-text-4);font-size:.78em;text-align:center;padding:14px 0">暂无档案，推算后点击「保存」即可收藏命盘</div>
       </div>
 
       <div class="anim-in d2" style="text-align:center;padding:20px 0 8px">
@@ -143,7 +161,7 @@
   <div class="modal-sheet glass" style="text-align:center">
     <div class="modal-close" onclick="closeSaveModal()">×</div>
     <div class="modal-title">保存命盘档案</div>
-    <input type="text" id="saveName" style="width:100%;padding:12px 16px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;font-family:var(--sf);font-size:.9em;margin:12px 0;text-align:center" placeholder="输入档案名称…" maxlength="20" autocomplete="off">
+    <input type="text" id="saveName" style="width:100%;padding:12px 16px;border-radius:100px;border:1px solid var(--c-border-2);background:var(--c-surface-3);color:var(--c-text-hi);font-family:var(--sf);font-size:.9em;margin:12px 0;text-align:center" placeholder="输入档案名称…" maxlength="20" autocomplete="off">
     <button class="cta" style="padding:12px 32px;font-size:.9em" onclick="confirmSaveProfile()">保存</button>
   </div>
 </div>
@@ -153,7 +171,7 @@
   <div class="modal-sheet glass">
     <div class="modal-close" onclick="closeRq()">×</div>
     <div class="modal-title">今日日签</div>
-    <div id="rqResult" style="font-size:.85em;line-height:1.9;color:rgba(255,245,220,0.75);padding-top:8px"></div>
+    <div id="rqResult" style="font-size:.85em;line-height:1.9;color:var(--c-text);padding-top:8px"></div>
   </div>
 </div>
 

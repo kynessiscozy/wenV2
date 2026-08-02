@@ -45,9 +45,11 @@ import {
   setGlassMode, toggleLgPanel, moveTabIndicator, initNavigationUI,
   openAsk, closeAsk, newAskChat, aiToolRequest, doAsk, doAskCustom,
   aiSwitchCat, aiRefreshChips, aiOnInputSuggest, generateAnswer,
-  getAISettings, getApiKey, toggleAISettings, initAISettings
+  getAISettings, getApiKey, toggleAISettings, initAISettings,
+  initTheme, toggleTheme
 } from './ui/index.js';
 
+initTheme();
 initNavigationUI();
 initAISettings();
 
@@ -73,8 +75,8 @@ async function calc(isDemoPreview=false){
     const _preCtx=buildContext({b,wx,ss,dy,ln,zw,qm,mh,si,shensha,liuyue,P:null,gen,q,city,input:_input});
     window._ctx=_preCtx;window._baziData=_preCtx;window._reportData=_preCtx;
     applyTheme(wx.ys);
-    const accentMap={木:[70,160,90],火:[200,80,60],土:[200,164,90],金:[170,165,150],水:[70,120,200]};
-    window._accentRGB=accentMap[wx.ys]||accentMap['土'];
+    // Claude 风格：图表统一使用主题强调色（赭橙），不随用神变色
+    window._accentRGB=[217,119,87];
     renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,y,shensha,liuyue);
     // 让问问大师与报告顶部共享“示例报告”状态。
     if(window._ctx)window._ctx.isDemoPreview=!!isDemoPreview;
@@ -110,10 +112,10 @@ function renderRiQian(){
   else if('庚辛'.includes(dg)){yi.push('裁决','交易','修造');ji.push('宴饮','借贷');yj='金气锐利，当断则断，利裁决交易，忌优柔寡断。';}
   else{yi.push('流通','迁移','沐浴');ji.push('签约','婚嫁');yj='水势汪洋，顺势而为，宜流通迁移，忌固守一域。';}
   return`<div style="text-align:center;margin-bottom:14px"><div style="font-family:var(--serif);font-size:1.6em;color:var(--ac-text);margin-bottom:4px">${dg}${dz}日</div><div style="font-size:.75em;color:var(--ac-dim)">${y}年${m}月${d}日${jie?' · '+jie+'后':''}</div></div>
-  <div style="display:flex;gap:8px;margin:12px 0"><div style="flex:1;padding:10px;border-radius:10px;background:rgba(255,255,255,0.04);text-align:center"><div style="font-size:.65em;color:rgba(255,255,255,.35);margin-bottom:4px">生肖</div><div style="font-size:1.1em;font-weight:600">${todaySX}</div></div><div style="flex:1;padding:10px;border-radius:10px;background:rgba(255,255,255,0.04);text-align:center"><div style="font-size:.65em;color:rgba(255,255,255,.35);margin-bottom:4px">冲煞</div><div style="font-size:1.1em;font-weight:600;color:#d4654a">冲${chongSX}</div></div><div style="flex:1;padding:10px;border-radius:10px;background:rgba(255,255,255,0.04);text-align:center"><div style="font-size:.65em;color:rgba(255,255,255,.35);margin-bottom:4px">吉神</div><div style="font-size:1.1em;font-weight:600;color:#7ab648">${sxjx[todaySX]||'天德'}</div></div></div>
+  <div style="display:flex;gap:8px;margin:12px 0"><div style="flex:1;padding:10px;border-radius:10px;background:var(--c-surface-2);text-align:center"><div style="font-size:.65em;color:var(--c-text-3);margin-bottom:4px">生肖</div><div style="font-size:1.1em;font-weight:600">${todaySX}</div></div><div style="flex:1;padding:10px;border-radius:10px;background:var(--c-surface-2);text-align:center"><div style="font-size:.65em;color:var(--c-text-3);margin-bottom:4px">冲煞</div><div style="font-size:1.1em;font-weight:600;color:#d4654a">冲${chongSX}</div></div><div style="flex:1;padding:10px;border-radius:10px;background:var(--c-surface-2);text-align:center"><div style="font-size:.65em;color:var(--c-text-3);margin-bottom:4px">吉神</div><div style="font-size:1.1em;font-weight:600;color:#7ab648">${sxjx[todaySX]||'天德'}</div></div></div>
   <div style="margin:10px 0"><div style="font-size:.75em;color:var(--ac-dim);margin-bottom:6px">🟢 今日宜</div><div style="display:flex;flex-wrap:wrap;gap:6px">${yi.map(x=>`<span class="tg tj">${x}</span>`).join('')}</div></div>
   <div style="margin:10px 0"><div style="font-size:.75em;color:var(--ac-dim);margin-bottom:6px">🔴 今日忌</div><div style="display:flex;flex-wrap:wrap;gap:6px">${ji.map(x=>`<span class="tg tc">${x}</span>`).join('')}</div></div>
-  <div style="font-size:.78em;color:rgba(255,255,255,.55);margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)"><b>一句话日签：</b>${yj}</div>`;
+  <div style="font-size:.78em;color:var(--c-text-2);margin-top:12px;padding-top:10px;border-top:1px solid var(--c-border)"><b>一句话日签：</b>${yj}</div>`;
 }
 function showRiQian(){const baseHtml=renderRiQian();document.getElementById('rqResult').innerHTML=baseHtml;document.getElementById('rqModal').classList.add('open');}
 function closeRq(){document.getElementById('rqModal').classList.remove('open');}
@@ -141,7 +143,7 @@ function openMonthModal(idx,name,gz,jq,ss){
     <div class="mm-row"><span class="mm-label">十神</span><span class="mm-value">${ss}</span></div>
     <div class="mm-row"><span class="mm-label">节气</span><span class="mm-value">${jq||'待查'}</span></div>
     <div class="mm-row"><span class="mm-label">日主</span><span class="mm-value">${dg}</span></div>
-    <div style="margin:14px 0;font-size:.82em;color:rgba(255,245,220,0.75);line-height:1.8">${analysis}</div>
+    <div style="margin:14px 0;font-size:.82em;color:var(--c-text);line-height:1.8">${analysis}</div>
     <div style="margin:10px 0"><div style="font-size:.7em;color:rgba(122,182,72,.8);margin-bottom:6px">🟢 本月宜</div><div style="display:flex;flex-wrap:wrap;gap:4px">${yi.map(x=>`<span class="mm-tag yi">宜${x}</span>`).join('')}</div></div>
     <div style="margin:10px 0"><div style="font-size:.7em;color:rgba(212,101,74,.8);margin-bottom:6px">🔴 本月忌</div><div style="display:flex;flex-wrap:wrap;gap:4px">${ji.map(x=>`<span class="mm-tag ji">忌${x}</span>`).join('')}</div></div>`;
   document.getElementById('monthModal').classList.add('open');
@@ -168,7 +170,7 @@ async function renderProfiles(){try{const list=await dbGetAll();const zone=docum
   if(!list.length){if(grid)grid.innerHTML='';if(empty)empty.style.display='block';if(zone)zone.style.display='block';if(recentZone)recentZone.style.display='none';return;}
   if(empty)empty.style.display='none';if(zone)zone.style.display='block';
   if(recentZone){recentZone.style.display='block';recentGrid.innerHTML=list.slice(0,3).map(p=>{const city=CD[p.bp]||{n:'未知'};const dg=p.bd?mkBazi(...p.bd.split('-').map(Number).concat([0])).D.g:'';const _bd=(p.bd||'1990-1-1').split('-').map(Number);const dy=mkDy(mkBazi(_bd[0],_bd[1],_bd[2],0),p.gen||'male',_bd[0]);const age=TJ.calcAge(_bd[0],_bd[1]||1,_bd[2]||1);const cDy=TJ.findDaYun(dy,age)||dy.ds[0];return`<div class="r-card" onclick="loadProfile(${p.id})"><div class="r-ava">${(p.name||'未').charAt(0)}</div><div class="r-info"><div class="r-name">${(p.name||'未命名').replace(/</g,'&lt;')}</div><div class="r-meta">当前大运：${cDy.g}${cDy.z} · ${CURR_YEAR}运势：${'★★★★☆'}<br>最近关注：${p.q||'综合'}</div></div><div class="r-arrow">›</div></div>`;}).join('');}
-  if(grid)grid.innerHTML=list.slice(0,8).map(p=>{const city=CD[p.bp]||{n:'未知'};const d=new Date(p.updatedAt);return`<div class="r-card" onclick="loadProfile(${p.id})"><div class="r-ava">${(p.name||'未').charAt(0)}</div><div class="r-info"><div class="r-name">${(p.name||'未命名').replace(/</g,'&lt;')}</div><div class="r-meta">${p.bd||''} · ${city.n} · ${p.gen==='male'?'男':'女'}${p.useTrueSolar?'·真':''}</div></div><div style="position:absolute;top:6px;right:8px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9em;color:rgba(255,255,255,0.25);cursor:pointer;transition:all .15s;z-index:2" onclick="event.stopPropagation();deleteProfile(${p.id})">×</div></div>`;}).join('');
+  if(grid)grid.innerHTML=list.slice(0,8).map(p=>{const city=CD[p.bp]||{n:'未知'};const d=new Date(p.updatedAt);return`<div class="r-card" onclick="loadProfile(${p.id})"><div class="r-ava">${(p.name||'未').charAt(0)}</div><div class="r-info"><div class="r-name">${(p.name||'未命名').replace(/</g,'&lt;')}</div><div class="r-meta">${p.bd||''} · ${city.n} · ${p.gen==='male'?'男':'女'}${p.useTrueSolar?'·真':''}</div></div><div style="position:absolute;top:6px;right:8px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9em;color:var(--c-text-4);cursor:pointer;transition:all .15s;z-index:2" onclick="event.stopPropagation();deleteProfile(${p.id})">×</div></div>`;}).join('');
 }catch(e){console.log('renderProfiles',e);}}
 async function loadProfile(id){try{const list=await dbGetAll();const p=list.find(x=>x.id===id);if(!p)return;document.getElementById('bDate').value=p.bd||'';document.getElementById('bTime').value=p.timeStr||'09:00';document.getElementById('bPlace').value=p.bp||'';document.getElementById('cInp').value=(CD[p.bp]||{n:''}).n;document.getElementById('bGen').value=p.gen||'male';document.getElementById('bQ').value=p.q||'';const sw=document.getElementById('swTrueSolar');if(sw){if(p.useTrueSolar)sw.classList.add('on');else sw.classList.remove('on');document.getElementById('swText').textContent=(sw.classList.contains('on')?'开启':'关闭')+'真太阳时（按出生地经度精确换算时辰）';}const chips=document.getElementById('qChips');if(chips){chips.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.q===p.q));}calc();}catch(e){console.log('loadProfile',e);}}
 async function deleteProfile(id){try{await dbDel(id);renderProfiles();}catch(e){console.log('deleteProfile',e);}}
@@ -179,7 +181,7 @@ async function exportProfiles(){try{const list=await dbGetAll();const blob=new B
 async function handleImport(input){const file=input.files[0];if(!file)return;try{const text=await file.text();const arr=JSON.parse(text);if(!Array.isArray(arr))throw new Error('格式错误');let count=0;for(const p of arr){if(p.bd&&p.bp&&p.gen){delete p.id;p.updatedAt=Date.now();await dbPut(p);count++;}}renderProfiles();showToast(`成功导入 ${count} 条档案`);}catch(e){showToast('导入失败：'+e.message);}input.value='';}
 
 (function(){const inp=document.getElementById('cInp'),hid=document.getElementById('bPlace'),dd=document.getElementById('cDD');let ai=-1;
-function rdd(f){let h='',n=0;const q=(f||'').toLowerCase();CG.forEach(g=>{const m=g.c.filter(c=>!q||c.n.includes(q)||c.i.includes(q)||g.g.includes(q));if(!m.length)return;h+=`<div class="cg">${g.g}</div>`;m.forEach(c=>{h+=`<div class="co" data-i="${c.i}" data-n="${c.n}"><span>${c.n}</span><span class="cp">${g.g}</span></div>`;n++})});if(!n)h='<div style="padding:18px;text-align:center;color:rgba(255,255,255,0.3);font-size:.82em">未找到</div>';dd.innerHTML=h;ai=-1;dd.querySelectorAll('.co').forEach(el=>{el.addEventListener('mousedown',e=>{e.preventDefault();sel(el.dataset.i,el.dataset.n)})});}
+function rdd(f){let h='',n=0;const q=(f||'').toLowerCase();CG.forEach(g=>{const m=g.c.filter(c=>!q||c.n.includes(q)||c.i.includes(q)||g.g.includes(q));if(!m.length)return;h+=`<div class="cg">${g.g}</div>`;m.forEach(c=>{h+=`<div class="co" data-i="${c.i}" data-n="${c.n}"><span>${c.n}</span><span class="cp">${g.g}</span></div>`;n++})});if(!n)h='<div style="padding:18px;text-align:center;color:var(--c-text-3);font-size:.82em">未找到</div>';dd.innerHTML=h;ai=-1;dd.querySelectorAll('.co').forEach(el=>{el.addEventListener('mousedown',e=>{e.preventDefault();sel(el.dataset.i,el.dataset.n)})});}
 function sel(i,n){hid.value=i;inp.value=n;dd.classList.remove('show')}
 inp.addEventListener('focus',()=>{rdd(inp.value===(CD[hid.value]||{}).n?'':inp.value);dd.classList.add('show')});
 inp.addEventListener('input',()=>{rdd(inp.value);dd.classList.add('show')});
@@ -1039,7 +1041,7 @@ window.ORACLE_SIGNS = {
   const tone=role&&role.includes('财')?'适合处理收入、资源与现实安排':role&&role.includes('官')?'适合明确规则、责任和推进节点':role&&role.includes('印')?'适合学习、复盘和获得支持':role&&role.includes('食')?'适合表达、创作和输出成果':role&&role.includes('比')?'适合主动推进，也要注意边界':'适合按节奏完成当日重点';
   const relation=dayZhi===((typeof __TJX_V5!=='undefined'&&'')||'')?'':'流日地支「'+dayZhi+'」提示：安排留白，给临时变化留出空间。';
   const out=document.getElementById('v3_result');if(!out)return;out.classList.add('daily-sign-result');
-  out.innerHTML='<div class="tj-result-head"><div><div class="tj-result-title">今日日签</div><div style="font-size:.68em;color:rgba(255,255,255,.42);margin-top:4px">流日 '+gz+' · '+dayWx+' · '+role+'</div></div><div class="tj-score">'+dayGan+'</div></div><div class="tj-result-body"><div class="tj-result-list"><div><b>今日主线</b><span>'+tone+'。</span></div><div><b>行动与协作</b><span>优先完成一件可见成果；沟通先说事实，再说需求。'+relation+'</span></div><div><b>状态与提醒</b><span>根据流日'+(dayWx===wx.ys?'与用神同气，适合顺势推进':'与当前用神不同，宜保留弹性')+'；重要决定先复核，避免在疲惫时拍板。</span></div></div></div><div class="tj-sign-actions"><button class="tj-sign-share" type="button" onclick="shareDailySign()">↗ 分享日签</button><button class="tj-sign-refresh" type="button" onclick="TJDailyRun()">↻ 重新生成</button></div><div class="tj-disclaimer">根据当日干支与命盘关系生成，仅用于节奏整理，不替代现实判断。</div>';out.classList.add('show');out.closest('.tj-tool-v3')?.classList.add('result-mode');document.querySelector('#toolModal .tool-sheet')?.classList.add('result-open');
+  out.innerHTML='<div class="tj-result-head"><div><div class="tj-result-title">今日日签</div><div style="font-size:.68em;color:var(--c-text-3);margin-top:4px">流日 '+gz+' · '+dayWx+' · '+role+'</div></div><div class="tj-score">'+dayGan+'</div></div><div class="tj-result-body"><div class="tj-result-list"><div><b>今日主线</b><span>'+tone+'。</span></div><div><b>行动与协作</b><span>优先完成一件可见成果；沟通先说事实，再说需求。'+relation+'</span></div><div><b>状态与提醒</b><span>根据流日'+(dayWx===wx.ys?'与用神同气，适合顺势推进':'与当前用神不同，宜保留弹性')+'；重要决定先复核，避免在疲惫时拍板。</span></div></div></div><div class="tj-sign-actions"><button class="tj-sign-share" type="button" onclick="shareDailySign()">↗ 分享日签</button><button class="tj-sign-refresh" type="button" onclick="TJDailyRun()">↻ 重新生成</button></div><div class="tj-disclaimer">根据当日干支与命盘关系生成，仅用于节奏整理，不替代现实判断。</div>';out.classList.add('show');out.closest('.tj-tool-v3')?.classList.add('result-mode');document.querySelector('#toolModal .tool-sheet')?.classList.add('result-open');
  };
 })();
 
@@ -1271,6 +1273,7 @@ Object.assign(window, {
   toggleDensity,
   toggleAISettings,
   toggleFullGods,
+  toggleTheme,
   toggleLgPanel,
   toggleUserMode,
   toolPageShell,
