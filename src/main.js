@@ -8,6 +8,7 @@ import { mkQm } from './engines/qimen.js';
 import { mkMh } from './engines/meihua.js';
 import { mkSi } from './engines/sizhi.js';
 import { calcSynastry } from './engines/synastry.js';
+import { shareSynastry, saveSynastryPartner, partnerPickerHtml, bindPartnerPicker, listPartners } from './tools/synastry-share.js';
 import { TJ } from './state/tj.js';
 import { getCtx } from './state/context.js';
 import { toolPageShell, setToolOutput } from './tools/shared.js';
@@ -714,7 +715,7 @@ function toggleUserMode(){setUserMode(document.body.classList.contains('beginner
   answerbook:{k:'灵感与娱乐',icon:'?',title:'答案之书',desc:'把一个问题写下来，翻开一句简短答案，作为整理思路的提示。它不是预测，也不能替代你的判断。',fields:[['question','你的问题','textarea','例如：我现在适合开始这件事吗？'],['mode','回答方式','select',['直接回答','行动提醒','自我探索']]]},
   lottery:{k:'灵感与娱乐',icon:'◎',title:'娱乐选号',desc:'纯随机生成，不预测中奖，不使用命盘制造确定性。',fields:[['type','玩法','select',['双色球','超级大乐透']],['count','注数','select',['1','3','5']]]},
   zodiac:{k:'关系与沟通',icon:'♧',title:'生肖合冲分析',desc:'只作为传统文化参考，真正决定关系质量的是边界、沟通和共同目标。',fields:[['other','对方生肖','select','鼠牛虎兔龙蛇马羊猴鸡狗猪'.split('')],['scene','关系场景','select',['亲密关系','朋友合作','家人沟通']]]},
-  relation:{k:'关系与沟通',icon:'♡',title:'八字合盘 · 关系分析',desc:'为对方真实排盘，比对日主、五行与干支关系，并给出可直接使用的沟通方案。',fields:[['focus','关系类型','select',['亲密关系','朋友合作','家人沟通']],['bdate','对方出生日期（可不填）','date',''],['bhour','对方出生时辰','select',['时辰不详 · 用三柱比对','子 23:00–00:59','丑 01:00–02:59','寅 03:00–04:59','卯 05:00–06:59','辰 07:00–08:59','巳 09:00–10:59','午 11:00–12:59','未 13:00–14:59','申 15:00–16:59','酉 17:00–18:59','戌 19:00–20:59','亥 21:00–22:59']],['issue','当前卡点','textarea','例如：对方不回复、分工不清、总是争吵'],['goal','希望改善','text','例如：把需求说清楚']]}
+  relation:{k:'关系与沟通',icon:'♡',title:'八字合盘 · 关系分析',desc:'为对方真实排盘，比对日主、五行与干支关系，并给出可直接使用的沟通方案。',fields:[['focus','关系类型','select',['亲密关系','朋友合作','家人沟通']],['pname','对方称呼（可不填）','text','例如：阿雯'],['bdate','对方出生日期（可不填）','date',''],['bhour','对方出生时辰','select',['时辰不详 · 用三柱比对','子 23:00–00:59','丑 01:00–02:59','寅 03:00–04:59','卯 05:00–06:59','辰 07:00–08:59','巳 09:00–10:59','午 11:00–12:59','未 13:00–14:59','申 15:00–16:59','酉 17:00–18:59','戌 19:00–20:59','亥 21:00–22:59']],['issue','当前卡点','textarea','例如：对方不回复、分工不清、总是争吵'],['goal','希望改善','text','例如：把需求说清楚']]}
  };
  const val=id=>{const e=document.getElementById('v3_'+id);return e?e.value.trim():''};
  function esc(x){return String(x||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
@@ -771,6 +772,9 @@ function toggleUserMode(){setUserMode(document.body.classList.contains('beginner
    H+='<div style="margin-top:14px"><b style="font-size:.9em">下一次沟通可以这样开始</b></div>'+scriptHtml;
    if(r.precision==='day')H+='<div class="tj-disclaimer">未填对方时辰，本次用年月日三柱比对。日柱（夫妻宫）不依赖时辰，仍为精确计算，核心结论成立；缺少的时柱主要影响子女宫与晚年节奏的判断。</div>';
    H+='<div class="tj-disclaimer">合盘用于理解彼此差异、找到沟通方式，不预测关系结局，也不构成是否开始或结束一段关系的建议。</div>';
+   H+='<div class="tj-sign-actions"><button type="button" class="tj-sign-share" onclick="TJSynShare()">分享结果</button><button type="button" class="tj-sign-refresh" onclick="TJSynSave()">保存这个人</button></div>';
+   window._lastSynastry={name:val('pname'),relation:focus,result:r,y:py,m:pm,d:pd,
+     hourZhi:(hourIdx===null||hourIdx<0)?null:hourIdx,score:r.score};
    result('合盘结果 · '+esc(focus),H,r.score);return}
  }
  window.TJAnswerBookAgain=function(){run('answerbook')};
@@ -1494,4 +1498,60 @@ Object.assign(window, {
     if(type==='answerbook'){openAnswerBook();return;}
     if(priorOpenTool)priorOpenTool(type);
   };
+})();
+
+/* ============================================================
+   合盘：分享 / 保存对象 / 最近对象快捷选择
+   ============================================================ */
+(function(){
+  const HOUR_LABELS=['子 23:00–00:59','丑 01:00–02:59','寅 03:00–04:59','卯 05:00–06:59',
+    '辰 07:00–08:59','巳 09:00–10:59','午 11:00–12:59','未 13:00–14:59',
+    '申 15:00–16:59','酉 17:00–18:59','戌 19:00–20:59','亥 21:00–22:59'];
+
+  window.TJSynShare=function(){
+    const s=window._lastSynastry;
+    if(!s){showToast('暂无可分享的合盘结果');return}
+    shareSynastry({name:s.name,relation:s.relation,result:s.result});
+  };
+
+  window.TJSynSave=function(){
+    const s=window._lastSynastry;
+    if(!s){showToast('暂无可保存的合盘对象');return}
+    const rec=saveSynastryPartner({name:s.name,y:s.y,m:s.m,d:s.d,hourZhi:s.hourZhi,
+                                   relation:s.relation,score:s.score});
+    if(rec)mountPicker();
+  };
+
+  // —— 在合盘表单顶部挂「最近对象」快捷选择 ——
+  function mountPicker(){
+    const root=document.getElementById('toolModalContent');
+    if(!root||window._activeTool!=='relation')return;
+    const fields=root.querySelector('.tj-fields');
+    if(!fields)return;
+    let box=root.querySelector('.tj-partner-picker-wrap');
+    const html=partnerPickerHtml();
+    if(!html){if(box)box.remove();return}
+    if(!box){
+      box=document.createElement('div');
+      box.className='tj-partner-picker-wrap';
+      fields.parentNode.insertBefore(box,fields);
+      bindPartnerPicker(box,p=>{
+        const set=(id,v)=>{const e=document.getElementById('v3_'+id);if(e)e.value=v;};
+        set('pname',p.name);
+        set('bdate',`${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`);
+        const hs=document.getElementById('v3_bhour');
+        if(hs)hs.value=(p.hourZhi==null)?'时辰不详 · 用三柱比对':HOUR_LABELS[p.hourZhi];
+        if(p.relation){const f=document.getElementById('v3_focus');if(f)f.value=p.relation;}
+        showToast(`已填入「${p.name}」`);
+      },mountPicker);
+    }
+    box.innerHTML=html;
+  }
+
+  const oldOpen=window.openToolPage;
+  window.openToolPage=function(type){
+    if(oldOpen)oldOpen(type);
+    if(type==='relation')[80,260,600].forEach(ms=>setTimeout(mountPicker,ms));
+  };
+  window.TJSynMountPicker=mountPicker;
 })();

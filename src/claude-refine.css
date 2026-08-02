@@ -330,3 +330,85 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
 
 /* 合盘结果：条目内的 <strong> 保持内联强调，避免 <b> 被块级化后断句 */
 .tj-result-list span strong { font-weight: 600; color: var(--c-text); }
+
+/* ---------- 11. 合盘：最近对象快捷选择 ---------- */
+.tj-partner-picker-wrap { margin: 0 0 var(--sp-4); }
+.tj-partner-picker-title {
+  font-size: var(--fs-micro);
+  color: var(--c-text-3);
+  margin-bottom: var(--sp-2);
+}
+.tj-partner-list { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.tj-partner-chip {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 40px;
+  padding: 7px 30px 7px 12px;
+  border: 1px solid var(--c-border-2);
+  border-radius: 999px;
+  background: var(--c-surface);
+  color: var(--c-text);
+  font-family: var(--sf);
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+.tj-partner-chip:hover { background: var(--c-surface-3); border-color: var(--c-border-3); }
+.tj-partner-name  { font-size: var(--fs-sm); font-weight: 500; }
+.tj-partner-meta  { font-size: var(--fs-micro); color: var(--c-text-3); }
+.tj-partner-score {
+  font-size: var(--fs-micro); font-weight: 600;
+  color: var(--c-accent-text);
+  background: var(--c-accent-soft);
+  border-radius: 999px; padding: 2px 7px;
+  font-variant-numeric: tabular-nums;
+}
+.tj-partner-del {
+  position: absolute; right: 6px; top: 50%;
+  width: 20px; height: 20px; margin-top: -10px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  color: var(--c-text-4); font-size: 14px; line-height: 1;
+}
+.tj-partner-del:hover { background: var(--c-surface-4); color: var(--c-text); }
+
+/* 合盘结果底部操作条：与日签保持同一形态 */
+.tj-sign-actions { display: flex; gap: var(--sp-2); margin-top: var(--sp-4); }
+.tj-sign-actions button { flex: 1; min-height: 44px; border-radius: 10px !important; font: 500 var(--fs-sm) var(--sf); cursor: pointer; }
+.tj-sign-share {
+  background: var(--c-accent) !important; border: 1px solid var(--c-accent) !important;
+  color: var(--c-on-accent) !important;
+}
+.tj-sign-share:hover { background: var(--c-accent-hover) !important; }
+.tj-sign-refresh {
+  background: transparent !important; border: 1px solid var(--c-border-2) !important;
+  color: var(--c-text-2) !important;
+}
+.tj-sign-refresh:hover { background: var(--c-surface-3) !important; color: var(--c-text) !important; }
+
+/* 分享兜底弹层：剪贴板不可用时，让用户能手动复制 */
+.tj-share-fallback { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: var(--sp-4); }
+.tj-share-fallback-bg { position: absolute; inset: 0; background: var(--c-overlay); }
+.tj-share-fallback-sheet {
+  position: relative; width: min(420px, 100%);
+  padding: var(--sp-5);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--c-r-lg);
+  box-shadow: var(--c-shadow-3);
+}
+.tj-share-fallback-title { font-size: var(--fs-sm); color: var(--c-text-2); margin-bottom: var(--sp-3); }
+.tj-share-fallback-text {
+  width: 100%; resize: none;
+  font: var(--fs-sm)/1.7 var(--sf);
+  color: var(--c-text);
+  background: var(--c-surface-2) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: 10px !important;
+  padding: var(--sp-3) !important;
+}
+.tj-share-fallback-close {
+  width: 100%; min-height: 44px; margin-top: var(--sp-3);
+  border-radius: 10px !important;
+  background: var(--c-accent) !important; border: 1px solid var(--c-accent) !important;
+  color: var(--c-on-accent) !important; font: 500 var(--fs-sm) var(--sf); cursor: pointer;
+}
