@@ -327,3 +327,6 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
 }
 /* 主题按钮的图标略小，与相邻保存图标视觉等重 */
 .theme-toggle svg { width: 17px; height: 17px; }
+
+/* 合盘结果：条目内的 <strong> 保持内联强调，避免 <b> 被块级化后断句 */
+.tj-result-list span strong { font-weight: 600; color: var(--c-text); }

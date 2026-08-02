@@ -7,6 +7,7 @@ import { mkZw } from './engines/ziwei.js';
 import { mkQm } from './engines/qimen.js';
 import { mkMh } from './engines/meihua.js';
 import { mkSi } from './engines/sizhi.js';
+import { calcSynastry } from './engines/synastry.js';
 import { TJ } from './state/tj.js';
 import { getCtx } from './state/context.js';
 import { toolPageShell, setToolOutput } from './tools/shared.js';
@@ -713,11 +714,11 @@ function toggleUserMode(){setUserMode(document.body.classList.contains('beginner
   answerbook:{k:'灵感与娱乐',icon:'?',title:'答案之书',desc:'把一个问题写下来，翻开一句简短答案，作为整理思路的提示。它不是预测，也不能替代你的判断。',fields:[['question','你的问题','textarea','例如：我现在适合开始这件事吗？'],['mode','回答方式','select',['直接回答','行动提醒','自我探索']]]},
   lottery:{k:'灵感与娱乐',icon:'◎',title:'娱乐选号',desc:'纯随机生成，不预测中奖，不使用命盘制造确定性。',fields:[['type','玩法','select',['双色球','超级大乐透']],['count','注数','select',['1','3','5']]]},
   zodiac:{k:'关系与沟通',icon:'♧',title:'生肖合冲分析',desc:'只作为传统文化参考，真正决定关系质量的是边界、沟通和共同目标。',fields:[['other','对方生肖','select','鼠牛虎兔龙蛇马羊猴鸡狗猪'.split('')],['scene','关系场景','select',['亲密关系','朋友合作','家人沟通']]]},
-  relation:{k:'关系与沟通',icon:'♡',title:'关系沟通方案',desc:'不再只给“合不合”，而是输出下一次沟通可以直接使用的方案。',fields:[['focus','关系类型','select',['亲密关系','朋友合作','家人沟通']],['issue','当前卡点','textarea','例如：对方不回复、分工不清、总是争吵'],['goal','希望改善','text','例如：把需求说清楚']]}
+  relation:{k:'关系与沟通',icon:'♡',title:'八字合盘 · 关系分析',desc:'为对方真实排盘，比对日主、五行与干支关系，并给出可直接使用的沟通方案。',fields:[['focus','关系类型','select',['亲密关系','朋友合作','家人沟通']],['bdate','对方出生日期（可不填）','date',''],['bhour','对方出生时辰','select',['时辰不详 · 用三柱比对','子 23:00–00:59','丑 01:00–02:59','寅 03:00–04:59','卯 05:00–06:59','辰 07:00–08:59','巳 09:00–10:59','午 11:00–12:59','未 13:00–14:59','申 15:00–16:59','酉 17:00–18:59','戌 19:00–20:59','亥 21:00–22:59']],['issue','当前卡点','textarea','例如：对方不回复、分工不清、总是争吵'],['goal','希望改善','text','例如：把需求说清楚']]}
  };
  const val=id=>{const e=document.getElementById('v3_'+id);return e?e.value.trim():''};
  function esc(x){return String(x||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
- function field(f){let [id,label,type,extra]=f;let body=type==='select'?'<select id="v3_'+id+'">'+extra.map(x=>'<option>'+esc(x)+'</option>').join('')+'</select>':type==='textarea'?'<textarea id="v3_'+id+'" placeholder="'+esc(extra)+'"></textarea>':'<input id="v3_'+id+'" type="'+type+'" placeholder="'+esc(extra)+'">';return '<div class="tj-field"><label for="v3_'+id+'">'+label+'</label>'+body+'</div>';}
+ function field(f){let [id,label,type,extra]=f;const optAttr=(id==='bdate')?' data-optional="1"':'';let body=type==='select'?'<select id="v3_'+id+'">'+extra.map(x=>'<option>'+esc(x)+'</option>').join('')+'</select>':type==='textarea'?'<textarea id="v3_'+id+'" placeholder="'+esc(extra)+'"></textarea>':'<input id="v3_'+id+'" type="'+type+'" placeholder="'+esc(extra)+'"'+optAttr+'>';return '<div class="tj-field"><label for="v3_'+id+'">'+label+'</label>'+body+'</div>';}
  function base(type){const t=T[type];return '<div class="tj-tool-v3"><div class="tj-tool-intro"><div class="tj-tool-kicker">'+t.k+' · 问问大师工具</div><div class="tj-tool-title">'+t.icon+' '+t.title+'</div><div class="tj-tool-desc">'+t.desc+'</div></div><div class="tj-fields">'+t.fields.map(field).join('')+'</div><button class="tj-submit" onclick="TJToolRun(\''+type+'\')">生成我的方案</button><div class="tj-result" id="v3_result"></div><div class="tj-disclaimer">结果用于整理思路与行动规划，不构成投资、医疗、法律或职业确定性判断。</div></div>';}
  const chartTools=new Set(['wealth','career','date','style','layoff','name','zodiac','relation']);
  function result(title,body,score){const e=document.getElementById('v3_result'),d=window._ctx||window._baziData||{},wx=d.wx||{},chart=chartTools.has(window._activeTool)?'<div class="tj-chart-basis"><b>✦ 命盘依据</b><div><span>日主</span><strong>'+(d.dg||'—')+'</strong><span>有利方向</span><strong>'+(wx.ys||'—')+'</strong><span>事业评分</span><strong>'+(d.cs||'—')+'/100</strong><span>财富评分</span><strong>'+(d.ws||'—')+'/100</strong></div><p>以上信息用于校正工具建议的节奏与侧重点；现实信号、个人选择和专业意见优先。</p></div>':' ';e.innerHTML='<div class="tj-result-head"><div class="tj-result-title">'+title+'</div>'+(score?'<div class="tj-score">'+score+'</div>':'')+'</div><div class="tj-result-body">'+body+'</div>'+chart;e.classList.add('show');e.scrollIntoView({behavior:'smooth',block:'nearest'});}
@@ -736,7 +737,41 @@ function toggleUserMode(){setUserMode(document.body.classList.contains('beginner
   if(type==='oracle'){let p=['先做最小的一步，再观察反馈。','信息未齐时，暂缓承诺更稳妥。','把期待说清楚，避免用猜测代替沟通。','保持节奏，答案会在行动中出现。'];result('三段式启示','问题：<strong>'+esc(val('question')||'你的问题')+'</strong>。<div class="tj-result-list"><div><b>当下</b><span>'+p[Math.floor(Math.random()*p.length)]+'</span></div><div><b>行动</b><span>'+p[Math.floor(Math.random()*p.length)]+'</span></div><div><b>提醒</b><span>'+p[Math.floor(Math.random()*p.length)]+'</span></div></div>');return}
   if(type==='lottery'){let n=+val('count')||1,red=()=>Array.from({length:6},()=>Math.floor(Math.random()*33)+1).filter((x,i,a)=>a.indexOf(x)===i).sort((a,b)=>a-b).slice(0,6).map(x=>String(x).padStart(2,'0')).join(' · ');result('随机组合','玩法：<strong>'+val('type')+'</strong>。<div class="tj-result-list">'+Array.from({length:n},(_,i)=>'<div><b>第'+(i+1)+'注</b><span>红球 '+red()+'　蓝球 '+String(Math.floor(Math.random()*16)+1).padStart(2,'0')+'</span></div>').join('')+'</div>');return}
   if(type==='zodiac'){let self=d.b&&d.b.sx||'本命生肖',other=val('other'),same=self===other;result('相处提醒', '你：<strong>'+self+'</strong>，对方：<strong>'+other+'</strong>。<div class="tj-result-list"><div><b>观察重点</b><span>'+(same?'相似处容易形成共鸣，也可能在相同固执点上拉扯。':'先观察价值观、边界和现实配合，不以生肖单独下结论。')+'</span></div><div><b>沟通建议</b><span>把分工、时间和期待说清楚，减少“你应该懂”的猜测。</span></div></div>');return}
-  if(type==='relation'){result('下一次沟通脚本','关系类型：<strong>'+val('focus')+'</strong>。<div class="tj-result-list"><div><b>开场</b><span>“我想把这件事说清楚，不是为了争输赢，而是希望我们更好配合。”</span></div><div><b>表达</b><span>描述事实 → 说出感受 → 提出一个具体请求：'+esc(val('goal'))+'</span></div><div><b>边界</b><span>如果现在不适合沟通，约定一个明确的回看时间，而不是无限等待。</span></div></div>');return}
+  if(type==='relation'){
+   const focus=val('focus'),bdate=val('bdate'),bhour=val('bhour');
+   const scriptHtml='<div class="tj-result-list"><div><b>开场</b><span>“我想把这件事说清楚，不是为了争输赢，而是希望我们更好配合。”</span></div><div><b>表达</b><span>描述事实 → 说出感受 → 提出一个具体请求：'+esc(val('goal'))+'</span></div><div><b>边界</b><span>如果现在不适合沟通，约定一个明确的回看时间，而不是无限等待。</span></div></div>';
+   if(!bdate){result('下一次沟通脚本','关系类型：<strong>'+esc(focus)+'</strong>。填写对方出生日期后，可在此基础上加入真实合盘比对。'+scriptHtml);return}
+   const me=window._ctx||window._baziData;
+   if(!me||!me.b){showToast('请先完成个人推演');return}
+   const [py,pm,pd]=bdate.split('-').map(Number);
+   if(!py||!pm||!pd){showToast('出生日期格式有误');return}
+   const hourIdx=(!bhour||bhour.indexOf('不详')>=0)?null:'子丑寅卯辰巳午未申酉戌亥'.indexOf(bhour.charAt(0));
+   let r;
+   try{r=calcSynastry({myChart:me.b,myPillars:['Y','M','D','H'],myYongShen:me.wx.ys,partner:{y:py,m:pm,d:pd,hourZhi:(hourIdx===null||hourIdx<0)?null:hourIdx}});}
+   catch(e){console.error('synastry failed',e);showToast('合盘计算失败，请检查输入');return}
+   const pbc=r.partnerChart;
+   const partnerGZ=r.partnerPillars.map(k=>pbc[k].g+pbc[k].z).join(' ');
+   const myGZ=[me.b.Y,me.b.M,me.b.D,me.b.H].map(x=>x.g+x.z).join(' ');
+   const lab=r.score>=80?'契合度高':r.score>=65?'整体顺畅':r.score>=50?'有合有冲':r.score>=35?'需要磨合':'差异明显';
+   const dp=r.dayPair,dn=[];
+   if(dp.same)dn.push('双方<strong>日柱相同</strong>，价值观与节奏高度接近，容易一拍即合，也容易同时陷入同一个盲区。');
+   if(dp.heZhi)dn.push('<strong>日支六合</strong>——合婚中最被看重的一项，日常相处自然合拍。');
+   if(dp.heGan)dn.push('<strong>日干相合</strong>，表达与决策方式容易同步。');
+   if(dp.chongZhi)dn.push('<strong>日支相冲</strong>，夫妻宫直接对冲：不代表不合适，但生活习惯差别大，需要明确规则而非靠默契。');
+   if(dp.chongGan)dn.push('<strong>日干相冲</strong>，容易在观点上针锋相对。');
+   if(dp.haiZhi)dn.push('<strong>日支相害</strong>，易因小事累积不满，要有及时说开的习惯。');
+   let H='<div class="tj-result-meta"><span>'+esc(focus)+'</span><span>'+lab+'</span><span>'+r.counts.he+' 合 / '+r.counts.chong+' 冲'+(r.counts.other?' / '+r.counts.other+' 刑害':'')+'</span><span>'+(r.precision==='full'?'四柱':'三柱')+'</span></div>';
+   H+='<div class="tj-result-list"><div><b>双方命盘</b><span>你：'+myGZ+'<br>对方：'+partnerGZ+(r.precision==='day'?'（时辰不详）':'')+'</span></div>';
+   H+='<div><b>日主关系 · '+r.dm.myDayGan+' 见 '+r.dm.theirDayGan+'（'+r.dm.ss+'）</b><span>'+r.dm.title+'　'+r.dm.desc+'</span></div>';
+   if(dn.length)H+='<div><b>夫妻宫（日柱）</b><span>'+dn.join('<br>')+'</span></div>';
+   H+='<div><b>五行互补 · 你的用神「'+r.comp.yongShen+'」</b><span>'+r.comp.text+'</span></div>';
+   if(r.positives.length)H+='<div><b>相合之处</b><span>'+r.positives.slice(0,4).map(h=>'· '+h.text+'（'+h.where+'）').join('<br>')+'</span></div>';
+   if(r.frictions.length)H+='<div><b>需要留意</b><span>'+r.frictions.slice(0,4).map(h=>'· '+h.text+'（'+h.where+'）').join('<br>')+'</span></div>';
+   H+='</div>';
+   H+='<div style="margin-top:14px"><b style="font-size:.9em">下一次沟通可以这样开始</b></div>'+scriptHtml;
+   if(r.precision==='day')H+='<div class="tj-disclaimer">未填对方时辰，本次用年月日三柱比对。日柱（夫妻宫）不依赖时辰，仍为精确计算，核心结论成立；缺少的时柱主要影响子女宫与晚年节奏的判断。</div>';
+   H+='<div class="tj-disclaimer">合盘用于理解彼此差异、找到沟通方式，不预测关系结局，也不构成是否开始或结束一段关系的建议。</div>';
+   result('合盘结果 · '+esc(focus),H,r.score);return}
  }
  window.TJAnswerBookAgain=function(){run('answerbook')};
  window.TJAnswerBookSave=function(){const card=document.querySelector('.answer-book-card');if(!card)return;const text=card.querySelector('.answer-book-answer')?.textContent||'';try{const old=JSON.parse(localStorage.getItem('tj_answerbook_saved')||'[]');old.unshift({text,at:Date.now()});localStorage.setItem('tj_answerbook_saved',JSON.stringify(old.slice(0,20)));const b=card.querySelector('.answer-book-actions button:last-child');if(b){b.textContent='♥ 已收藏';b.disabled=true}}catch(e){showToast('暂时无法保存，请稍后再试')}};
@@ -966,7 +1001,7 @@ window.ORACLE_SIGNS = {
  const esc=x=>String(x||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
  function read(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return[]}}
  function save(type){const root=document.getElementById('toolModalContent');const title=root?.querySelector('.tj-tool-title')?.textContent||type;let a=read().filter(x=>x.type!==type);a.unshift({type,title:title.replace(/^\S+\s/,''),at:Date.now()});try{localStorage.setItem(KEY,JSON.stringify(a.slice(0,8)))}catch(e){}}
- function validate(type){const root=document.getElementById('toolModalContent');if(!root)return false;const fields=[...root.querySelectorAll('.tj-field input,.tj-field textarea')];for(const el of fields){if(el.type==='date'&&!el.value){showToast('请先选择目标日期');el.focus();return false}if(el.tagName==='TEXTAREA'&&type!=='oracle'&&type!=='relation'&&type!=='answerbook'&&!el.value.trim()){showToast('请补充具体问题或限制条件');el.focus();return false}}if(type==='wealth'){const income=+document.getElementById('v3_income')?.value,cost=+document.getElementById('v3_cost')?.value;if(!income||cost<0||cost>income*10){showToast('请检查收入与支出数据');return false}}return true}
+ function validate(type){const root=document.getElementById('toolModalContent');if(!root)return false;const fields=[...root.querySelectorAll('.tj-field input,.tj-field textarea')];for(const el of fields){if(el.type==='date'&&!el.value){if(el.dataset.optional==='1')continue;showToast('请先选择目标日期');el.focus();return false}if(el.tagName==='TEXTAREA'&&type!=='oracle'&&type!=='relation'&&type!=='answerbook'&&!el.value.trim()){showToast('请补充具体问题或限制条件');el.focus();return false}}if(type==='wealth'){const income=+document.getElementById('v3_income')?.value,cost=+document.getElementById('v3_cost')?.value;if(!income||cost<0||cost>income*10){showToast('请检查收入与支出数据');return false}}return true}
  function historyHtml(){const a=read();if(!a.length)return '';return '<div class="tj-history"><div class="tj-history-title">最近使用</div>'+a.slice(0,4).map(x=>'<div class="tj-history-item"><span>'+esc(x.title)+'</span><time>'+new Date(x.at).toLocaleDateString('zh-CN')+'</time></div>').join('')+'</div>'}
  function addMeta(type){const result=document.querySelector('#toolModalContent .tj-result');if(!result||result.querySelector('.tj-result-meta'))return;const meta=document.createElement('div');meta.className='tj-result-meta';meta.innerHTML='<span>已完成分析</span><span>结果仅供决策参考</span>';result.insertBefore(meta,result.firstChild);const hist=document.createElement('div');hist.innerHTML=historyHtml();result.appendChild(hist.firstElementChild||hist)}
  const oldRun=window.TJToolRun;

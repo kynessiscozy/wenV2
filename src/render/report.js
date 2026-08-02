@@ -6,6 +6,7 @@ import { getCtx } from '../state/context.js';
 import { buildContext } from '../state/context.js';
 import { getLayoffAstroRisk } from '../ai/risk.js';
 import { showToast } from '../ui/toast.js';
+import { calcSynastry } from '../engines/synastry.js';
 
 export function getPersona(dg,wx,st,ss){const P={甲:{思维:'目标导向，擅长搭建框架',情绪:'直来直去，不喜绕弯',人际:'领袖型，易成核心',决策:'果断，但易武断',压力:'目标未达成时焦躁'},乙:{思维:'灵活变通，善于借力',情绪:'细腻敏感，易内耗',人际:'润滑剂型，人缘好',决策:'犹豫但周全',压力:'被否定、被忽视时低落'},丙:{思维:'发散创意，喜新厌旧',情绪:'来得快去得快',人际:'阳光型，感染力强',决策:'凭直觉，敢赌',压力:'无聊、被束缚时崩溃'},丁:{思维:'深度钻研，追根究底',情绪:'内敛深沉，积压型',人际:'少而精，重质量',决策:'谨慎，谋定后动',压力:'不确定性、失控感'},戊:{思维:'务实落地，重可行性',情绪:'稳定迟缓，不易波动',人际:'可靠型，但略显沉闷',决策:'保守，厌恶风险',压力:'变动频繁、计划被打乱'},己:{思维:'调和矛盾，八面玲珑',情绪:'隐忍包容，自我消化',人际:'老好人，边界模糊',决策:'折中，和稀泥',压力:'冲突场面、被当工具人'},庚:{思维:'逻辑清晰，黑白分明',情绪:'刚硬直接，易冲突',人际:'义气型，兄弟多',决策:'快刀斩乱麻',压力:'不公平、被算计时暴怒'},辛:{思维:'精致挑剔，追求细节',情绪:'含蓄压抑，表面冷静',人际:'高冷型，慢热',决策:'反复比较，宁缺毋滥',压力:'粗制滥造、审美被毁'},壬:{思维:'宏观视野，系统思考',情绪:'随境而转，适应力强',人际:'广泛交际，三教九流',决策:'顺势而为，灵活调整',压力:'被困住、重复枯燥时抑郁'},癸:{思维:'洞察人心，直觉敏锐',情绪:'深沉暗涌，不易外露',人际:'倾听者型，易成知己',决策:'凭感觉，重视精神契合',压力:'被误解、精神孤立时低落'}};const base=P[dg]||P['甲'];const mode=st?'（偏主动型）':'（偏内敛型）';return{思维:base.思维+mode,情绪:base.情绪,人际:base.人际,决策:base.决策,压力:base.压力};}
 export function getTimeline(dy,by,wx,b,dg,gen,age){
@@ -396,9 +397,9 @@ export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue
   </div>`;
   H+=`<div class="cta-row" style="margin-top:8px"><button class="cta" style="padding:12px 28px;font-size:.92em;letter-spacing:1px" onclick="calcLayoffRisk()">开始检测</button></div><div id="layoffResult" aria-live="polite"></div><div class="layoff-disclaimer">本工具用于风险筛查与行动规划，不构成法律、职业或投资建议；若已收到正式通知，请以劳动合同和当地法律为准。</div></div>`;
 
-  H+=`<div class="glass card-1" data-card="relAi"><div class="card-hd"><div class="card-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="card-tt">AI 关系分析</div><div class="card-st">输入对方信息，查看相处节奏与长期稳定性</div></div></div>`;
-  H+=`<div class="hh-form" id="relForm"><div><div class="fd" style="margin-bottom:10px"><label>对方出生日期</label><input type="date" id="rDate" value="1992-08-20"></div><div class="fd" style="margin-bottom:10px"><label>对方出生时间</label><input type="time" id="rTime" value="06:00" style="font-family:var(--sf)"></div><div class="fd" style="margin-bottom:10px"><label>对方性别</label><select id="rGen"><option value="male">男</option><option value="female" selected>女</option></select></div></div></div>`;
-  H+=`<div class="cta-row" style="margin-top:10px"><button class="cta" style="padding:12px 28px;font-size:.95em;letter-spacing:1px" onclick="calcRelation()">开始分析</button></div>`;
+  H+=`<div class="glass card-1" data-card="relAi"><div class="card-hd"><div class="card-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="card-tt">八字合盘</div><div class="card-st">为对方真实排盘，逐柱比对日主、五行与干支关系</div></div></div>`;
+  H+=`<div class="hh-form" id="relForm"><div><div class="fd" style="margin-bottom:10px"><label>对方出生日期</label><input type="date" id="rDate" value="1992-08-20"></div><div class="fd" style="margin-bottom:10px"><label>对方出生时辰（可不填）</label><select id="rHour"><option value="">时辰不详 · 用三柱比对</option><option value="0">子 23:00–00:59</option><option value="1">丑 01:00–02:59</option><option value="2">寅 03:00–04:59</option><option value="3">卯 05:00–06:59</option><option value="4">辰 07:00–08:59</option><option value="5">巳 09:00–10:59</option><option value="6">午 11:00–12:59</option><option value="7">未 13:00–14:59</option><option value="8">申 15:00–16:59</option><option value="9">酉 17:00–18:59</option><option value="10">戌 19:00–20:59</option><option value="11">亥 21:00–22:59</option></select></div></div></div>`;
+  H+=`<div class="cta-row" style="margin-top:10px"><button class="cta" style="padding:12px 28px;font-size:.95em;letter-spacing:1px" onclick="calcRelation()">开始合盘</button></div>`;
   H+=`<div id="relResult" style="margin-top:10px"></div></div>`;
   H+=`</div>`;
 
@@ -601,10 +602,13 @@ export function organizeMasterReportLayout(ctx){
     const family=document.createElement('section');family.className='glass card-1 relation-profile';family.dataset.card='family';
     family.innerHTML='<div class="card-hd"><div class="card-ic">⌂</div><div><div class="card-tt">亲人关系</div><div class="card-st">家庭互动、责任感与更舒服的沟通方式</div></div></div><div class="relation-block"><div><span>家庭互动</span><b>'+((ctx.wx.st)?'你容易承担家庭中的责任与期待，也会希望自己的决定被理解。':'你很在意家庭氛围与亲人的感受，习惯先照顾整体和谐。')+'</b></div></div><div class="relation-grid"><div><span>相处优势</span><p>重视情义和长期陪伴，遇到重要事情愿意为家人投入时间。</p></div><div><span>成长课题</span><p>'+((ctx.wx.st)?'练习在承担之前先沟通边界，不必独自解决所有问题。':'练习直接表达自己的想法，不必为了和气一直压下需求。')+'</p></div></div><div class="relation-data"><span>命盘依据</span><b>印星（长辈 / 支持）：'+familyPos+'</b><b>月令状态：'+ctx.si.s+'令 · '+ctx.si.st+'</b><b>当前健康评分：'+ctx.hs+' / 100</b></div><div class="relation-tip">沟通建议：谈重要议题时先确认彼此关心的目标，再讨论具体做法，减少“谁对谁错”的拉扯。</div>';
     // 旧关系工具不纳入新的四段式主阅读流，保留数据但不干扰本页结构。
-    rel.querySelectorAll('[data-card="loveMode"],[data-card="loveMatch"],[data-card="loveRisk"],[data-card="layoffRisk"],[data-card="relAi"]').forEach(el=>el.remove());
+    // 旧关系工具不纳入四段式主阅读流；但「八字合盘」是真实排盘功能，保留并置于画像之后。
+    rel.querySelectorAll('[data-card="loveMode"],[data-card="loveMatch"],[data-card="loveRisk"],[data-card="layoffRisk"]').forEach(el=>el.remove());
+    const relAiCard=rel.querySelector('[data-card="relAi"]');
     const anchor=rel.querySelector('.beginner-brief')||rel.querySelector('.qr-card');
     if(anchor)anchor.insertAdjacentElement('afterend',profile);else rel.prepend(profile);
     profile.insertAdjacentElement('afterend',friends);friends.insertAdjacentElement('afterend',family);
+    if(relAiCard)family.insertAdjacentElement('afterend',relAiCard);
   }
 }
 export function switchStructureTab(btn){
@@ -682,32 +686,51 @@ export function buildAISummary(b,wx,ss,dy,ln,pa,P,gen,si,age){
 
 export function calcRelation(){
   const d=window._baziData;if(!d)return;
-  const rd=document.getElementById('rDate').value,rt=document.getElementById('rTime').value||'06:00',rg=document.getElementById('rGen').value;
+  const rd=document.getElementById('rDate').value;
   if(!rd)return showToast('请填写对方出生日期');
-  const [y2,m2,d02]=rd.split('-').map(Number),[hh2,mm2]=rt.split(':').map(Number);
-  const r2=resolveBirthDateTime(y2,m2,d02,hh2,mm2,false);
-  const b2=mkBazi(r2.year,r2.month,r2.day,r2.hourZhi);
-  const wx2=mkWx(b2),ss2=mkSs(b2);
-  let score=65,notes=[];
-  const sxMatch={鼠:'牛',牛:'鼠',虎:'猪',猪:'虎',兔:'狗',狗:'兔',龙:'鸡',鸡:'龙',蛇:'猴',猴:'蛇',马:'羊',羊:'马'};
-  const sxChong={鼠:'马',马:'鼠',牛:'羊',羊:'牛',虎:'猴',猴:'虎',兔:'鸡',鸡:'兔',龙:'狗',狗:'龙',蛇:'猪',猪:'蛇'};
-  if(sxMatch[d.b.sx]===b2.sx){score+=10;notes.push('生肖相合，属相投缘');}
-  else if(sxChong[d.b.sx]===b2.sx){score-=8;notes.push('生肖相冲，需更多包容');}
-  const dg1=d.b.D.g,dg2=b2.D.g;
-  const ganHe={'甲':'己','己':'甲','乙':'庚','庚':'乙','丙':'辛','辛':'丙','丁':'壬','壬':'丁','戊':'癸','癸':'戊'};
-  if(ganHe[dg1]===dg2){score+=8;notes.push('日干天合，精神契合度高');}
-  const w1s=Object.entries(d.wx.c).sort((a,b)=>b[1]-a[1])[0][0],w1w=Object.entries(d.wx.c).sort((a,b)=>a[1]-b[1])[0][0];
-  const w2s=Object.entries(wx2.c).sort((a,b)=>b[1]-a[1])[0][0],w2w=Object.entries(wx2.c).sort((a,b)=>a[1]-b[1])[0][0];
-  if(w1s===w2w||w2s===w1w){score+=6;notes.push('五行互补，如天作之合');}
-  score=Math.max(30,Math.min(99,score));
-  const grade=score>=85?'上婚（极佳）':score>=70?'中婚（良好）':score>=55?'下婚（一般）':'需慎重';
-  const gColor=score>=85?'var(--c-green)':score>=70?'var(--c-yellow)':score>=55?'var(--c-orange)':'var(--c-red)';
-  let H=`<div class="glass card-2"><div class="card-hd"><div class="card-ic">💞</div><div><div class="card-tt">AI 关系分析结果</div></div></div>`;
-  H+=`<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px"><div style="flex:1"><div style="font-size:1.8em;font-weight:700;color:${gColor}">${score}分</div><div style="font-size:.78em;color:var(--c-text-3)">${grade}</div></div><div style="flex:2"><div class="hh-bar"><div class="hh-fill" style="width:0%;background:${gColor}" data-w="${score}%"></div></div></div></div>`;
-  H+=`<div style="font-size:.82em;line-height:1.8;color:var(--c-text-2)">${notes.map(t=>`· ${t}`).join('<br>')}</div>`;
-  H+=`<div class="at"><h4>相处节奏</h4><p>${d.gen==='male'?'男方':'女方'}日主${dg1}，${d.gen==='male'?'女方':'男方'}日主${dg2}。${ganHe[dg1]===dg2?'双方天干相合，初期吸引力强，相处节奏偏快':'双方天干无明显合冲，相处节奏循序渐进，需时间磨合'}。</p>`;
-  H+=`<h4>冲突点</h4><p>${sxChong[d.b.sx]===b2.sx?'生肖相冲，价值观与生活习惯差异较大，遇事容易对立':'无明显生肖冲克，冲突多来自沟通方式而非本质矛盾'}。</p>`;
-  H+=`<h4>长期稳定性</h4><p>综合评分<span class="hl">${score}分</span>，属于<span class="hl">${grade}</span>。${score>=70?'长期稳定性良好，若能共同经营，白头偕老概率高':'需要双方持续投入经营，通过五行互补与环境调和可大幅提升稳定性'}。</p></div></div>`;
+  const hourSel=document.getElementById('rHour')?document.getElementById('rHour').value:'';
+  const [y2,m2,d02]=rd.split('-').map(Number);
+  if(!y2||!m2||!d02)return showToast('出生日期格式有误');
+  const hourZhi=(hourSel===''||hourSel==null)?null:Number(hourSel);
+
+  let r;
+  try{
+    r=calcSynastry({myChart:d.b,myPillars:['Y','M','D','H'],myYongShen:d.wx.ys,
+                    partner:{y:y2,m:m2,d:d02,hourZhi}});
+  }catch(e){console.error('synastry failed',e);return showToast('合盘计算失败');}
+
+  const label=r.score>=80?'契合度高':r.score>=65?'整体顺畅':r.score>=50?'有合有冲':r.score>=35?'需要磨合':'差异明显';
+  const gColor=r.score>=80?'var(--c-green)':r.score>=65?'var(--c-teal)':r.score>=50?'var(--c-yellow)':r.score>=35?'var(--c-orange)':'var(--c-red)';
+  const pb=r.partnerChart;
+  const partnerGZ=r.partnerPillars.map(k=>pb[k].g+pb[k].z).join(' ');
+
+  let H=`<div class="glass card-2"><div class="card-hd"><div class="card-ic">合</div><div><div class="card-tt">八字合盘结果</div><div class="card-st">日主 · 五行互补 · 干支刑冲合害</div></div></div>`;
+  H+=`<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px"><div style="flex:1"><div style="font-size:1.8em;font-weight:600;color:${gColor}">${r.score}<span style="font-size:.5em">分</span></div><div style="font-size:.78em;color:var(--c-text-3)">${label}</div></div><div style="flex:2"><div class="hh-bar"><div class="hh-fill" style="width:0%;background:${gColor}" data-w="${r.score}%"></div></div><div style="font-size:.72em;color:var(--c-text-3);margin-top:6px">${r.counts.he} 处相合 · ${r.counts.chong} 处相冲${r.counts.other?' · '+r.counts.other+' 处刑害':''}</div></div></div>`;
+
+  H+=`<div class="ig" style="margin-bottom:10px">`+
+     [['你的四柱',[d.b.Y,d.b.M,d.b.D,d.b.H].map(x=>x.g+x.z).join(' ')],
+      [r.precision==='full'?'对方四柱':'对方三柱',partnerGZ+(r.precision==='day'?'（时辰不详）':'')]]
+     .map(x=>`<div class="ii"><div class="il">${x[0]}</div><div class="iv">${x[1]}</div></div>`).join('')+`</div>`;
+
+  H+=`<div class="at"><h4>日主关系 · ${r.dm.myDayGan} 见 ${r.dm.theirDayGan}（${r.dm.ss}）</h4><p><span class="hl">${r.dm.title}</span>　${r.dm.desc}</p>`;
+
+  const dp=r.dayPair,dn=[];
+  if(dp.same)dn.push('双方<span class="hl">日柱相同</span>，价值观与节奏高度接近，容易一拍即合，也容易同时陷入同一个盲区。');
+  if(dp.heZhi)dn.push('<span class="hl">日支六合</span>——合婚中最被看重的一项，日常相处自然合拍。');
+  if(dp.heGan)dn.push('<span class="hl">日干相合</span>，表达与决策方式容易同步。');
+  if(dp.chongZhi)dn.push('<span class="hl">日支相冲</span>，夫妻宫直接对冲：不代表不合适，但生活习惯差别大，需要明确规则而非靠默契。');
+  if(dp.chongGan)dn.push('<span class="hl">日干相冲</span>，容易在观点上针锋相对。');
+  if(dp.haiZhi)dn.push('<span class="hl">日支相害</span>，易因小事累积不满，要有及时说开的习惯。');
+  if(dn.length)H+=`<h4>夫妻宫（日柱）</h4><p>${dn.join('<br>')}</p>`;
+
+  H+=`<h4>五行互补 · 你的用神「${r.comp.yongShen}」</h4><p>${r.comp.text}</p>`;
+
+  if(r.positives.length)H+=`<h4>相合之处</h4><p>${r.positives.slice(0,4).map(h=>'· '+h.text+'（'+h.where+'）').join('<br>')}</p>`;
+  if(r.frictions.length)H+=`<h4>需要留意</h4><p>${r.frictions.slice(0,4).map(h=>'· '+h.text+'（'+h.where+'）').join('<br>')}</p>`;
+
+  if(r.precision==='day')H+=`<h4>关于精度</h4><p>未填对方时辰，本次用<span class="hl">年月日三柱</span>比对。日柱（夫妻宫）不依赖时辰，仍为精确计算，核心结论成立；缺少的时柱主要影响子女宫与晚年节奏的判断。</p>`;
+
+  H+=`</div><div class="layoff-disclaimer">合盘用于理解彼此差异、找到沟通方式，不预测关系结局，也不构成是否开始或结束一段关系的建议。</div></div>`;
   document.getElementById('relResult').innerHTML=H;
   requestAnimationFrame(()=>{document.querySelectorAll('.hh-fill').forEach(el=>setTimeout(()=>el.style.width=el.dataset.w,150));});
 }

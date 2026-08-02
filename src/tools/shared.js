@@ -22,7 +22,7 @@ const TOOL_NAMES = {
   layoff: '裁员风险检测', daily: '今日日签',
   name: '智能起名工具', oracle: '摇签问卜',
   lottery: '双色球 / 超级大乐透', zodiac: '生肖合冲分析',
-  relation: 'AI 关系分析',
+  relation: '八字合盘 · 关系分析',
 };
 
 /**
