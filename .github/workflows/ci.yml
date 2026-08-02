@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── 1. 构建 + 纯 Node 单测（快，不需要浏览器）────────────────
+  build-and-unit:
+    name: 构建与引擎单测
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # 仓库未提交 package-lock.json，用 install 而非 ci
+      - name: 安装依赖（跳过 Chrome 下载）
+        run: npm install
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+
+      - name: 构建
+        run: npm run build
+
+      - name: 引擎单测（流日 / 合盘）
+        run: npm run test:unit
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
+
+  # ── 2. 端到端 + 可访问性（需要 Chrome）────────────────────────
+  e2e:
+    name: 端到端与对比度
+    runs-on: ubuntu-latest
+    needs: build-and-unit
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 安装依赖（含 Chrome）
+        run: npm install
+
+      - name: 安装 Chrome 运行库
+        run: npx puppeteer browsers install chrome --install-deps
+
+      - name: 构建
+        run: npm run build
+
+      # vite preview 会按 base 提供 /wenV2/ 路径
+      # 用轮询代替 wait-on，避免为一个等待工具引入额外依赖
+      - name: 启动预览服务
+        run: |
+          npx vite preview --port 4173 --host 127.0.0.1 &
+          for i in $(seq 1 60); do
+            if curl -sf -o /dev/null http://127.0.0.1:4173/wenV2/; then
+              echo "预览服务已就绪（${i}s）"; exit 0
+            fi
+            sleep 1
+          done
+          echo "预览服务启动超时"; exit 1
+
+      - name: 端到端测试
+        run: npm run test:e2e
+        env:
+          BASE_URL: http://127.0.0.1:4173/wenV2/
+
+      - name: 对比度审计（WCAG AA）
+        run: npm run test:a11y
+        env:
+          BASE_URL: http://127.0.0.1:4173/wenV2/
+
+      - name: 截图留档
+        if: always()
+        run: |
+          mkdir -p screenshots
+          BASE_URL=http://127.0.0.1:4173/wenV2/ OUT=screenshots node tools/shot.mjs || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: screenshots
+          retention-days: 7

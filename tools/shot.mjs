@@ -1,6 +1,7 @@
 import puppeteer from 'puppeteer';
+const BASE=process.env.BASE_URL||'http://localhost:5173/wenV2/';
 
-const BASE = process.env.BASE || 'http://localhost:5173/wenV2/';
+
 const OUT = process.env.OUT || '/tmp/shots';
 const fs = await import('node:fs');
 fs.mkdirSync(OUT, { recursive: true });

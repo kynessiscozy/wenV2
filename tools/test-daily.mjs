@@ -1,9 +1,10 @@
 import puppeteer from 'puppeteer';
+const BASE=process.env.BASE_URL||'http://localhost:5173/wenV2/';
 const b=await puppeteer.launch({headless:'new',args:['--no-sandbox']});
 const p=await b.newPage();await p.setViewport({width:430,height:932,deviceScaleFactor:2});
 const errs=[];p.on('pageerror',e=>errs.push(e.message));
 p.on('console',m=>{if(m.type()==='error'&&!/404/.test(m.text()))errs.push(m.text())});
-await p.goto('http://localhost:5173/wenV2/',{waitUntil:'networkidle0'});
+await p.goto(BASE,{waitUntil:'networkidle0'});
 await new Promise(r=>setTimeout(r,900));
 
 console.log('=== 1. 无档案时不显示今日卡 ===');

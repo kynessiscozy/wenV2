@@ -1,8 +1,9 @@
 import puppeteer from 'puppeteer';
+const BASE=process.env.BASE_URL||'http://localhost:5173/wenV2/';
 const b=await puppeteer.launch({headless:'new',args:['--no-sandbox']});
 const p=await b.newPage();await p.setViewport({width:430,height:932});
 const errs=[];p.on('pageerror',e=>errs.push(e.message));
-await p.goto('http://localhost:5173/wenV2/',{waitUntil:'networkidle0'});
+await p.goto(BASE,{waitUntil:'networkidle0'});
 await new Promise(r=>setTimeout(r,800));
 
 // 1. 生成报告 → 保存档案

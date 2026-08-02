@@ -4,3 +4,6 @@ dist/
 *.local
 .env
 .env.*
+
+# 测试产物
+screenshots/

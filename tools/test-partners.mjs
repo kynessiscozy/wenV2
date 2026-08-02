@@ -1,11 +1,12 @@
 import puppeteer from 'puppeteer';
+const BASE=process.env.BASE_URL||'http://localhost:5173/wenV2/';
 const b=await puppeteer.launch({headless:'new',args:['--no-sandbox']});
 const p=await b.newPage();await p.setViewport({width:430,height:932,deviceScaleFactor:2});
 const errs=[];p.on('pageerror',e=>errs.push(e.message));
 p.on('console',m=>{if(m.type()==='error'&&!/404/.test(m.text()))errs.push(m.text())});
 // 授予剪贴板权限，便于测试分享降级路径
-await b.defaultBrowserContext().overridePermissions('http://localhost:5173',['clipboard-read','clipboard-write']);
-await p.goto('http://localhost:5173/wenV2/',{waitUntil:'networkidle0'});
+await b.defaultBrowserContext().overridePermissions(new URL(BASE).origin,['clipboard-read','clipboard-write']);
+await p.goto(BASE,{waitUntil:'networkidle0'});
 await p.evaluate(()=>window.calc(true));
 await new Promise(r=>setTimeout(r,3600));
 
