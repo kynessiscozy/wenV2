@@ -497,13 +497,15 @@ export function renderBeginnerBrief(sec,d){
   const _dy=d.cDy||null;
   const _dyLabel=_dy?((_dy.g||'')+(_dy.z||'')):'';
   const _dyNote=_dy&&(_dy.as!=null)?`${_dy.as}–${_dy.ae}岁这十年`:'这十年的整体基调';
-  const _cell=(label,value,note,termAttr='')=>
-    `<div><span${termAttr}>${label}</span><b>${value||'—'}</b>${note?`<em class="bb-cell-note">${note}</em>`:''}</div>`;
+  // term：把标签本身做成可点术语，保证新手模式下也有解释入口
+  const _term=t=>`<span class="glossary-term" data-term="${t}" onclick="showGlossPop(event)">${t}</span>`;
+  const _cell=(label,value,note)=>
+    `<div><span>${label}</span><b>${value||'—'}</b>${note?`<em class="bb-cell-note">${note}</em>`:''}</div>`;
   const basicHtml=sec==='ming'?`<div class="beginner-basic">`+
     _cell('生肖',d.b?.sx||'—','')+
-    _cell('我是什么样的人',_dg?_dg+'（'+(GW[_dg]||'')+'）':'—',DG_TRAIT[_dg]||'')+
-    _cell('对我有利的方向',_ys?_ys+'元素':'—',YS_MEANING[_ys]||'')+
-    _cell('当前人生阶段',_dyLabel||'—',_dy?_dyNote:'')+
+    _cell(`我是什么样的人 ${_term('日主')}`,_dg?_dg+'（'+(GW[_dg]||'')+'）':'—',DG_TRAIT[_dg]||'')+
+    _cell(`对我有利的方向 ${_term('用神')}`,_ys?_ys+'元素':'—',YS_MEANING[_ys]||'')+
+    _cell(`当前人生阶段 ${_term('大运')}`,_dyLabel||'—',_dy?_dyNote:'')+
   `</div>`:'';
   return `<div class="beginner-brief"><div class="bb-eyebrow">新手解读报告</div>${basicHtml}<div class="bb-title">${title}</div>${scoreHtml}<div class="bb-row"><div class="bb-label">你现在的状态</div><div class="bb-text">${portrait}</div></div><div class="bb-row"><div class="bb-label">对你有利的方向</div><div class="bb-text">${opportunity}</div></div><div class="bb-row"><div class="bb-label">接下来怎么做</div><div class="bb-text bb-action">${action}</div></div><div class="bb-note">${tip}</div><button class="bb-master" type="button" onclick="setUserMode('master')">查看完整专业依据　→</button></div>`;
 }

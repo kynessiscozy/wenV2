@@ -472,7 +472,10 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
   /* 触控目标：中文字号偏小，扩大可点区域 */
   -webkit-tap-highlight-color: color-mix(in srgb, var(--c-accent) 18%, transparent);
 }
-.glossary-term::after {
+/* 问号只加在「每张卡片的第一个术语」上：
+   大师模式一屏可有 10+ 个术语，全部加问号会变成视觉噪音。
+   其余术语靠虚线下划线 + 强调色即可辨识。 */
+.glossary-term.has-hint::after {
   content: '?';
   display: inline-flex;
   align-items: center; justify-content: center;
@@ -534,4 +537,44 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
 /* 四列在窄屏挤成两列，保证每格能放下一句说明 */
 @media (max-width: 480px) {
   .beginner-basic { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ---------- 15. 「这段是什么意思」入口 ---------- */
+#page2 [data-card], #page2 .beginner-brief { position: relative; }
+.explain-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: var(--sp-3);
+  min-height: 34px; padding: 0 12px;
+  border: 1px dashed var(--c-border-2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--c-text-3);
+  font: 500 var(--fs-micro) var(--sf);
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.explain-btn::before {
+  content: '?';
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--c-accent-soft); color: var(--c-accent-text);
+  font-size: 9px; font-weight: 700;
+}
+.explain-btn:hover {
+  background: var(--c-accent-soft);
+  border-color: color-mix(in srgb, var(--c-accent) 40%, transparent);
+  border-style: solid;
+  color: var(--c-accent-text);
+}
+
+/* 新手首屏标签：术语与标签同行显示，避免括号被换行拆散 */
+.beginner-basic > div > span {
+  display: block;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+.beginner-basic > div > span .glossary-term {
+  display: inline-block;
+  margin-left: 2px;
+  white-space: nowrap;
 }

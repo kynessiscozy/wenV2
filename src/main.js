@@ -10,6 +10,7 @@ import { mkSi } from './engines/sizhi.js';
 import { calcSynastry } from './engines/synastry.js';
 import { shareSynastry, saveSynastryPartner, partnerPickerHtml, bindPartnerPicker, listPartners } from './tools/synastry-share.js';
 import { calcLiuRi, buildDailyCopy, dailyOneLiner } from './engines/liuri.js';
+import { buildExplainQuestion, extractSection, chartFacts } from './ai/explain.js';
 import { TJ } from './state/tj.js';
 import { getCtx } from './state/context.js';
 import { toolPageShell, setToolOutput } from './tools/shared.js';
@@ -559,6 +560,8 @@ const GLOSSARY={
   '奇门':'奇门遁甲，传统上用于观察「当下局势」和行动时机的一套体系。',
   '梅花':'梅花易数，一种针对具体某件事起卦、看变化趋势的传统方法。'
 };
+// 供 AI 术语检索复用，避免 GLOSSARY 与 KB.terms 两份词表各自漂移
+try{ window.__TJ_GLOSSARY__=GLOSSARY; }catch(e){}
 let _glossKeys=null;
 let _annotatedTerms=new Set();
 function _getGlossKeys(){
@@ -1735,4 +1738,65 @@ Object.assign(window, {
   });
   obs.observe(document.body,{attributes:true,attributeFilter:['class']});
   window.TJMountGlossHint=mount;
+})();
+
+/* ============================================================
+   「这段是什么意思」——为报告卡片注入解释入口
+   竞品调研：新手最大的障碍是「看不懂，又不知道怎么问」。
+   这里让用户不必自己组织问题，点一下即可带着上下文提问。
+   ============================================================ */
+(function(){
+  const SEL='#page2 [data-card], #page2 .beginner-brief, #page2 .qr-card';
+
+  function makeBtn(){
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='explain-btn';
+    b.setAttribute('aria-label','这段是什么意思');
+    b.title='这段是什么意思';
+    b.innerHTML='<span>这段是什么意思</span>';
+    return b;
+  }
+
+  // 每张卡片只给第一个「可见」术语加问号，避免满屏问号。
+  // 必须判断可见性：新手/大师模式会隐藏大量卡片，
+  // 若标到隐藏元素上，用户实际看到的那个就没有提示了。
+  function markFirstTerms(){
+    document.querySelectorAll('#page2 .glass, #page2 .beginner-brief, #page2 .qr-card').forEach(card=>{
+      if(card.offsetParent===null)return;
+      const terms=[...card.querySelectorAll('.glossary-term')].filter(t=>t.offsetParent!==null);
+      card.querySelectorAll('.glossary-term.has-hint').forEach(e=>e.classList.remove('has-hint'));
+      if(terms.length)terms[0].classList.add('has-hint');
+    });
+  }
+
+  function inject(){
+    if(!document.body.classList.contains('report-active'))return;
+    markFirstTerms();
+    document.querySelectorAll(SEL).forEach(card=>{
+      if(card.querySelector(':scope > .explain-btn'))return;
+      // 工具中心与合盘表单不需要解释入口
+      const k=card.dataset?.card||'';
+      if(k==='toolHub')return;
+      if(card.offsetParent===null)return;
+      const btn=makeBtn();
+      btn.addEventListener('click',e=>{
+        e.stopPropagation();
+        try{
+          const {cardKey,heading,excerpt}=extractSection(card);
+          const q=buildExplainQuestion({cardKey,heading,excerpt});
+          if(typeof window.openAsk==='function')window.openAsk();
+          setTimeout(()=>{ if(typeof window.doAsk==='function')window.doAsk(q); },260);
+        }catch(err){ console.warn('explain',err); }
+      });
+      card.appendChild(btn);
+    });
+  }
+
+  const obs=new MutationObserver(()=>{
+    clearTimeout(window._explainT);
+    window._explainT=setTimeout(inject,300);
+  });
+  obs.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  window.TJInjectExplain=inject;
 })();

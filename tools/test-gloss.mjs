@@ -11,9 +11,13 @@ console.log(await p.evaluate(()=>{const e=document.getElementById('glossHint');r
 
 console.log('\n=== 2. 术语视觉 ===');
 console.log(await p.evaluate(()=>{
-  const t=[...document.querySelectorAll('#page2 .glossary-term')].filter(e=>e.offsetParent)[0];
-  const c=getComputedStyle(t),a=getComputedStyle(t,'::after');
-  return `"${t.textContent}" cursor=${c.cursor} 问号=${a.content}`;
+  const all=[...document.querySelectorAll('#page2 .glossary-term')].filter(e=>e.offsetParent);
+  if(!all.length)return '❗无术语';
+  const t=all[0];
+  const hinted=[...document.querySelectorAll('#page2 .glossary-term.has-hint')].filter(e=>e.offsetParent);
+  const c=getComputedStyle(t);
+  const a=hinted[0]?getComputedStyle(hinted[0],'::after').content:'(无)';
+  return `首个="${t.textContent}" cursor=${c.cursor} | 术语${all.length}个/带问号${hinted.length}个 问号=${a}`;
 }));
 await p.screenshot({path:'/tmp/gloss-hint.png'});
 

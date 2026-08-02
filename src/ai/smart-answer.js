@@ -54,10 +54,24 @@ export const KBSearch={
   byIntent(intent){
     return KB.faqs.filter(f=>f.intent===intent);
   },
-  // 术语检索
+  // 术语检索：取「最长匹配」，避免「食神格」被「食神」抢先命中；
+  // 同时并入报告用的 GLOSSARY（两份词表此前各自维护、已经漂移）。
   findTerm(q){
     const ql=(q||'').trim();
-    return KB.terms.find(t=>ql.includes(t.t)||this.similar(ql,t.t)>0.7);
+    if(!ql)return null;
+    const pool=KB.terms.slice();
+    const G=(typeof window!=='undefined'&&window.__TJ_GLOSSARY__)||null;
+    if(G)Object.keys(G).forEach(k=>{
+      if(!pool.some(t=>t.t===k))pool.push({t:k,d:G[k],see:[]});
+    });
+    let best=null;
+    pool.forEach(t=>{
+      if(ql.includes(t.t)){
+        if(!best||t.t.length>best.t.length)best=t;
+      }
+    });
+    if(best)return best;
+    return pool.find(t=>this.similar(ql,t.t)>0.7)||null;
   }
 };
 
@@ -68,7 +82,10 @@ export function smartAnswer(q,ctx){
   if(!ctx)ctx=getCtx();if(!ctx)return null;
   // 1) 术语命中
   const term=KBSearch.findTerm(q);
-  if(term&&q.length<=10){
+  // 原本用 q.length<=10 做门槛，导致「食神格是什么意思？」(11字) 落到
+  // 模糊 FAQ 匹配上，答非所问。改为看提问意图。
+  const ASK_MEANING=/(是什么|什么意思|怎么理解|指的是|啥意思|如何理解|怎么看)/;
+  if(term&&(q.length<=10||ASK_MEANING.test(q))){
     const links=(term.see||[]).map(k=>KB.routes[k]).filter(Boolean);
     return{
       kind:'term',
@@ -80,7 +97,9 @@ export function smartAnswer(q,ctx){
   }
   // 2) FAQ 命中（高置信）
   const hits=KBSearch.search(q,3);
-  if(hits.length&&hits[0].sc>=8){
+  // 门槛从 8 提到 12：实测「食神格是什么意思？」会以 8.4 分错配到
+  // 「我最近为什么压力大？」。宁可交给 AI，也不要给出无关答案。
+  if(hits.length&&hits[0].sc>=12){
     const f=hits[0].f;
     let lines;
     try{lines=f.answer(ctx);}catch(e){lines=['信息计算异常','','',''];}
