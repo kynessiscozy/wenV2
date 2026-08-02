@@ -58,11 +58,13 @@ jobs:
           node-version: 22
           cache: npm
 
+      # npm install 已经会下载 Chrome；ubuntu-latest 自带所需系统库，
+      # 不能用 --install-deps（它需要 root，会直接失败）
       - name: 安装依赖（含 Chrome）
         run: npm install
 
-      - name: 安装 Chrome 运行库
-        run: npx puppeteer browsers install chrome --install-deps
+      - name: 确认 Chrome 可用
+        run: node -e "console.log(require('puppeteer').executablePath())"
 
       - name: 构建
         run: npm run build
