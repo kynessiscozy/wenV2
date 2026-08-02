@@ -27,17 +27,17 @@ export function getTimeline(dy,by,wx,b,dg,gen,age){
     const gSS=SS[dg][d.g],gwx=GW[d.g],zwx=ZW[d.z],sc=scoreOne(d.g,d.z);
     const active=age>=d.as&&age<=d.ae,past=age>d.ae,future=age<d.as;
     const stage=d.as<20?'青春期':d.as<30?'立业期':d.as<40?'冲刺期':d.as<50?'丰盛期':d.as<60?'转型期':d.as<70?'成熟期':'晚晴期';
-    let theme='过渡周期',ico='◆',tcol='#c8a45a';
-    if(gSS==='正财'){theme='稳健聚财周期';ico='¥';tcol='#d4a04a';}
-    else if(gSS==='偏财'){theme='机会财富周期';ico='¥';tcol='#d4a04a';}
-    else if(gSS==='正官'){theme='仕途权位周期';ico='☗';tcol='#c8a45a';}
-    else if(gSS==='七杀'){theme='挑战拼搏周期';ico='⚔';tcol='#d4654a';}
-    else if(gSS==='正印'){theme='贵人学养周期';ico='☷';tcol='#8ab5c8';}
-    else if(gSS==='偏印'){theme='玄学独修周期';ico='✶';tcol='#9a7abf';}
-    else if(gSS==='食神'){theme='才华享受周期';ico='✿';tcol='#7ab648';}
-    else if(gSS==='伤官'){theme='叛逆突破周期';ico='⚡';tcol='#d4b85a';}
-    else if(gSS==='比肩'){theme='同行合作周期';ico='⚭';tcol='#8ab5c8';}
-    else if(gSS==='劫财'){theme='竞争分利周期';ico='⚔';tcol='#d4654a';}
+    let theme='过渡周期',ico='◆',tcol='var(--c-yellow)';
+    if(gSS==='正财'){theme='稳健聚财周期';ico='¥';tcol='var(--c-orange)';}
+    else if(gSS==='偏财'){theme='机会财富周期';ico='¥';tcol='var(--c-orange)';}
+    else if(gSS==='正官'){theme='仕途权位周期';ico='☗';tcol='var(--c-yellow)';}
+    else if(gSS==='七杀'){theme='挑战拼搏周期';ico='⚔';tcol='var(--c-red)';}
+    else if(gSS==='正印'){theme='贵人学养周期';ico='☷';tcol='var(--c-teal)';}
+    else if(gSS==='偏印'){theme='玄学独修周期';ico='✶';tcol='var(--c-purple)';}
+    else if(gSS==='食神'){theme='才华享受周期';ico='✿';tcol='var(--c-green)';}
+    else if(gSS==='伤官'){theme='叛逆突破周期';ico='⚡';tcol='var(--c-yellow)';}
+    else if(gSS==='比肩'){theme='同行合作周期';ico='⚭';tcol='var(--c-teal)';}
+    else if(gSS==='劫财'){theme='竞争分利周期';ico='⚔';tcol='var(--c-red)';}
     const career=gSS.includes('官')?'职位易动，宜主动争取上升或带团队':gSS.includes('财')?'适合谈待遇、跑项目、跨界变现':gSS.includes('印')?'适合进修、考证、回归专业深耕':gSS==='食神'?'用作品/内容打开知名度的好时机':gSS==='伤官'?'易与上级摩擦，宜独立或自媒体':gSS==='比肩'?'人脉资源丰富，合伙优于单干':'稳守为主，少做颠覆性决策';
     const money=(gwx===ys||zwx===ys)?'用神入运，财源稳健':(gwx===KEys||zwx===KEys)?'忌神当道，宜守不宜攻、远离杠杆':gSS.includes('财')?'财星显现，正/偏财机会增多':gSS==='劫财'?'破财之运，谨防担保与朋友借贷':'平稳，无大起大落';
     const love=gSS==='劫财'?'同性竞争多，感情易有第三者':gen==='male'&&gSS.includes('财')?'妻星到位，未婚利结合':gen==='female'&&gSS.includes('官')?'夫星显现，感情有结果':gSS==='伤官'?'情绪起伏大，注意言辞':(zwx===dw||gwx===dw)?'比劫旺，桃花虽多易竞争':'感情平稳，宜深度经营';
@@ -79,10 +79,10 @@ export function calcLayoffRisk(){
   score=Math.max(5,Math.min(96,score));
 
   let level,color,summary;
-  if(score<26){level='低风险';color='#7ab648';summary='暂未见明显裁员信号，继续保持可见产出即可。';}
-  else if(score<50){level='需要关注';color='#d4b85a';summary='已有部分预警信号，建议在不制造恐慌的前提下主动核实。';}
-  else if(score<70){level='较高风险';color='#d4a04a';summary='现实红旗已较集中，应立即准备备选方案并留存关键材料。';}
-  else{level='高危信号集中';color='#d4654a';summary='多项强信号叠加，请把重心放在证据、现金流与求职预案上。';}
+  if(score<26){level='低风险';color='var(--c-green)';summary='暂未见明显裁员信号，继续保持可见产出即可。';}
+  else if(score<50){level='需要关注';color='var(--c-yellow)';summary='已有部分预警信号，建议在不制造恐慌的前提下主动核实。';}
+  else if(score<70){level='较高风险';color='var(--c-orange)';summary='现实红旗已较集中，应立即准备备选方案并留存关键材料。';}
+  else{level='高危信号集中';color='var(--c-red)';summary='多项强信号叠加，请把重心放在证据、现金流与求职预案上。';}
 
   const factors=[];
   if(company.value>=20)factors.push(company.label);
@@ -124,7 +124,7 @@ export function calcLayoffRisk(){
       <div><div class="layoff-level">${level}</div><div class="layoff-period">评估窗口：${astro.window}</div></div>
     </div>
     <div class="layoff-meter"><div class="layoff-meter-fill" data-w="${score}%" style="background:${color}"></div></div>
-    <div style="font-size:.76em;color:rgba(255,255,255,.78);line-height:1.75;margin-bottom:10px">${summary}</div>
+    <div style="font-size:.76em;color:var(--c-text);line-height:1.75;margin-bottom:10px">${summary}</div>
     <div class="layoff-result-grid">
       <div class="layoff-result-box"><h5>现实预警 · 82%</h5><p>${factors.map(x=>'· '+x).join('<br>')}</p></div>
       <div class="layoff-result-box"><h5>趋势参考 · 18%</h5><p>${trendFactors.map(x=>'· '+x).join('<br>')}</p></div>
@@ -144,16 +144,16 @@ export function getRelationRisks(wx,dg,ss){const r=[];if(wx.st)r.push('过于强
 
 
 function _mysticPill(text,type='main'){
-  const palette={main:['var(--ac1)','var(--ac4)','var(--ac-text)'],aux:['rgba(138,181,200,.10)','rgba(138,181,200,.22)','#b7d7e6'],sha:['rgba(212,101,74,.10)','rgba(212,101,74,.24)','#e6a092'],muted:['rgba(255,255,255,.04)','rgba(255,255,255,.08)','rgba(255,255,255,.52)']};
+  const palette={main:['var(--ac1)','var(--ac4)','var(--ac-text)'],aux:['color-mix(in srgb,var(--c-teal) 12%,transparent)','color-mix(in srgb,var(--c-teal) 28%,transparent)','var(--c-teal)'],sha:['color-mix(in srgb,var(--c-red) 12%,transparent)','color-mix(in srgb,var(--c-red) 28%,transparent)','var(--c-red)'],muted:['var(--c-surface-2)','var(--c-border)','var(--c-text-2)']};
   const [bg,bd,co]=palette[type]||palette.main;
   return '<span style="display:inline-flex;align-items:center;margin:2px 4px 2px 0;padding:3px 7px;border-radius:999px;background:'+bg+';border:1px solid '+bd+';color:'+co+';font-size:.72em;line-height:1.35;white-space:nowrap">'+(text||'—')+'</span>';
 }
-function _mysticNote(title,body){return '<div style="padding:10px 11px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);line-height:1.65"><div style="font-size:.68em;color:rgba(255,255,255,.38);margin-bottom:4px">'+title+'</div><div style="font-size:.78em;color:rgba(255,245,220,.76)">'+body+'</div></div>';}
+function _mysticNote(title,body){return '<div style="padding:10px 11px;border-radius:12px;background:var(--c-surface-2);border:1px solid var(--c-border);line-height:1.65"><div style="font-size:.68em;color:var(--c-text-3);margin-bottom:4px">'+title+'</div><div style="font-size:.78em;color:var(--c-text)">'+body+'</div></div>';}
 function _hexLines(lines,lineNumbers=[],changingLine=0){
   return (lines||[]).map((v,idx)=>{
     const lineNo=Array.isArray(lineNumbers)?lineNumbers[idx]:lineNumbers+idx+1,active=lineNo===changingLine;
-    const bar=v?'<span style="display:block;height:8px;border-radius:99px;background:'+(active?'#d4b85a':'var(--ac5)')+'"></span>':'<span style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><i style="display:block;height:8px;border-radius:99px;background:'+(active?'#d4b85a':'rgba(255,255,255,.42)')+'"></i><i style="display:block;height:8px;border-radius:99px;background:'+(active?'#d4b85a':'rgba(255,255,255,.42)')+'"></i></span>';
-    return '<div style="height:16px;display:flex;align-items:center;gap:8px">'+bar+(active?'<em style="font-style:normal;font-size:.66em;color:#d4b85a">动</em>':'')+'</div>';
+    const bar=v?'<span style="display:block;height:8px;border-radius:99px;background:'+(active?'var(--c-yellow)':'var(--ac5)')+'"></span>':'<span style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><i style="display:block;height:8px;border-radius:99px;background:'+(active?'var(--c-yellow)':'var(--c-surface-4)')+'"></i><i style="display:block;height:8px;border-radius:99px;background:'+(active?'var(--c-yellow)':'var(--c-surface-4)')+'"></i></span>';
+    return '<div style="height:16px;display:flex;align-items:center;gap:8px">'+bar+(active?'<em style="font-style:normal;font-size:.66em;color:var(--c-yellow)">动</em>':'')+'</div>';
   }).join('');
 }
 function _elementRelation(a,b){
@@ -172,8 +172,8 @@ export function renderZiWeiCard(zw){
   const bodyStars=(body.m&&body.m.length?body.m:['借对宫参看']).join('、');
   const palaceHtml=ps.map((p,i)=>{
     const isM=i===zw.mingGongZhi,isB=i===zw.bodyGongZhi;
-    return '<div style="min-height:92px;padding:10px;border-radius:14px;background:'+(isM?'var(--ac1)':'rgba(255,255,255,.028)')+';border:1px solid '+(isM?'var(--ac4)':'rgba(255,255,255,.06)')+'">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:7px"><b style="font-size:.78em;color:'+(isM?'var(--ac-text)':'rgba(255,245,220,.82)')+'">'+p.n+'</b><span style="font-size:.62em;color:rgba(255,255,255,.32)">'+(DZ[i]||'')+(isM?' · 命':'')+(isB?' · 身':'')+'</span></div>'
+    return '<div style="min-height:92px;padding:10px;border-radius:14px;background:'+(isM?'var(--ac1)':'var(--c-surface-2)')+';border:1px solid '+(isM?'var(--ac4)':'var(--c-border)')+'">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:7px"><b style="font-size:.78em;color:'+(isM?'var(--ac-text)':'var(--c-text)')+'">'+p.n+'</b><span style="font-size:.62em;color:var(--c-text-3)">'+(DZ[i]||'')+(isM?' · 命':'')+(isB?' · 身':'')+'</span></div>'
       +'<div>'+((p.m&&p.m.length)?p.m.map(x=>_mysticPill(x,'main')).join(''):_mysticPill('无主星','muted'))+'</div>'
       +(p.a&&p.a.length?'<div style="margin-top:4px">'+p.a.map(x=>_mysticPill(x,'aux')).join('')+'</div>':'')
       +(p.s&&p.s.length?'<div style="margin-top:4px">'+p.s.map(x=>_mysticPill(x,'sha')).join('')+'</div>':'')
@@ -190,7 +190,7 @@ export function renderQiMenCard(qm){
   if(!qm||!qm.ps)return '';
   const ps=qm.ps||[],dun=qm.yangDun?'阳遁':'阴遁',open=ps.find(x=>x.d==='开门')||{},sheng=ps.find(x=>x.d==='生门')||{},rest=ps.find(x=>x.d==='休门')||{},fu=ps.find(x=>x.g==='值符')||ps[0]||{};
   const doorTone={开门:'开局、沟通、发布',生门:'增长、求财、修复',休门:'休整、谈和、恢复',景门:'曝光、表达、文书',杜门:'保密、学习、闭关',伤门:'冲突、突破、损耗',死门:'停滞、收尾、保守',惊门:'消息、口舌、突发'};
-  const grid=ps.map(x=>'<div style="min-height:96px;padding:10px;border-radius:14px;background:'+(x.cc?'rgba(212,184,90,.08)':'rgba(255,255,255,.028)')+';border:1px solid '+(x.g==='值符'?'var(--ac4)':'rgba(255,255,255,.06)')+'"><div style="display:flex;justify-content:space-between;gap:6px;margin-bottom:7px"><b style="font-size:.78em;color:rgba(255,245,220,.86)">'+x.p+'</b><span style="font-size:.62em;color:rgba(255,255,255,.35)">'+(x.cc?'中宫':'')+'</span></div><div>'+_mysticPill(x.d,'main')+_mysticPill(x.s,'aux')+_mysticPill(x.g,x.g==='白虎'||x.g==='玄武'?'sha':'muted')+'</div><div style="margin-top:7px;font-size:.66em;line-height:1.55;color:rgba(255,255,255,.44)">'+(doorTone[x.d]||'顺势观察')+'</div></div>').join('');
+  const grid=ps.map(x=>'<div style="min-height:96px;padding:10px;border-radius:14px;background:'+(x.cc?'color-mix(in srgb,var(--c-yellow) 10%,transparent)':'var(--c-surface-2)')+';border:1px solid '+(x.g==='值符'?'var(--ac4)':'var(--c-border)')+'"><div style="display:flex;justify-content:space-between;gap:6px;margin-bottom:7px"><b style="font-size:.78em;color:var(--c-text-hi)">'+x.p+'</b><span style="font-size:.62em;color:var(--c-text-3)">'+(x.cc?'中宫':'')+'</span></div><div>'+_mysticPill(x.d,'main')+_mysticPill(x.s,'aux')+_mysticPill(x.g,x.g==='白虎'||x.g==='玄武'?'sha':'muted')+'</div><div style="margin-top:7px;font-size:.66em;line-height:1.55;color:var(--c-text-2)">'+(doorTone[x.d]||'顺势观察')+'</div></div>').join('');
   return '<div class="glass card-2" data-card="qimen"><div class="card-hd"><div class="card-ic">奇</div><div><div class="card-tt">奇门遁甲</div><div class="card-st">'+dun+' '+qm.ju+'局 · 九宫、八门、九星、八神</div></div></div>'
     +'<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px">'
     +_mysticNote('值符落宫',(fu.p||'—')+' · '+(fu.s||'—')+' · '+(fu.d||'—'))
@@ -203,23 +203,23 @@ export function renderMeiHuaCard(mh){
   if(!mh)return '';
   const top=(mh.ul||[]).slice().reverse(),bottom=(mh.ll||[]).slice().reverse();
   const moveArea=mh.cl<=3?'内卦（基础、自己、近处）':'外卦（环境、他人、远处）';
-  const tyColor=mh.tyRel?.score==='good'?'#7ab648':mh.tyRel?.score==='bad'?'#d4654a':mh.tyRel?.score==='caution'?'#d4a04a':'rgba(255,255,255,.65)';
+  const tyColor=mh.tyRel?.score==='good'?'var(--c-green)':mh.tyRel?.score==='bad'?'var(--c-red)':mh.tyRel?.score==='caution'?'var(--c-orange)':'var(--c-text-2)';
 
   return '<div class="glass card-2" data-card="meihua"><div class="card-hd"><div class="card-ic">卦</div><div><div class="card-tt">梅花易数</div><div class="card-st">本卦 · 互卦 · 变卦 · 体用生克</div></div></div>'
 
-    +'<div style="text-align:center;padding:12px 0 8px"><div style="font-family:var(--serif);font-size:1.5em;color:#fff;font-weight:700;letter-spacing:2px">'+(mh.benName||'')+'</div>'
-    +(mh.benHint?'<div style="font-size:.72em;color:rgba(255,255,255,.42);margin-top:4px">'+mh.benHint+'</div>':'')
+    +'<div style="text-align:center;padding:12px 0 8px"><div style="font-family:var(--serif);font-size:1.5em;color:var(--c-text-hi);font-weight:700;letter-spacing:2px">'+(mh.benName||'')+'</div>'
+    +(mh.benHint?'<div style="font-size:.72em;color:var(--c-text-3);margin-top:4px">'+mh.benHint+'</div>':'')
     +'</div>'
 
     +'<div style="display:grid;grid-template-columns:1.05fr .95fr;gap:12px;align-items:stretch">'
-    +'<div style="padding:14px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div style="font-family:var(--serif);font-size:1.35em;color:var(--ac-text)">'+mh.ug+'</div><div style="font-family:var(--serif);font-size:1.35em;color:rgba(255,245,220,.86);margin-top:4px">'+mh.lg+'</div></div><div style="text-align:right;font-size:.72em;color:rgba(255,255,255,.42)">本卦<br><b style="color:#d4b85a;font-size:1.3em">'+mh.cl+'爻动</b></div></div><div style="display:grid;gap:2px;max-width:180px;margin:0 auto 6px">'+_hexLines(top,[6,5,4],mh.cl)+_hexLines(bottom,[3,2,1],mh.cl)+'</div></div>'
+    +'<div style="padding:14px;border-radius:16px;background:var(--c-surface-2);border:1px solid var(--c-border)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div style="font-family:var(--serif);font-size:1.35em;color:var(--ac-text)">'+mh.ug+'</div><div style="font-family:var(--serif);font-size:1.35em;color:var(--c-text-hi);margin-top:4px">'+mh.lg+'</div></div><div style="text-align:right;font-size:.72em;color:var(--c-text-3)">本卦<br><b style="color:var(--c-yellow);font-size:1.3em">'+mh.cl+'爻动</b></div></div><div style="display:grid;gap:2px;max-width:180px;margin:0 auto 6px">'+_hexLines(top,[6,5,4],mh.cl)+_hexLines(bottom,[3,2,1],mh.cl)+'</div></div>'
     +'<div style="display:grid;gap:8px">'+_mysticNote('上卦 / 下卦',mh.ug+'（'+mh.ue+'）<br>'+mh.lg+'（'+mh.le+'）')+_mysticNote('动爻',mh.cl+'爻动 · '+moveArea)+_mysticNote('体卦 / 用卦','<span style="color:var(--ac-text)">'+(mh.ti||'-')+'</span>（体·'+mh.tiWx+'）<br>'+(mh.yong||'-')+'（用·'+mh.yongWx+'）')+'</div></div>'
 
-    +'<div style="margin-top:14px;padding:14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="padding:3px 9px;border-radius:6px;background:rgba(255,255,255,.06);font-size:.68em;color:rgba(255,255,255,.5)">体用生克</span><b style="font-size:.92em;color:'+tyColor+'">'+(mh.tyRel?.label||'-')+'</b></div><div style="font-size:.78em;line-height:1.75;color:rgba(255,245,220,.78)">'+(mh.tyRel?.desc||'')+'</div></div>'
+    +'<div style="margin-top:14px;padding:14px;border-radius:14px;background:var(--c-surface-2);border:1px solid var(--c-border)"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="padding:3px 9px;border-radius:6px;background:var(--c-surface-3);font-size:.68em;color:var(--c-text-2)">体用生克</span><b style="font-size:.92em;color:'+tyColor+'">'+(mh.tyRel?.label||'-')+'</b></div><div style="font-size:.78em;line-height:1.75;color:var(--c-text)">'+(mh.tyRel?.desc||'')+'</div></div>'
 
     +'<div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px">'
-    +_mysticNote('互卦 · '+(mh.huName||''),(mh.hu||'-')+'（'+mh.hue+'）/ '+(mh.hl||'-')+'（'+mh.hle+'）<br><span style="font-size:.88em;color:rgba(255,255,255,.38)">互卦看事情内在发展过程</span>')
-    +_mysticNote('变卦 · '+(mh.bianName||''),(mh.mu||'-')+'（'+mh.mue+'）/ '+(mh.ml||'-')+'（'+mh.mle+'）<br><span style="font-size:.88em;color:rgba(255,255,255,.38)">'+(mh.bianHint||'变卦看最终走向')+'</span>')
+    +_mysticNote('互卦 · '+(mh.huName||''),(mh.hu||'-')+'（'+mh.hue+'）/ '+(mh.hl||'-')+'（'+mh.hle+'）<br><span style="font-size:.88em;color:var(--c-text-3)">互卦看事情内在发展过程</span>')
+    +_mysticNote('变卦 · '+(mh.bianName||''),(mh.mu||'-')+'（'+mh.mue+'）/ '+(mh.ml||'-')+'（'+mh.mle+'）<br><span style="font-size:.88em;color:var(--c-text-3)">'+(mh.bianHint||'变卦看最终走向')+'</span>')
     +'</div>'
 
     +'<div class="at" style="margin-top:12px"><p>梅花易数适合回答某件事的变化趋势。本卦看当前局面，互卦看内在过程，动爻看变化触发点，变卦看后续走向。体用生克是断卦核心：用生体为吉、用克体需防守。若用于重大决策，仍建议结合现实信息与专业意见。</p></div></div>';
@@ -258,7 +258,7 @@ export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue
   H+=renderBeginnerBrief('ming',ctx);
 
   H+=`<div class="glass card-2" data-card="bazi"><div class="card-hd"><div class="card-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><div><div class="card-tt">四柱八字</div><div class="card-st">${gl} · ${city.n} · ${b.sx}年 · ${b.ny}${b._meta&&b._meta.useTrueSolar?' · 真太阳时':''}</div></div></div>`;
-  H+=`<div class="pls">${[{l:'年柱',p:b.Y,s:ss.yg},{l:'月柱',p:b.M,s:ss.mg},{l:'日柱',p:b.D,s:'日元',dm:1},{l:'时柱',p:b.H,s:ss.hg}].map(x=>`<div class="pl ${x.dm?'dm':''}" onclick="this.classList.toggle('open')"><div class="pl-l">${x.l}</div><div class="pl-g">${x.p.g}</div><div class="pl-z" style="color:${WC[ZW[x.p.z]]}">${x.p.z}</div><div class="pl-i"><span class="wdot" style="background:${WC[GW[x.p.g]]}"></span>${GW[x.p.g]} · ${x.s}</div><div class="pl-xd"><div style="padding-top:6px;font-size:.62em;color:rgba(255,255,255,.45);line-height:1.7;border-top:1px solid rgba(255,255,255,.06);margin-top:4px">${ZC[x.p.z].map((g,idx)=>`<div style="display:flex;align-items:center;gap:4px"><span class="wdot" style="background:${WC[GW[g]]}"></span><span style="color:rgba(255,255,255,.6)">${g}</span><span style="color:var(--ac-dim)">${SS[b.D.g][g]}</span><span style="font-size:.85em;color:rgba(255,255,255,.25)">${['主气','中气','余气'][idx]}</span></div>`).join('')}</div></div></div>`).join('')}</div>`;
+  H+=`<div class="pls">${[{l:'年柱',p:b.Y,s:ss.yg},{l:'月柱',p:b.M,s:ss.mg},{l:'日柱',p:b.D,s:'日元',dm:1},{l:'时柱',p:b.H,s:ss.hg}].map(x=>`<div class="pl ${x.dm?'dm':''}" onclick="this.classList.toggle('open')"><div class="pl-l">${x.l}</div><div class="pl-g">${x.p.g}</div><div class="pl-z" style="color:${WC[ZW[x.p.z]]}">${x.p.z}</div><div class="pl-i"><span class="wdot" style="background:${WC[GW[x.p.g]]}"></span>${GW[x.p.g]} · ${x.s}</div><div class="pl-xd"><div style="padding-top:6px;font-size:.62em;color:var(--c-text-2);line-height:1.7;border-top:1px solid var(--c-border);margin-top:4px">${ZC[x.p.z].map((g,idx)=>`<div style="display:flex;align-items:center;gap:4px"><span class="wdot" style="background:${WC[GW[g]]}"></span><span style="color:var(--c-text-2)">${g}</span><span style="color:var(--ac-dim)">${SS[b.D.g][g]}</span><span style="font-size:.85em;color:var(--c-text-3)">${['主气','中气','余气'][idx]}</span></div>`).join('')}</div></div></div>`).join('')}</div>`;
   H+=`<div class="ig">${[['日主',`${dg}${dw}·${wx.st?'身旺':'身弱'}`],['命格',pa.join('、')],['用神',`<span style="color:${WC[wx.ys]}">${wx.ys}</span>`],['喜神',`<span style="color:${WX.includes(wx.xs)?WC[wx.xs]:'#fff'}">${wx.xs}</span>`],['纳音',b.ny],['四时',`${si.s}令·${siS}`]].map(x=>`<div class="ii"><div class="il">${x[0]}</div><div class="iv">${x[1]}</div></div>`).join('')}</div>`;
   H+=`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">${getShenShaLabels(b).map(l=>`<span class="sstag" style="background:${l.bg};color:${l.co};border:1px solid ${l.bd}">${l.t}</span>`).join('')}</div>`;
   H+=`</div>`;
@@ -283,10 +283,10 @@ export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue
   const areaD=pathD+` L${pts[pts.length-1][0].toFixed(1)} ${cvH-padB} L${pts[0][0].toFixed(1)} ${cvH-padB} Z`;
   const startYear=by+dy.sa;
   H+=`<div class="glass card-2" data-card="timeline"><div class="card-hd"><div class="card-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><div><div class="card-tt">人生时间线 · 大运十程</div><div class="card-st">${dy.sa}岁起运 · ${startYear}年入大运 · ${(b.Y.gi%2===0)===(gen==='male')?'顺':'逆'}排</div></div></div>`;
-  H+=`<div class="tl-curve-wrap"><svg viewBox="0 0 ${cvW} ${cvH}" preserveAspectRatio="none" class="tl-curve"><defs><linearGradient id="tlGrad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--ac)" stop-opacity=".45"/><stop offset="1" stop-color="var(--ac)" stop-opacity="0"/></linearGradient></defs><path d="${areaD}" fill="url(#tlGrad)"/><path d="${pathD}" fill="none" stroke="var(--ac5)" stroke-width="1.5" stroke-linejoin="round"/>${pts.map((p,i)=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${tlData[i].active?3.5:2.2}" fill="${tlData[i].active?'var(--ac)':tlData[i].past?'rgba(255,255,255,.25)':'var(--ac5)'}"/>`).join('')}</svg><div class="tl-curve-axis">${tlData.map(t=>`<span class="${t.active?'on':''}">${t.as}</span>`).join('')}</div></div>`;
-  H+=`<div class="tl-legend"><span><i style="background:var(--ac)"></i>当前大运</span><span><i style="background:rgba(255,255,255,.25)"></i>已过</span><span><i style="background:var(--ac5)"></i>未来</span></div>`;
+  H+=`<div class="tl-curve-wrap"><svg viewBox="0 0 ${cvW} ${cvH}" preserveAspectRatio="none" class="tl-curve"><defs><linearGradient id="tlGrad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--ac)" stop-opacity=".45"/><stop offset="1" stop-color="var(--ac)" stop-opacity="0"/></linearGradient></defs><path d="${areaD}" fill="url(#tlGrad)"/><path d="${pathD}" fill="none" stroke="var(--ac5)" stroke-width="1.5" stroke-linejoin="round"/>${pts.map((p,i)=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${tlData[i].active?3.5:2.2}" fill="${tlData[i].active?'var(--ac)':tlData[i].past?'var(--c-text-4)':'var(--ac5)'}"/>`).join('')}</svg><div class="tl-curve-axis">${tlData.map(t=>`<span class="${t.active?'on':''}">${t.as}</span>`).join('')}</div></div>`;
+  H+=`<div class="tl-legend"><span><i style="background:var(--ac)"></i>当前大运</span><span><i style="background:var(--c-text-4)"></i>已过</span><span><i style="background:var(--ac5)"></i>未来</span></div>`;
   H+=`<div class="tl-list">${tlData.map(t=>{
-    const stars='★★★★★'.split('').map((s,i)=>`<span style="color:${i<Math.round(t.sc/20)?t.tcol:'rgba(255,255,255,.12)'}">${s}</span>`).join('');
+    const stars='★★★★★'.split('').map((s,i)=>`<span style="color:${i<Math.round(t.sc/20)?t.tcol:'var(--c-border-2)'}">${s}</span>`).join('');
     const stateCls=t.active?'active':t.past?'past':'future';
     const msHtml=t.milestones.length?`<div class="tl-ms">${t.milestones.map(m=>`<span class="tl-ms-pill ${m.k}">${m.y}年·${m.age}岁·${m.t}</span>`).join('')}</div>`:'';
     return `<div class="tl-card ${stateCls}" onclick="this.classList.toggle(\'open\')">
@@ -322,7 +322,7 @@ export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue
   H+=renderQuickRead('yun',ctx);
   H+=renderBeginnerBrief('yun',ctx);
   H+=`<div class="glass card-1" data-card="trend"><div class="card-hd"><div class="card-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 20h18M6 16V9M10 16V5M14 16V8M18 16V3"/></svg></div><div><div class="card-tt">${CURR_YEAR}年核心趋势</div><div class="card-st">${cLn.g}${cLn.z} ${cLn.sx}年 · ${lnSS}</div></div></div>`;
-  H+=`<div class="y-hero">${[{l:'事业',v:cs,c:'#c8a45a'},{l:'财运',v:ws,c:'#d4a04a'},{l:'感情',v:ls,c:'#d4654a'},{l:'健康',v:hs,c:'#7ab648'}].map(x=>`<div class="y-hero-item"><div class="y-hero-label">${x.l}</div><div class="y-hero-stars">${'★★★★★'.split('').map((s,i)=>`<span style="color:${i<Math.round(x.v/20)?x.c:'rgba(255,255,255,0.12)'}">${s}</span>`).join('')}</div><div class="y-hero-score">${x.v}分</div></div>`).join('')}</div>`;
+  H+=`<div class="y-hero">${[{l:'事业',v:cs,c:'var(--c-yellow)'},{l:'财运',v:ws,c:'var(--c-orange)'},{l:'感情',v:ls,c:'var(--c-red)'},{l:'健康',v:hs,c:'var(--c-green)'}].map(x=>`<div class="y-hero-item"><div class="y-hero-label">${x.l}</div><div class="y-hero-stars">${'★★★★★'.split('').map((s,i)=>`<span style="color:${i<Math.round(x.v/20)?x.c:'var(--c-border-2)'}">${s}</span>`).join('')}</div><div class="y-hero-score">${x.v}分</div></div>`).join('')}</div>`;
   H+=`<div class="at"><p>今年<span class="hl">${cLn.g}${cLn.z}</span>年，流年十神为「<span class="tg">${lnSS}</span>」。${cs>72?'整体势能向上，适合主动进取。':'整体以稳为主，厚积薄发。'}当前<span class="hl">${cDy.g}${cDy.z}</span>大运，${dySS.includes('官')?'事业压力与机遇并存':dySS.includes('财')?'财运通道打开':dySS.includes('印')?'适合学习沉淀':''}。</p></div></div>`;
 
   // —— 合并卡：⚠ 当下关注（本月 + 风险 + 健康）——
@@ -332,7 +332,7 @@ export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue
   // 严重度评估：决定默认显示哪个子 tab（任一子区如果"高风险"则定位过去）
   const hasHardRisk=risks.some(r=>!r.safe);
   const defaultFocus=hasHardRisk?'risk':(ma.risks&&ma.risks.length?'monthly':'risk');
-  H+=`<div class="glass card-2 focus-card" data-card="focus"><div class="card-hd"><div class="card-ic" style="color:#d4654a;background:rgba(212,101,74,.12);border-color:rgba(212,101,74,.20)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div><div class="card-tt">⚠ 当下关注</div><div class="card-st">${getTodayGZ().split(' ').pop()} · 本月 · 风险 · 健康</div></div></div>`;
+  H+=`<div class="glass card-2 focus-card" data-card="focus"><div class="card-hd"><div class="card-ic" style="color:var(--c-red);background:color-mix(in srgb,var(--c-red) 12%,transparent);border-color:color-mix(in srgb,var(--c-red) 24%,transparent)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div><div class="card-tt">⚠ 当下关注</div><div class="card-st">${getTodayGZ().split(' ').pop()} · 本月 · 风险 · 健康</div></div></div>`;
   // 子 tab 头
   H+=`<div class="focus-tabs">
     <button class="focus-tab ${defaultFocus==='monthly'?'active':''}" data-sub="monthly" onclick="focusSwitchTab(this)"><span class="focus-tab-ic">🗓</span> 本月${ma.risks&&ma.risks.length?'<span class="focus-dot"></span>':''}</button>
@@ -357,7 +357,7 @@ export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue
 
   H+=`<div class="glass card-2" data-card="dayun"><div class="card-hd"><div class="card-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 12c2-4 5-7 10-7s8 3 10 7c-2 4-5 7-10 7s-8-3-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div><div><div class="card-tt">大运时间轴</div></div></div>`;
   H+=`<div class="tl" id="daYunTl">${dy.ds.map((d,idx)=>{const c=age>=d.as&&age<=d.ae;const dySS=SS[dg][d.g];return`<div class="ti ${c?'cu':''}"><div class="ta">${d.as}-${d.ae}岁</div><div class="tg2">${d.g}${d.z}</div><div class="ty">${d.ys}-${d.ye}</div><div style="font-size:.55em;color:var(--ac-dim);margin-top:2px">${dySS}</div>${c?'<div class="tb">当前</div>':''}</div>`}).join('')}</div>`;
-  H+=`<div class="crvw" style="margin:14px 0;padding:14px;background:rgba(255,255,255,0.03);border-radius:var(--rs)"><div style="font-size:.68em;color:rgba(255,255,255,0.3);font-weight:500;letter-spacing:1px;margin-bottom:8px">运势曲线</div><canvas id="cvC" width="700" height="170" style="width:100%;height:auto"></canvas></div></div>`;
+  H+=`<div class="crvw" style="margin:14px 0;padding:14px;background:var(--c-surface-2);border-radius:var(--rs)"><div style="font-size:.68em;color:var(--c-text-3);font-weight:500;letter-spacing:1px;margin-bottom:8px">运势曲线</div><canvas id="cvC" width="700" height="170" style="width:100%;height:auto"></canvas></div></div>`;
 
   H+=`<div class="glass card-2" data-card="liuyue"><div class="card-hd"><div class="card-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 20h18M6 16V9M10 16V5M14 16V8M18 16V3"/></svg></div><div><div class="card-tt">${CURR_YEAR}年流月</div><div class="card-st">点击月份查看详解</div></div></div><div class="lym-grid">${liuyue.map((lm,idx)=>{const now=new Date();const curMonth=now.getMonth();const isCur=(idx===curMonth);const lmSS=SS[dg][lm.gz.charAt(0)];return`<div class="lym-item ${isCur?'current':''}" onclick="openMonthModal(${idx},'${lm.name}','${lm.gz}','${lm.jq}','${lmSS}')"><div class="lym-name">${lm.name}</div><div class="lym-gz">${lm.gz}</div><div class="lym-jq">${lm.jq}</div><div class="lym-ss">${lmSS}</div></div>`}).join('')}</div></div>`;
   H+=`</div>`;
@@ -379,7 +379,7 @@ export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue
   H+=`<div class="glass card-2" data-card="loveRisk"><div class="card-hd"><div class="card-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div><div><div class="card-tt">关系风险</div></div></div>`;
   H+=`<div class="risk-row">${rrisks.map(r=>`<span class="risk-pill">${r}</span>`).join('')}</div></div>`;
 
-  H+=`<div class="glass card-1 layoff-card" data-card="layoffRisk"><div class="card-hd"><div class="card-ic" style="color:#d4b85a;background:rgba(212,184,90,.10);border-color:rgba(212,184,90,.18)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2M3 12h18M10 12v2h4v-2"/></svg></div><div><div class="card-tt">裁员风险检测</div><div class="card-st">现实职场信号 × 当前大运流年 · 评估未来3—6个月</div></div></div>`;
+  H+=`<div class="glass card-1 layoff-card" data-card="layoffRisk"><div class="card-hd"><div class="card-ic" style="color:var(--c-yellow);background:color-mix(in srgb,var(--c-yellow) 12%,transparent);border-color:color-mix(in srgb,var(--c-yellow) 24%,transparent)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2M3 12h18M10 12v2h4v-2"/></svg></div><div><div class="card-tt">裁员风险检测</div><div class="card-st">现实职场信号 × 当前大运流年 · 评估未来3—6个月</div></div></div>`;
   H+=`<div class="layoff-method"><div class="layoff-method-title">检测逻辑：现实证据优先，命理只作趋势参考</div><div class="layoff-method-weight">现实信号 82% · 命理趋势 18%</div></div>`;
   H+=`<div class="layoff-trend"><div class="layoff-trend-score">${layoffTrend.score}</div><div class="layoff-trend-copy"><div class="layoff-trend-title">命理职场趋势：${layoffTrend.label}</div><div class="layoff-trend-text">${layoffTrend.reasons.length?layoffTrend.reasons.slice(0,2).join('；'):'当前周期未见明显职场冲击'} · 仅占综合评估18%</div></div></div>`;
   H+=`<div class="layoff-form">
@@ -418,7 +418,7 @@ export function renderAll(b,wx,ss,dy,ln,zw,qm,mh,si,gen,q,city,by,shensha,liuyue
   H+=`</div></div>`;
 
   H+=`<div class="glass card-2" data-card="daySign"><div class="card-hd"><div class="card-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div><div class="card-tt">今日日签</div><div class="card-st">${todayJ}</div></div></div>`;
-  H+=`<div style="display:flex;gap:10px;align-items:center;padding:8px 0"><div style="flex:1;padding:14px 10px;border-radius:var(--rs);background:rgba(255,255,255,0.04);text-align:center;border:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background .2s" onmouseover="this.style.background='var(--ac3)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'" onclick="showRiQian()"><div style="font-size:1.2em;margin-bottom:4px">📜</div><div style="font-size:.78em;color:var(--ac-text);font-weight:500">查看今日日签</div><div style="font-size:.65em;color:rgba(255,255,255,0.35);margin-top:3px">宜忌 · 干支 · 吉凶</div></div></div></div>`;
+  H+=`<div style="display:flex;gap:10px;align-items:center;padding:8px 0"><div style="flex:1;padding:14px 10px;border-radius:var(--rs);background:var(--c-surface-2);text-align:center;border:1px solid var(--c-border);cursor:pointer;transition:background .2s" onmouseover="this.style.background='var(--ac3)'" onmouseout="this.style.background='var(--c-surface-2)'" onclick="showRiQian()"><div style="font-size:1.2em;margin-bottom:4px">📜</div><div style="font-size:.78em;color:var(--ac-text);font-weight:500">查看今日日签</div><div style="font-size:.65em;color:var(--c-text-3);margin-top:3px">宜忌 · 干支 · 吉凶</div></div></div></div>`;
   H+=`</div>`;
 
   document.getElementById('p2Inner').innerHTML=H;
@@ -701,16 +701,21 @@ export function calcRelation(){
   if(w1s===w2w||w2s===w1w){score+=6;notes.push('五行互补，如天作之合');}
   score=Math.max(30,Math.min(99,score));
   const grade=score>=85?'上婚（极佳）':score>=70?'中婚（良好）':score>=55?'下婚（一般）':'需慎重';
-  const gColor=score>=85?'#7ab648':score>=70?'#c8a45a':score>=55?'#d4a04a':'#d4654a';
+  const gColor=score>=85?'var(--c-green)':score>=70?'var(--c-yellow)':score>=55?'var(--c-orange)':'var(--c-red)';
   let H=`<div class="glass card-2"><div class="card-hd"><div class="card-ic">💞</div><div><div class="card-tt">AI 关系分析结果</div></div></div>`;
-  H+=`<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px"><div style="flex:1"><div style="font-size:1.8em;font-weight:700;color:${gColor}">${score}分</div><div style="font-size:.78em;color:rgba(255,255,255,0.4)">${grade}</div></div><div style="flex:2"><div class="hh-bar"><div class="hh-fill" style="width:0%;background:${gColor}" data-w="${score}%"></div></div></div></div>`;
-  H+=`<div style="font-size:.82em;line-height:1.8;color:rgba(255,255,255,0.6)">${notes.map(t=>`· ${t}`).join('<br>')}</div>`;
+  H+=`<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px"><div style="flex:1"><div style="font-size:1.8em;font-weight:700;color:${gColor}">${score}分</div><div style="font-size:.78em;color:var(--c-text-3)">${grade}</div></div><div style="flex:2"><div class="hh-bar"><div class="hh-fill" style="width:0%;background:${gColor}" data-w="${score}%"></div></div></div></div>`;
+  H+=`<div style="font-size:.82em;line-height:1.8;color:var(--c-text-2)">${notes.map(t=>`· ${t}`).join('<br>')}</div>`;
   H+=`<div class="at"><h4>相处节奏</h4><p>${d.gen==='male'?'男方':'女方'}日主${dg1}，${d.gen==='male'?'女方':'男方'}日主${dg2}。${ganHe[dg1]===dg2?'双方天干相合，初期吸引力强，相处节奏偏快':'双方天干无明显合冲，相处节奏循序渐进，需时间磨合'}。</p>`;
   H+=`<h4>冲突点</h4><p>${sxChong[d.b.sx]===b2.sx?'生肖相冲，价值观与生活习惯差异较大，遇事容易对立':'无明显生肖冲克，冲突多来自沟通方式而非本质矛盾'}。</p>`;
   H+=`<h4>长期稳定性</h4><p>综合评分<span class="hl">${score}分</span>，属于<span class="hl">${grade}</span>。${score>=70?'长期稳定性良好，若能共同经营，白头偕老概率高':'需要双方持续投入经营，通过五行互补与环境调和可大幅提升稳定性'}。</p></div></div>`;
   document.getElementById('relResult').innerHTML=H;
   requestAnimationFrame(()=>{document.querySelectorAll('.hh-fill').forEach(el=>setTimeout(()=>el.style.width=el.dataset.w,150));});
 }
+
+/* 画布颜色跟随明暗主题 */
+function _isDark(){return document.documentElement.getAttribute('data-theme')==='dark';}
+function _gridLine(){return _isDark()?'rgba(245,244,238,.10)':'rgba(20,20,19,.08)';}
+function _axisText(){return _isDark()?'rgba(245,244,238,.45)':'rgba(20,20,19,.42)';}
 
 export function drawCurve(data,dys,age){
   const cv=document.getElementById('cvC');if(!cv)return;
@@ -721,11 +726,11 @@ export function drawCurve(data,dys,age){
   if(cv.width!==Math.round(cssW*dpr)||cv.height!==Math.round(cssH*dpr)){cv.width=Math.round(cssW*dpr);cv.height=Math.round(cssH*dpr);cv.style.width=cssW+'px';cv.style.height=cssH+'px';}
   const ctx=cv.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);ctx.scale(dpr,dpr);
   const w=cssW,h=cssH;const p={t:14,b:26,l:30,r:14},cw=w-p.l-p.r,ch=h-p.t-p.b;
-  [0,50,100].forEach(v=>{const y=p.t+ch-(v/100)*ch;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(w-p.r,y);ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.stroke()});
+  [0,50,100].forEach(v=>{const y=p.t+ch-(v/100)*ch;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(w-p.r,y);ctx.strokeStyle=_gridLine();ctx.stroke()});
   const grad=ctx.createLinearGradient(0,p.t,0,h-p.b);const _ac=window._accentRGB||[200,164,90];grad.addColorStop(0,`rgba(${_ac},0.18)`);grad.addColorStop(1,`rgba(${_ac},0)`);
   ctx.beginPath();data.forEach((v,i)=>{const x=p.l+i*(cw/(data.length-1)),y=p.t+ch-(v/100)*ch;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.lineTo(p.l+(data.length-1)*(cw/(data.length-1)),p.t+ch);ctx.lineTo(p.l,p.t+ch);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
   ctx.beginPath();data.forEach((v,i)=>{const x=p.l+i*(cw/(data.length-1)),y=p.t+ch-(v/100)*ch;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.strokeStyle=`rgba(${_ac},0.5)`;ctx.lineWidth=2;ctx.stroke();
-  data.forEach((v,i)=>{const x=p.l+i*(cw/(data.length-1)),y=p.t+ch-(v/100)*ch;const cu=age>=dys[i].as&&age<=dys[i].ae;ctx.beginPath();ctx.arc(x,y,cu?5:2.5,0,Math.PI*2);ctx.fillStyle=cu?`rgb(${_ac})`:`rgba(${_ac},.35)`;ctx.fill();if(cu){ctx.beginPath();ctx.arc(x,y,9,0,Math.PI*2);ctx.strokeStyle=`rgba(${_ac},.2)`;ctx.lineWidth=2;ctx.stroke()}ctx.fillStyle='rgba(255,255,255,.25)';ctx.font='7px sans-serif';ctx.textAlign='center';ctx.fillText(dys[i].g+dys[i].z,x,h-p.b+11);ctx.fillText(dys[i].as+'岁',x,h-p.b+20);});
+  data.forEach((v,i)=>{const x=p.l+i*(cw/(data.length-1)),y=p.t+ch-(v/100)*ch;const cu=age>=dys[i].as&&age<=dys[i].ae;ctx.beginPath();ctx.arc(x,y,cu?5:2.5,0,Math.PI*2);ctx.fillStyle=cu?`rgb(${_ac})`:`rgba(${_ac},.35)`;ctx.fill();if(cu){ctx.beginPath();ctx.arc(x,y,9,0,Math.PI*2);ctx.strokeStyle=`rgba(${_ac},.2)`;ctx.lineWidth=2;ctx.stroke()}ctx.fillStyle=_axisText();ctx.font='7px sans-serif';ctx.textAlign='center';ctx.fillText(dys[i].g+dys[i].z,x,h-p.b+11);ctx.fillText(dys[i].as+'岁',x,h-p.b+20);});
 }
 
 export function copyReport(){
