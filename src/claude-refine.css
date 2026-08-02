@@ -412,3 +412,49 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
   background: var(--c-accent) !important; border: 1px solid var(--c-accent) !important;
   color: var(--c-on-accent) !important; font: 500 var(--fs-sm) var(--sf); cursor: pointer;
 }
+
+/* ---------- 12. 首页「今日一句」 ---------- */
+.today-card {
+  margin-bottom: var(--sp-5);
+  padding: var(--sp-5);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--c-r-lg);
+  box-shadow: var(--c-shadow-1);
+}
+.today-card-top { display: flex; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-3); }
+.today-card-date { font-size: var(--fs-micro); color: var(--c-text-3); font-variant-numeric: tabular-nums; }
+.today-card-tone {
+  font-size: var(--fs-micro); font-weight: 600;
+  padding: 2px 8px; border-radius: 999px;
+  background: var(--c-surface-2);
+}
+.today-card-headline {
+  font-family: var(--display);
+  font-size: var(--fs-lg); line-height: 1.5; font-weight: 500;
+  color: var(--c-text);
+  margin-bottom: var(--sp-3);
+}
+.today-card-body { font-size: var(--fs-sm); line-height: 1.75; color: var(--c-text-2); }
+.today-card-body b { display: block; font-size: var(--fs-micro); color: var(--c-text-3); font-weight: 500; margin-bottom: 2px; }
+.today-card-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2);
+  margin-top: var(--sp-4); padding-top: var(--sp-3);
+  border-top: 1px solid var(--c-border);
+}
+.today-card-who { font-size: var(--fs-micro); color: var(--c-text-3); }
+.today-card-more {
+  min-height: 36px; padding: 0 var(--sp-3);
+  border: 1px solid var(--c-border-2); border-radius: 999px;
+  background: transparent; color: var(--c-text-2);
+  font: 500 var(--fs-sm) var(--sf); cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.today-card-more:hover { background: var(--c-surface-3); color: var(--c-text); }
+.tj-daily-meta { font-size: var(--fs-micro); color: var(--c-text-3); margin-top: 4px; }
+
+/* 首页滚动容器：justify-content:center 在内容超高时会把顶部溢出到
+   scrollTop=0 之上（flex 已知问题），导致「今日一句」永远滚不到。
+   改用 auto margin 实现居中——内容不足时依然居中，超高时正常从顶部开始。 */
+.p1-scroll { justify-content: flex-start !important; }
+.p1-scroll > .p1-inner { margin-top: auto !important; margin-bottom: auto !important; }

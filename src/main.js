@@ -9,6 +9,7 @@ import { mkMh } from './engines/meihua.js';
 import { mkSi } from './engines/sizhi.js';
 import { calcSynastry } from './engines/synastry.js';
 import { shareSynastry, saveSynastryPartner, partnerPickerHtml, bindPartnerPicker, listPartners } from './tools/synastry-share.js';
+import { calcLiuRi, buildDailyCopy, dailyOneLiner } from './engines/liuri.js';
 import { TJ } from './state/tj.js';
 import { getCtx } from './state/context.js';
 import { toolPageShell, setToolOutput } from './tools/shared.js';
@@ -1070,17 +1071,44 @@ window.ORACLE_SIGNS = {
  };
 })();
 
-/* 流日驱动日签：以当日干支、流日十神和地支关系替代固定文案 */
+/* 流日驱动日签：真实计算「当日干支 × 本人命盘」的互动
+   （旧版此处的地支比对是死代码：dayZhi===((typeof __TJX_V5!=='undefined'&&'')||'')
+     恒为 false，导致永远输出同一句通用提示） */
 (function(){
- const old=window.TJDailyRun;
  window.TJDailyRun=function(){
-  const d=window._ctx||window._baziData||{},wx=d.wx||{},dg=d.dg||'日主';
-  const gz=typeof getTodayGZ==='function'?getTodayGZ():'甲子';const dayGan=gz.charAt(0),dayZhi=gz.charAt(1);const dayWx=typeof GW!=='undefined'?GW[dayGan]:'土';const role=typeof SS!=='undefined'&&SS[dg]?SS[dg][dayGan]:'流日';
-  const sheng={木:'火',火:'土',土:'金',金:'水',水:'木'},ke={木:'土',火:'金',土:'水',金:'木',水:'火'};
-  const tone=role&&role.includes('财')?'适合处理收入、资源与现实安排':role&&role.includes('官')?'适合明确规则、责任和推进节点':role&&role.includes('印')?'适合学习、复盘和获得支持':role&&role.includes('食')?'适合表达、创作和输出成果':role&&role.includes('比')?'适合主动推进，也要注意边界':'适合按节奏完成当日重点';
-  const relation=dayZhi===((typeof __TJX_V5!=='undefined'&&'')||'')?'':'流日地支「'+dayZhi+'」提示：安排留白，给临时变化留出空间。';
-  const out=document.getElementById('v3_result');if(!out)return;out.classList.add('daily-sign-result');
-  out.innerHTML='<div class="tj-result-head"><div><div class="tj-result-title">今日日签</div><div style="font-size:.68em;color:var(--c-text-3);margin-top:4px">流日 '+gz+' · '+dayWx+' · '+role+'</div></div><div class="tj-score">'+dayGan+'</div></div><div class="tj-result-body"><div class="tj-result-list"><div><b>今日主线</b><span>'+tone+'。</span></div><div><b>行动与协作</b><span>优先完成一件可见成果；沟通先说事实，再说需求。'+relation+'</span></div><div><b>状态与提醒</b><span>根据流日'+(dayWx===wx.ys?'与用神同气，适合顺势推进':'与当前用神不同，宜保留弹性')+'；重要决定先复核，避免在疲惫时拍板。</span></div></div></div><div class="tj-sign-actions"><button class="tj-sign-share" type="button" onclick="shareDailySign()">↗ 分享日签</button><button class="tj-sign-refresh" type="button" onclick="TJDailyRun()">↻ 重新生成</button></div><div class="tj-disclaimer">根据当日干支与命盘关系生成，仅用于节奏整理，不替代现实判断。</div>';out.classList.add('show');out.closest('.tj-tool-v3')?.classList.add('result-mode');document.querySelector('#toolModal .tool-sheet')?.classList.add('result-open');
+  const d=window._ctx||window._baziData;
+  const out=document.getElementById('v3_result');
+  if(!out)return;
+  if(!d||!d.b){showToast('请先完成个人推演');return}
+
+  const r=calcLiuRi(d.b,(d.wx&&d.wx.ys)||'土');
+  const c=buildDailyCopy(r);
+  const focusEl=document.getElementById('v3_focus');
+  const focus=focusEl?focusEl.value:'';
+
+  const toneColor=r.tone==='flow'?'var(--c-green)':r.tone==='steady'?'var(--c-teal)'
+                 :r.tone==='friction'?'var(--c-orange)':'var(--c-text-3)';
+
+  let H='<div class="tj-result-head"><div><div class="tj-result-title">'+c.headline+'</div>'+
+        '<div class="tj-daily-meta">'+r.day.gz+'日 · '+c.role+' · '+c.domain+'</div></div>'+
+        '<div class="tj-score" style="color:'+toneColor+'">'+c.label+'</div></div>';
+
+  H+='<div class="tj-result-body"><div class="tj-result-list">';
+  c.sections.forEach(x=>{H+='<div><b>'+x.k+'</b><span>'+x.v+'</span></div>'});
+  if(focus)H+='<div><b>你选的重点：'+focus+'</b><span>'+
+    (r.tone==='rest'||r.tone==='friction'
+      ? '今天阻力偏大，把它拆成一个 20 分钟就能完成的版本，先动起来即可。'
+      : '今天状态支持这件事，安排一段不被打断的时间集中处理。')+'</span></div>';
+  H+='</div></div>';
+
+  H+='<div class="tj-sign-actions"><button class="tj-sign-share" type="button" onclick="shareDailySign()">分享日签</button>'+
+     '<button class="tj-sign-refresh" type="button" onclick="closeToolPage()">完成</button></div>';
+  H+='<div class="tj-disclaimer">依据当日干支与你的命盘关系生成，同一天内容固定，用于整理节奏，不预测吉凶，也不替代现实判断。</div>';
+
+  out.innerHTML=H;
+  out.classList.add('daily-sign-result','show');
+  out.closest('.tj-tool-v3')?.classList.add('result-mode');
+  document.querySelector('#toolModal .tool-sheet')?.classList.add('result-open');
  };
 })();
 
@@ -1554,4 +1582,91 @@ Object.assign(window, {
     if(type==='relation')[80,260,600].forEach(ms=>setTimeout(mountPicker,ms));
   };
   window.TJSynMountPicker=mountPicker;
+})();
+
+/* ============================================================
+   首页「今日一句」：回访用户无需重新推演即可看到当天内容
+   数据来自最近一次保存的档案；不做推送、不制造紧迫感。
+   ============================================================ */
+(function(){
+  async function renderTodayCard(){
+    const el=document.getElementById('todayCard');
+    if(!el)return;
+    let list=[];
+    try{ list=await dbGetAll(); }catch(e){ return; }
+    if(!list.length){ el.style.display='none'; return; }
+
+    const p=list[0];                       // dbGetAll 已按 updatedAt 倒序
+    if(!p||!p.bd){ el.style.display='none'; return; }
+    const [by,bm,bd]=p.bd.split('-').map(Number);
+    if(!by||!bm||!bd){ el.style.display='none'; return; }
+
+    let r,c;
+    try{
+      const hourZhi=(()=>{const t=(p.timeStr||'09:00').split(':').map(Number);
+        const mins=t[0]*60+(t[1]||0);
+        if(mins>=23*60)return 0;
+        return Math.floor((mins+60)/120)%12;})();
+      const chart=mkBazi(by,bm,bd,hourZhi);
+      const wx=mkWx(chart);
+      r=calcLiuRi(chart,wx.ys);
+      c=buildDailyCopy(r);
+    }catch(e){ console.warn('todayCard',e); el.style.display='none'; return; }
+
+    const toneColor=r.tone==='flow'?'var(--c-green)':r.tone==='steady'?'var(--c-teal)'
+                   :r.tone==='friction'?'var(--c-orange)':'var(--c-text-3)';
+    const first=c.sections[0];
+
+    el.innerHTML=
+      '<div class="today-card-top">'+
+        '<span class="today-card-date">'+r.day.gz+'日</span>'+
+        '<span class="today-card-tone" style="color:'+toneColor+'">'+c.label+'</span>'+
+      '</div>'+
+      '<div class="today-card-headline">'+c.headline+'</div>'+
+      (first?'<div class="today-card-body"><b>'+first.k+'</b>'+first.v+'</div>':'')+
+      '<div class="today-card-foot">'+
+        '<span class="today-card-who">'+String(p.name||'我的命盘').replace(/</g,'&lt;')+'</span>'+
+        '<button type="button" class="today-card-more">查看完整日签 →</button>'+
+      '</div>';
+    el.style.display='block';
+
+    el.querySelector('.today-card-more')?.addEventListener('click',()=>{
+      window._pendingDaily=true;
+      loadProfile(p.id);
+    });
+
+  }
+
+  window.renderTodayCard=renderTodayCard;
+
+  // 首次进入
+  document.addEventListener('DOMContentLoaded',()=>{ setTimeout(renderTodayCard,600); });
+
+  // 档案增删后立即同步（renderProfiles 未挂到 window，改为包装公开的入口）
+  ['confirmSaveProfile','deleteProfile','handleImport'].forEach(fn=>{
+    const old=window[fn];
+    if(typeof old!=='function')return;
+    window[fn]=function(){
+      const ret=old.apply(this,arguments);
+      Promise.resolve(ret).then(()=>setTimeout(renderTodayCard,260)).catch(()=>{});
+      return ret;
+    };
+  });
+
+  // 返回首页时刷新（跨零点时内容需更新）
+  const oldBack=window.goBack;
+  window.goBack=function(){
+    if(oldBack)oldBack.apply(this,arguments);
+    setTimeout(renderTodayCard,120);
+  };
+
+  // 从「查看完整日签」进入时，报告渲染完成后自动打开日签工具
+  const oldShow=window.showPage2;
+  window.showPage2=function(){
+    if(oldShow)oldShow.apply(this,arguments);
+    if(window._pendingDaily){
+      window._pendingDaily=false;
+      setTimeout(()=>{ if(window.openToolPage)openToolPage('daily'); },700);
+    }
+  };
 })();
