@@ -61,6 +61,9 @@ function _titleCached(card) {
 
 /* 标签已经写明这是哪一段，卡片里的图标 + 同名大标题就是重复信息。
    去掉标头，只把副标题保留成一行说明。 */
+/* 精简标头。
+   关键：只做「隐藏」不做「删除」——新手模式要把卡片原样还回 .sec，
+   删掉的标头无法还原。用 class 标记，teardown 时一并撤销。 */
 function _slimHead(card, label) {
   const hd = card.querySelector(':scope > .card-hd');
   if (!hd || card.dataset.slimmed === '1') return;
@@ -70,21 +73,26 @@ function _slimHead(card, label) {
   const dup = tt && (tt.includes(label) || label.includes(tt.slice(0, 2)));
   if (!dup) return;
   card.dataset.slimmed = '1';
+  hd.classList.add('sec-head-hidden');
   // 副标题若只是在罗列下面那排子标签（如「四柱、五行、细盘与十神关系」
-  // 下面正好就是四个同名子标签），也是重复信息，一并去掉
+  // 下面正好就是四个同名子标签），也是重复信息，不再另行展示
   const subTabs = [...card.querySelectorAll('.structure-tab, .focus-tab')]
     .map(b => b.textContent.trim()).filter(Boolean);
   const plain = st.replace(/<[^>]*>/g, '');
   const hit = subTabs.filter(x => x && plain.includes(x)).length;
-  if (hit >= 2) { hd.remove(); return; }
-  if (st) {
-    const p = document.createElement('div');
-    p.className = 'sec-pane-desc';
-    p.innerHTML = st;
-    hd.replaceWith(p);
-  } else {
-    hd.remove();
-  }
+  if (hit >= 2 || !st) return;
+  const d = document.createElement('div');
+  d.className = 'sec-pane-desc';
+  d.innerHTML = st;
+  hd.insertAdjacentElement('afterend', d);
+}
+
+/* 撤销 _slimHead，把卡片恢复成原始结构 */
+function _restoreHead(card) {
+  if (card.dataset.slimmed !== '1') return;
+  delete card.dataset.slimmed;
+  card.querySelector(':scope > .card-hd')?.classList.remove('sec-head-hidden');
+  card.querySelector(':scope > .sec-pane-desc')?.remove();
 }
 
 function _load() {
@@ -99,6 +107,13 @@ function _save(secId, idx) {
 
 function build(sec) {
   if (!sec) return;
+  /* 新手模式必须还原成「卡片是 .sec 的直接子元素」。
+     styles.css 用 `body.beginner-mode .sec > .glass{display:none}` 隐藏
+     大师专属卡片 —— 这是个依赖直接子层级的选择器。
+     标签页把卡片搬进 .sec > .sec-tabs-wrap > .sec-panes > .sec-pane 后
+     层级变深，该规则不再匹配，导致新手模式下大师卡片与标签栏全部照常显示。
+     （实测：新手/大师两种模式 panes 数量完全一致，均为 4/5/4） */
+  if (document.body.classList.contains('beginner-mode')) { teardown(sec); return; }
   const wrapEl = sec.querySelector(':scope > .sec-tabs-wrap');
   // 关键：已经归位到面板里的卡片也要算进来，否则每轮轮询都会看到
   // 「.sec 直接子里没有卡片」→ 误判为需要拆除 → 拆了又建，无限循环
@@ -204,7 +219,11 @@ function select(sec, idx, persist) {
 function teardown(sec) {
   const wrap = sec.querySelector(':scope > .sec-tabs-wrap');
   if (!wrap) return;
-  wrap.querySelectorAll('.sec-pane > *').forEach(c => { c.classList.remove('sec-plain'); sec.appendChild(c); });
+  wrap.querySelectorAll('.sec-pane > *').forEach(c => {
+    c.classList.remove('sec-plain');
+    _restoreHead(c);
+    sec.appendChild(c);
+  });
   wrap.remove();
 }
 
@@ -243,7 +262,13 @@ export function initSectionTabs() {
   }
   function stopPolling() { clearInterval(timer); timer = null; }
 
+  /* body 的 class 同时承载 report-active 与 beginner-mode。
+     新手↔大师切换必须立刻 run() 一次：仅靠轮询会有最多 400ms 的窗口，
+     期间标签栏仍留在新手版页面上（用户可见的闪烁）。 */
+  let lastBeginner = document.body.classList.contains('beginner-mode');
   new MutationObserver(() => {
+    const nowBeginner = document.body.classList.contains('beginner-mode');
+    if (nowBeginner !== lastBeginner) { lastBeginner = nowBeginner; run(); }
     if (document.body.classList.contains('report-active')) startPolling();
     else stopPolling();
   }).observe(document.body, { attributes: true, attributeFilter: ['class'] });

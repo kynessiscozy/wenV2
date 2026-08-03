@@ -9,13 +9,50 @@ const ok = (c, m, extra = '') => { c ? (pass++, console.log('  ✓ ' + m)) : (fa
 
 const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
 
-/* ---------- 1. 标签内容去卡片化 ---------- */
+/* ---------- 0. 新手模式不得出现分区标签栏 ----------
+   styles.css 用 `body.beginner-mode .sec > .glass{display:none}` 隐藏大师卡片，
+   这条规则依赖「卡片是 .sec 的直接子元素」。标签页把层级变深会让它失效，
+   导致新手版下方冒出大师版的标签切换（已回归过一次，故固化为用例）。 */
 {
   const p = await b.newPage();
   await p.setViewport({ width: 430, height: 932 });
   await p.goto(BASE, { waitUntil: 'networkidle0' });
   await p.evaluate(() => window.calc(true));
   await new Promise(r => setTimeout(r, 4500));
+
+  console.log('\n[新手 / 大师 模式隔离]');
+  for (let i = 1; i <= 2; i++) {
+    await p.evaluate(() => window.setUserMode('beginner'));
+    await new Promise(r => setTimeout(r, 2600));
+    const bg = await p.evaluate(() => {
+      const o = { tabs: 0, wraps: 0, plain: 0, hidHead: 0, desc: 0, deep: 0 };
+      for (const s of ['s-ming', 's-yun', 's-rel']) {
+        const el = document.getElementById(s); if (!el) continue;
+        o.tabs += [...el.querySelectorAll('.sec-tab')].filter(t => t.offsetParent !== null).length;
+        o.wraps += el.querySelectorAll('.sec-tabs-wrap').length;
+        o.plain += el.querySelectorAll('.sec-plain').length;
+        o.hidHead += el.querySelectorAll('.card-hd.sec-head-hidden').length;
+        o.desc += el.querySelectorAll('.sec-pane-desc').length;
+        // 大师专属卡片必须仍是 .sec 的直接子元素，隐藏规则才生效
+        o.deep += [...el.querySelectorAll('.glass')].filter(c => c.parentElement !== el).length;
+      }
+      return o;
+    });
+    ok(bg.tabs === 0, `第${i}轮 新手版无可见标签栏`, JSON.stringify(bg));
+    ok(bg.wraps === 0, `第${i}轮 新手版已拆除标签结构`);
+    ok(bg.plain === 0 && bg.hidHead === 0 && bg.desc === 0, `第${i}轮 去壳/隐藏标头已完全还原`);
+
+    await p.evaluate(() => window.setUserMode('master'));
+    await new Promise(r => setTimeout(r, 2800));
+    const mg = await p.evaluate(() => ({
+      tabs: [...document.querySelectorAll('#s-ming .sec-tab')].filter(t => t.offsetParent !== null).length,
+      head: (() => { const h = document.querySelector('#s-ming .sec-pane.active > * > .card-hd'); return h ? h.offsetParent !== null : false; })(),
+    }));
+    ok(mg.tabs >= 2, `第${i}轮 大师版标签栏正常`, 'tabs=' + mg.tabs);
+    ok(mg.head === false, `第${i}轮 大师版重复标头不可见`);
+  }
+  await p.evaluate(() => window.setUserMode('master'));
+  await new Promise(r => setTimeout(r, 2800));
 
   for (const sec of ['s-ming', 's-yun', 's-rel']) {
     await p.evaluate(s => document.querySelector(`.tab-item[data-sec="${s}"]`)?.click(), sec);
@@ -27,7 +64,10 @@ const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
       const card = el.querySelector('.sec-pane.active > *');
       const cs = card ? getComputedStyle(card) : null;
       const active = el.querySelector('.sec-tab.active')?.textContent.trim() || '';
+      // 标头改为「隐藏」而非「删除」（新手模式要能原样还回），
+      // 因此这里必须判可见性，只查 DOM 存在会误报。
       const heads = [...el.querySelectorAll('.sec-pane.active > * > .card-hd')]
+        .filter(h => h.offsetParent !== null)
         .map(h => (h.querySelector('.card-tt')?.textContent || '').replace(/\s+/g, ''));
       // 内层子卡也不该再画一层灰底方块
       const sub = el.querySelector('.sec-pane.active .structure-subcard');
@@ -45,7 +85,7 @@ const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
     ok(d.bg === 'rgba(0, 0, 0, 0)', '面板内容无卡片底色', d.bg);
     ok(d.bw === '0px', '面板内容无卡片描边', d.bw);
     ok(d.pad === '0px', '面板内容无卡片内边距', d.pad);
-    ok(!d.dupHead, '标头未与标签重复');
+    ok(!d.dupHead, '标头未与标签重复（可见的）');
     ok(d.subBg === null || d.subBg === 'rgba(0, 0, 0, 0)', '二级子卡也已去壳', String(d.subBg));
     ok(d.explainDup <= 1, '「这段是什么意思」不重复出现', '数量=' + d.explainDup);
     ok(!d.truncated, '标签文案未被截断');

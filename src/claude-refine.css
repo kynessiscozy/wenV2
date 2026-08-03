@@ -1241,3 +1241,8 @@ body .ig-dock.tab-bar { z-index: 210 !important; }
   margin: 0 0 var(--sp-3) !important;
   box-shadow: none !important;
 }
+
+/* ---- 22.4 被精简的标头用隐藏而非删除 ----
+   新手模式要把卡片原样还回 .sec（见 section-tabs.js 的层级契约说明），
+   删除掉的标头无法还原，因此改为加 class 隐藏，teardown 时撤销。 */
+.card-hd.sec-head-hidden { display: none !important; }
