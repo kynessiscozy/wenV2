@@ -628,11 +628,27 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
 /* ---- 16.3 工具弹层：关闭按钮压在简介卡上（实测重叠） ---- */
 #toolModal .tj-tool-intro {
   padding-right: 52px !important;
-  background-image: none !important;   /* 底图让文字对比度不稳定 */
-  background: var(--c-surface-2) !important;
+  /* 原深蓝金 WEBP 会让文字对比度不稳定，已换成随主题着色的 SVG 纹理：
+     用 currentColor 绘制，浅色/深色下都保持低对比，不与文字抢注意力 */
+  position: relative;
+  background-color: var(--c-surface-2) !important;
+  background-repeat: no-repeat !important;
+  background-position: right -10px center !important;
+  background-size: auto 150% !important;
   border: 1px solid var(--c-border) !important;
   border-radius: var(--c-r) !important;
+  overflow: hidden;
 }
+/* 同磁贴：用一层 ::after 承载纹理并控制透明度 */
+#toolModal .tj-tool-intro::after {
+  content: ''; position: absolute; inset: 0; z-index: 0;
+  background: inherit; background-color: transparent !important;
+  opacity: .16; pointer-events: none;
+}
+[data-theme="dark"] #toolModal .tj-tool-intro::after { opacity: .22; }
+#toolModal .tj-tool-intro > * { position: relative; z-index: 1; }
+#toolModal .tj-tool-intro > * { color: var(--c-text); }
+#toolModal .tj-tool-intro .tj-tool-kicker { color: var(--c-accent-text); }
 #toolModal .tool-sheet-close {
   background: var(--c-surface) !important;
   border: 1px solid var(--c-border-2) !important;

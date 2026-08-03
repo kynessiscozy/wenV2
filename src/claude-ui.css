@@ -436,14 +436,32 @@ table, .fine-table, .god-table { border-collapse: collapse; width: 100%; }
 .r-meta { color: var(--c-text-3) !important; }
 
 /* ---------- 12. 工具中心 ---------- */
+/* 底纹改为 SVG（随 currentColor 适配明暗），不再用深色 WEBP */
 #s-adv .tool-tile {
-  background: var(--c-surface) !important;
-  background-image: none !important;
+  position: relative;
+  background-color: var(--c-surface) !important;
+  background-repeat: no-repeat !important;
+  background-position: right -14px center !important;
+  background-size: auto 150% !important;
   border: 1px solid var(--c-border) !important;
   border-radius: var(--c-r) !important;
   box-shadow: none !important;
+  overflow: hidden;
 }
-#s-adv .tool-tile:hover { background: var(--c-surface-3) !important; border-color: var(--c-border-2) !important; }
+/* SVG 是外部文档拿不到 currentColor，统一用 opacity 控制存在感：
+   浅色下 .12、深色下调低，始终不与文字抢注意力 */
+#s-adv .tool-tile { --art-op: .14; }
+[data-theme="dark"] #s-adv .tool-tile { --art-op: .20; }
+#s-adv .tool-tile::after {
+  content: ''; position: absolute; inset: 0; z-index: 0;
+  background: inherit; background-color: transparent !important;
+  opacity: var(--art-op); pointer-events: none;
+}
+#s-adv .tool-tile > * { position: relative; z-index: 1; }
+#s-adv .tool-tile:hover { background-color: var(--c-surface-3) !important; border-color: var(--c-border-2) !important; }
+#s-adv .tool-tile:hover::after { opacity: calc(var(--art-op) * 1.5); }
+#s-adv .tool-tile .tool-label, #s-adv .tool-tile > b { color: var(--c-text) !important; }
+#s-adv .tool-tile .tool-tag, #s-adv .tool-tile > small { color: var(--c-text-3) !important; }
 .tools-toolbar {
   background: var(--c-bg) !important;
   background-image: none !important;

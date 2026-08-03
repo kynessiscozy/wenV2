@@ -4,17 +4,17 @@
 
 /* —— 工具 → 配图映射 —— */
 const TOOL_IMG = {
-  wealth:  '/tool-wealth.webp',
-  career:  '/tool-career.webp',
-  date:    '/tool-date.webp',
-  style:   '/tool-style.webp',
-  layoff:  '/tool-layoff.webp',
-  daily:   '/tool-daily.webp',
-  name:    '/tool-name.webp',
-  oracle:  '/tool-oracle.webp',
-  lottery: '/tool-lottery.webp',
-  zodiac:  '/tool-answerbook.webp',
-  relation:'/tool-bg-relation.webp',
+  wealth:  '/art/wealth.svg',
+  career:  '/art/career.svg',
+  date:    '/art/date.svg',
+  style:   '/art/style.svg',
+  layoff:  '/art/layoff.svg',
+  daily:   '/art/daily.svg',
+  name:    '/art/name.svg',
+  oracle:  '/art/oracle.svg',
+  lottery: '/art/lottery.svg',
+  zodiac:  '/art/answerbook.svg',
+  relation:'/art/relation.svg',
 };
 const TOOL_NAMES = {
   wealth: '财运与理财罗盘', career: '转行与副业测评',
