@@ -105,8 +105,7 @@
       <span>重新推演</span>
     </button>
     <div class="mode-top-group" role="tablist" aria-label="报告阅读模式"><button class="mode-top-switch" id="modeBeginner" type="button" role="tab" aria-selected="true" onclick="setUserMode('beginner')">新手</button><button class="mode-top-switch" id="modeMaster" type="button" role="tab" aria-selected="false" onclick="setUserMode('master')">大师</button></div>
-    <div class="p2-actions"><div class="p2-act" id="lgFab" onclick="toggleLgPanel()" title="玻璃质感强度">◐</div>
-      <button class="p2-act" type="button" onclick="openSaveModal()" title="保存档案" aria-label="保存档案"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></button>
+    <div class="p2-actions"><button class="p2-act" type="button" onclick="openSaveModal()" title="保存档案" aria-label="保存档案"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></button>
     </div>
   </div>
   <div class="p2-scroll" id="p2Scroll"><button class="back-to-top" id="backToTop" onclick="document.getElementById('p2Scroll').scrollTo({top:0,behavior:'smooth'})"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg></button>
@@ -140,7 +139,7 @@
 <div class="ai-sheet" id="aiSheet">
   <div class="ai-actions">
     <button class="ai-new" type="button" onclick="newAskChat()" title="新对话" aria-label="新对话">＋</button>
-    <button class="ai-settings" type="button" onclick="toggleAISettings()" title="AI 设置" aria-label="AI 设置">⚙</button>
+    <button class="ai-settings" type="button" onclick="toggleAISettings()" title="AI 设置" aria-label="AI 设置"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></button>
     <button class="ai-close" type="button" onclick="closeAsk()" title="关闭" aria-label="关闭">×</button>
   </div>
   <div class="ai-handle"></div>

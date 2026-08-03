@@ -179,11 +179,11 @@ const __TJX_V5 = (function(){
     let score=0;const found=[],missing=[];
     if(qiList[0]){
       const qw=GW[qiList[0]];
-      if(pw.has(qw)&&qw!==dw){score+=15;found.push('一气'+qiList[0]+'✅');}else{score-=8;missing.push('一气'+qiList[0]+'❌');}
+      if(pw.has(qw)&&qw!==dw){score+=15;found.push('一气'+qiList[0]+'·符合');}else{score-=8;missing.push('一气'+qiList[0]+'·缺');}
     }
     if(qiList[1]){
       const qw=GW[qiList[1]];
-      if(pw.has(qw)&&qw!==dw){score+=8;found.push('二气'+qiList[1]+'✅');}else{score-=4;missing.push('二气'+qiList[1]+'❌');}
+      if(pw.has(qw)&&qw!==dw){score+=8;found.push('二气'+qiList[1]+'·符合');}else{score-=4;missing.push('二气'+qiList[1]+'·缺');}
     }
     const agw=new Set(allGan.filter(Boolean).map(g=>GW[g]));
     if(qiList[0]&&agw.has(GW[qiList[0]])){score+=3;found.push('一气透干+3');}

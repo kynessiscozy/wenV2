@@ -11,6 +11,7 @@ import { calcSynastry } from './engines/synastry.js';
 import { shareSynastry, saveSynastryPartner, partnerPickerHtml, bindPartnerPicker, listPartners } from './tools/synastry-share.js';
 import { calcLiuRi, buildDailyCopy, dailyOneLiner } from './engines/liuri.js';
 import { buildExplainQuestion, extractSection, chartFacts } from './ai/explain.js';
+import { initSectionTabs } from './ui/section-tabs.js';
 import { TJ } from './state/tj.js';
 import { getCtx } from './state/context.js';
 import { toolPageShell, setToolOutput } from './tools/shared.js';
@@ -54,6 +55,7 @@ import {
 } from './ui/index.js';
 
 initTheme();
+initSectionTabs();
 initNavigationUI();
 initAISettings();
 
@@ -117,8 +119,8 @@ function renderRiQian(){
   else{yi.push('流通','迁移','沐浴');ji.push('签约','婚嫁');yj='水势汪洋，顺势而为，宜流通迁移，忌固守一域。';}
   return`<div style="text-align:center;margin-bottom:14px"><div style="font-family:var(--serif);font-size:1.6em;color:var(--ac-text);margin-bottom:4px">${dg}${dz}日</div><div style="font-size:.75em;color:var(--ac-dim)">${y}年${m}月${d}日${jie?' · '+jie+'后':''}</div></div>
   <div style="display:flex;gap:8px;margin:12px 0"><div style="flex:1;padding:10px;border-radius:10px;background:var(--c-surface-2);text-align:center"><div style="font-size:.65em;color:var(--c-text-3);margin-bottom:4px">生肖</div><div style="font-size:1.1em;font-weight:600">${todaySX}</div></div><div style="flex:1;padding:10px;border-radius:10px;background:var(--c-surface-2);text-align:center"><div style="font-size:.65em;color:var(--c-text-3);margin-bottom:4px">冲煞</div><div style="font-size:1.1em;font-weight:600;color:#d4654a">冲${chongSX}</div></div><div style="flex:1;padding:10px;border-radius:10px;background:var(--c-surface-2);text-align:center"><div style="font-size:.65em;color:var(--c-text-3);margin-bottom:4px">吉神</div><div style="font-size:1.1em;font-weight:600;color:#7ab648">${sxjx[todaySX]||'天德'}</div></div></div>
-  <div style="margin:10px 0"><div style="font-size:.75em;color:var(--ac-dim);margin-bottom:6px">🟢 今日宜</div><div style="display:flex;flex-wrap:wrap;gap:6px">${yi.map(x=>`<span class="tg tj">${x}</span>`).join('')}</div></div>
-  <div style="margin:10px 0"><div style="font-size:.75em;color:var(--ac-dim);margin-bottom:6px">🔴 今日忌</div><div style="display:flex;flex-wrap:wrap;gap:6px">${ji.map(x=>`<span class="tg tc">${x}</span>`).join('')}</div></div>
+  <div style="margin:10px 0"><div style="font-size:.75em;color:var(--ac-dim);margin-bottom:6px">今日宜</div><div style="display:flex;flex-wrap:wrap;gap:6px">${yi.map(x=>`<span class="tg tj">${x}</span>`).join('')}</div></div>
+  <div style="margin:10px 0"><div style="font-size:.75em;color:var(--ac-dim);margin-bottom:6px">今日忌</div><div style="display:flex;flex-wrap:wrap;gap:6px">${ji.map(x=>`<span class="tg tc">${x}</span>`).join('')}</div></div>
   <div style="font-size:.78em;color:var(--c-text-2);margin-top:12px;padding-top:10px;border-top:1px solid var(--c-border)"><b>一句话日签：</b>${yj}</div>`;
 }
 function showRiQian(){const baseHtml=renderRiQian();document.getElementById('rqResult').innerHTML=baseHtml;document.getElementById('rqModal').classList.add('open');}
@@ -148,8 +150,8 @@ function openMonthModal(idx,name,gz,jq,ss){
     <div class="mm-row"><span class="mm-label">节气</span><span class="mm-value">${jq||'待查'}</span></div>
     <div class="mm-row"><span class="mm-label">日主</span><span class="mm-value">${dg}</span></div>
     <div style="margin:14px 0;font-size:.82em;color:var(--c-text);line-height:1.8">${analysis}</div>
-    <div style="margin:10px 0"><div style="font-size:.7em;color:rgba(122,182,72,.8);margin-bottom:6px">🟢 本月宜</div><div style="display:flex;flex-wrap:wrap;gap:4px">${yi.map(x=>`<span class="mm-tag yi">宜${x}</span>`).join('')}</div></div>
-    <div style="margin:10px 0"><div style="font-size:.7em;color:rgba(212,101,74,.8);margin-bottom:6px">🔴 本月忌</div><div style="display:flex;flex-wrap:wrap;gap:4px">${ji.map(x=>`<span class="mm-tag ji">忌${x}</span>`).join('')}</div></div>`;
+    <div style="margin:10px 0"><div style="font-size:.7em;color:rgba(122,182,72,.8);margin-bottom:6px">本月宜</div><div style="display:flex;flex-wrap:wrap;gap:4px">${yi.map(x=>`<span class="mm-tag yi">宜${x}</span>`).join('')}</div></div>
+    <div style="margin:10px 0"><div style="font-size:.7em;color:rgba(212,101,74,.8);margin-bottom:6px">本月忌</div><div style="display:flex;flex-wrap:wrap;gap:4px">${ji.map(x=>`<span class="mm-tag ji">忌${x}</span>`).join('')}</div></div>`;
   document.getElementById('monthModal').classList.add('open');
 }
 function closeMonthModal(){document.getElementById('monthModal').classList.remove('open');}
@@ -271,7 +273,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   window._injectCardToggles=injectToggles;
 })();
 
-/* ====== 合并卡：⚠ 当下关注 子 tab 切换 ====== */
+/* ====== 合并卡：当下关注 子 tab 切换 ====== */
 function focusSwitchTab(btn){
   const card=btn.closest('.focus-card');
   if(!card)return;
@@ -736,18 +738,18 @@ function toggleUserMode(){setUserMode(document.body.classList.contains('beginner
 /* v3：统一工具引擎。每个工具只有“输入—判断—行动”三步，避免各自为政。 */
 (function(){
  const T={
-  wealth:{k:'财富与事业',icon:'◉',title:'财运与理财罗盘',desc:'把命盘节奏和真实现金流放在一起看，先建立安全垫，再安排增长。',fields:[['income','月到手收入','number','例如 15000'],['cost','月固定支出','number','例如 8000'],['cash','现有储蓄','number','例如 60000']]},
-  career:{k:'财富与事业',icon:'↗',title:'转行与副业测评',desc:'不替你冲动跳船，而是判断准备度、现金流和验证路径。',fields:[['goal','目标','select',['转行','副业','创业']],['ready','准备程度','select',['已有技能和作品','已有方向但未验证','还没有明确方向']],['runway','可承受准备期','select',['1个月以内','1—3个月','3个月以上']]]},
-  date:{k:'日常决策',icon:'◇',title:'重要事项择日助手',desc:'择日不替代现实条件，重点帮你补齐风险检查和行动准备。',fields:[['event','事项','select',['签约合作','面试入职','搬家出行','关系沟通']],['date','目标日期','date',''],['constraint','现实限制','textarea','例如：必须周五完成、对方只能晚上沟通']]},
-  style:{k:'日常决策',icon:'✦',title:'能量穿搭与工位风水',desc:'将抽象的五行提示转成颜色、环境和专注习惯，避免复杂摆件依赖。',fields:[['scene','场景','select',['重要沟通','面试汇报','专注工作','休息恢复']],['space','当前环境问题','select',['杂乱、注意力分散','光线不足','久坐疲劳','没有明显问题']]]},
-  layoff:{k:'财富与事业',icon:'⚠',title:'裁员风险预案',desc:'不做“会不会被裁”的确定性预测，综合公司信号、现金流缓冲与求职准备度，帮你判断应观察、准备还是立即行动。',fields:[['signal','公司信号（最重要）','select',['稳定增长','业务调整','部门收缩或冻结','已出现明确裁撤信号']],['buffer','现金流缓冲（月数）','select',['不足3个月','3—6个月','6个月以上']],['ready','求职准备度','select',['未准备','部分准备','随时可投递']]]},
-  daily:{k:'日常决策',icon:'☼',title:'今日日签',desc:'每天只选一个重点，避免把建议变成新的压力。',fields:[['focus','今日重点','select',['推进工作','关系沟通','学习积累','休息恢复']],['energy','当前状态','select',['精力充足','普通','疲惫或焦虑']]]},
+  wealth:{k:'财富与事业',icon:'财',title:'财运与理财罗盘',desc:'把命盘节奏和真实现金流放在一起看，先建立安全垫，再安排增长。',fields:[['income','月到手收入','number','例如 15000'],['cost','月固定支出','number','例如 8000'],['cash','现有储蓄','number','例如 60000']]},
+  career:{k:'财富与事业',icon:'业',title:'转行与副业测评',desc:'不替你冲动跳船，而是判断准备度、现金流和验证路径。',fields:[['goal','目标','select',['转行','副业','创业']],['ready','准备程度','select',['已有技能和作品','已有方向但未验证','还没有明确方向']],['runway','可承受准备期','select',['1个月以内','1—3个月','3个月以上']]]},
+  date:{k:'日常决策',icon:'择',title:'重要事项择日助手',desc:'择日不替代现实条件，重点帮你补齐风险检查和行动准备。',fields:[['event','事项','select',['签约合作','面试入职','搬家出行','关系沟通']],['date','目标日期','date',''],['constraint','现实限制','textarea','例如：必须周五完成、对方只能晚上沟通']]},
+  style:{k:'日常决策',icon:'装',title:'能量穿搭与工位风水',desc:'将抽象的五行提示转成颜色、环境和专注习惯，避免复杂摆件依赖。',fields:[['scene','场景','select',['重要沟通','面试汇报','专注工作','休息恢复']],['space','当前环境问题','select',['杂乱、注意力分散','光线不足','久坐疲劳','没有明显问题']]]},
+  layoff:{k:'财富与事业',icon:'险',title:'裁员风险预案',desc:'不做“会不会被裁”的确定性预测，综合公司信号、现金流缓冲与求职准备度，帮你判断应观察、准备还是立即行动。',fields:[['signal','公司信号（最重要）','select',['稳定增长','业务调整','部门收缩或冻结','已出现明确裁撤信号']],['buffer','现金流缓冲（月数）','select',['不足3个月','3—6个月','6个月以上']],['ready','求职准备度','select',['未准备','部分准备','随时可投递']]]},
+  daily:{k:'日常决策',icon:'签',title:'今日日签',desc:'每天只选一个重点，避免把建议变成新的压力。',fields:[['focus','今日重点','select',['推进工作','关系沟通','学习积累','休息恢复']],['energy','当前状态','select',['精力充足','普通','疲惫或焦虑']]]},
   name:{k:'灵感与娱乐',icon:'名',title:'智能起名工具',desc:'生成的是灵感方向，不替代读音、字义、重名和家族规范核验。',fields:[['surname','姓氏','text','请输入姓氏'],['style','风格','select',['简洁现代','温润典雅','大气坚定']],['wish','希望传达','text','例如：安定、聪慧、开阔']]},
-  oracle:{k:'灵感与娱乐',icon:'☷',title:'摇签问卜',desc:'传统寺庙问卜：先按问题选择适合的签种，再抽取签诗。观音签适合综合求问；文王签适合事业、学业与方向；关帝签适合事业、承诺与行动；城隍签适合是非、契约与公道；土地公签适合家宅、搬迁与生活根基；财神签适合财务、经营与收入；爱情签适合感情关系；健康签适合作息与身心提醒。结果仅作自我反思参考。',fields:[['area','签种','select',['观音签','文王签','关帝签','城隍签','土地公签','财神签','爱情签','健康签']],['question','你的问题','textarea','只写一件具体的事']]},
-  answerbook:{k:'灵感与娱乐',icon:'?',title:'答案之书',desc:'把一个问题写下来，翻开一句简短答案，作为整理思路的提示。它不是预测，也不能替代你的判断。',fields:[['question','你的问题','textarea','例如：我现在适合开始这件事吗？'],['mode','回答方式','select',['直接回答','行动提醒','自我探索']]]},
-  lottery:{k:'灵感与娱乐',icon:'◎',title:'娱乐选号',desc:'纯随机生成，不预测中奖，不使用命盘制造确定性。',fields:[['type','玩法','select',['双色球','超级大乐透']],['count','注数','select',['1','3','5']]]},
-  zodiac:{k:'关系与沟通',icon:'♧',title:'生肖合冲分析',desc:'只作为传统文化参考，真正决定关系质量的是边界、沟通和共同目标。',fields:[['other','对方生肖','select','鼠牛虎兔龙蛇马羊猴鸡狗猪'.split('')],['scene','关系场景','select',['亲密关系','朋友合作','家人沟通']]]},
-  relation:{k:'关系与沟通',icon:'♡',title:'八字合盘 · 关系分析',desc:'为对方真实排盘，比对日主、五行与干支关系，并给出可直接使用的沟通方案。',fields:[['focus','关系类型','select',['亲密关系','朋友合作','家人沟通']],['pname','对方称呼（可不填）','text','例如：阿雯'],['bdate','对方出生日期（可不填）','date',''],['bhour','对方出生时辰','select',['时辰不详 · 用三柱比对','子 23:00–00:59','丑 01:00–02:59','寅 03:00–04:59','卯 05:00–06:59','辰 07:00–08:59','巳 09:00–10:59','午 11:00–12:59','未 13:00–14:59','申 15:00–16:59','酉 17:00–18:59','戌 19:00–20:59','亥 21:00–22:59']],['issue','当前卡点','textarea','例如：对方不回复、分工不清、总是争吵'],['goal','希望改善','text','例如：把需求说清楚']]}
+  oracle:{k:'灵感与娱乐',icon:'卜',title:'摇签问卜',desc:'传统寺庙问卜：先按问题选择适合的签种，再抽取签诗。观音签适合综合求问；文王签适合事业、学业与方向；关帝签适合事业、承诺与行动；城隍签适合是非、契约与公道；土地公签适合家宅、搬迁与生活根基；财神签适合财务、经营与收入；爱情签适合感情关系；健康签适合作息与身心提醒。结果仅作自我反思参考。',fields:[['area','签种','select',['观音签','文王签','关帝签','城隍签','土地公签','财神签','爱情签','健康签']],['question','你的问题','textarea','只写一件具体的事']]},
+  answerbook:{k:'灵感与娱乐',icon:'答',title:'答案之书',desc:'把一个问题写下来，翻开一句简短答案，作为整理思路的提示。它不是预测，也不能替代你的判断。',fields:[['question','你的问题','textarea','例如：我现在适合开始这件事吗？'],['mode','回答方式','select',['直接回答','行动提醒','自我探索']]]},
+  lottery:{k:'灵感与娱乐',icon:'号',title:'娱乐选号',desc:'纯随机生成，不预测中奖，不使用命盘制造确定性。',fields:[['type','玩法','select',['双色球','超级大乐透']],['count','注数','select',['1','3','5']]]},
+  zodiac:{k:'关系与沟通',icon:'肖',title:'生肖合冲分析',desc:'只作为传统文化参考，真正决定关系质量的是边界、沟通和共同目标。',fields:[['other','对方生肖','select','鼠牛虎兔龙蛇马羊猴鸡狗猪'.split('')],['scene','关系场景','select',['亲密关系','朋友合作','家人沟通']]]},
+  relation:{k:'关系与沟通',icon:'合',title:'八字合盘 · 关系分析',desc:'为对方真实排盘，比对日主、五行与干支关系，并给出可直接使用的沟通方案。',fields:[['focus','关系类型','select',['亲密关系','朋友合作','家人沟通']],['pname','对方称呼（可不填）','text','例如：阿雯'],['bdate','对方出生日期（可不填）','date',''],['bhour','对方出生时辰','select',['时辰不详 · 用三柱比对','子 23:00–00:59','丑 01:00–02:59','寅 03:00–04:59','卯 05:00–06:59','辰 07:00–08:59','巳 09:00–10:59','午 11:00–12:59','未 13:00–14:59','申 15:00–16:59','酉 17:00–18:59','戌 19:00–20:59','亥 21:00–22:59']],['issue','当前卡点','textarea','例如：对方不回复、分工不清、总是争吵'],['goal','希望改善','text','例如：把需求说清楚']]}
  };
  const val=id=>{const e=document.getElementById('v3_'+id);return e?e.value.trim():''};
  function esc(x){return String(x||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}

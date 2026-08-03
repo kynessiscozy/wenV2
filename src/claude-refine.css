@@ -919,3 +919,134 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
   line-height: 1.5;
   color: var(--c-text-3);
 }
+
+/* ============================================================
+   19. 问问大师聊天面板
+   ============================================================ */
+
+/* ---- 19.1 输入框与发送键等高（实测差 6px：44 vs 38）---- */
+#aiSheet .ai-input-row,
+.ai-sheet .ai-input-row {
+  align-items: center !important;      /* 原为 flex-end，单行时两者不对齐 */
+}
+#aiSheet .ai-input,
+.ai-sheet .ai-input {
+  min-height: 40px !important;
+  max-height: 132px !important;
+  padding: 9px 10px !important;
+  line-height: 22px !important;
+}
+#aiSheet .ai-send,
+.ai-sheet .ai-send {
+  width: 40px !important; min-width: 40px !important;
+  height: 40px !important; min-height: 40px !important;
+  align-self: center !important;
+}
+
+/* ---- 19.2 底部圆角：面板并未贴到屏幕底（实测悬空 87~92px），
+        却用了「上圆下方」的贴底样式，看起来像被截断 ---- */
+#aiSheet, .ai-sheet {
+  border-radius: var(--c-r-xl) !important;
+  bottom: max(10px, env(safe-area-inset-bottom)) !important;
+  overflow: hidden;
+}
+
+/* ---- 19.3 桌面端放大：原固定 430px 宽、56% 屏高，
+        大屏上浪费了大量空间 ---- */
+@media (min-width: 768px) {
+  #aiSheet, .ai-sheet {
+    width: min(720px, calc(100vw - 48px)) !important;
+    max-width: min(720px, calc(100vw - 48px)) !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    height: min(78vh, 760px) !important;
+    max-height: min(78vh, 760px) !important;
+    bottom: 24px !important;
+    border-radius: var(--c-r-xl) !important;
+  }
+  /* 打开动画同样要带上 translateX，否则会先跳到左侧 */
+  #aiSheet:not(.open), .ai-sheet:not(.open) {
+    transform: translateX(-50%) translateY(24px) !important;
+  }
+  #askResult { max-height: none !important; }
+  .ai-overlay { backdrop-filter: blur(3px); }
+}
+@media (min-width: 1200px) {
+  #aiSheet, .ai-sheet {
+    width: min(860px, calc(100vw - 64px)) !important;
+    max-width: min(860px, calc(100vw - 64px)) !important;
+    height: min(82vh, 880px) !important;
+    max-height: min(82vh, 880px) !important;
+  }
+}
+
+/* ---- 19.4 工具卡文字阴影过重 ----
+   styles.css 有 `text-shadow: 0 1px 8px rgba(0,0,0,.75)`，
+   那是为「白字压在深色 WEBP 上」设计的。底图已换成浅色 SVG 纹理，
+   这层黑色投影在亮色模式下变成明显的脏边。 */
+#s-adv .tool-tile b,
+#s-adv .tool-tile small,
+#s-adv .tool-tile[data-group] b,
+#s-adv .tool-tile[data-group] small,
+#s-adv .tool-tile .tool-label,
+#s-adv .tool-tile .tool-tag {
+  text-shadow: none !important;
+}
+
+/* ---- 19.5 全局：不使用彩色 emoji ----
+   保留卦象（☰☱☲☳☴☵☶☷）与评分星号，它们是内容而非装饰。
+   其余图标一律走线性 SVG 或单字，保证跨平台一致。 */
+.tool-icon, .card-ic, .adv-hd, .focus-tab-ic {
+  font-variant-emoji: text;   /* 支持的浏览器强制文字形态 */
+}
+
+/* ============================================================
+   20. 分区标签页：速读常驻 + 其余卡片切换
+   实测「关系」需滚 3.2 屏、「命盘」2.5 屏，用户要不断下滑找内容。
+   ============================================================ */
+.sec-tabs-wrap { margin-top: var(--sp-3); }
+
+.sec-tabs {
+  display: flex; gap: 6px;
+  overflow-x: auto;
+  padding: 2px 0 var(--sp-3);
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  position: sticky; top: 0; z-index: 12;
+  background: linear-gradient(var(--c-bg) 72%, transparent);
+}
+.sec-tabs::-webkit-scrollbar { display: none; }
+
+.sec-tab {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--c-border-2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--c-text-2);
+  font: 500 var(--fs-sm) var(--sf);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.sec-tab:hover { background: var(--c-surface-3); color: var(--c-text); }
+.sec-tab.active {
+  background: var(--c-accent-soft);
+  border-color: color-mix(in srgb, var(--c-accent) 45%, transparent);
+  color: var(--c-accent-text);
+  font-weight: 600;
+}
+
+.sec-pane { display: none; }
+.sec-pane.active { display: block; animation: secPaneIn .2s ease; }
+@keyframes secPaneIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* 标签页内的卡片不再需要自己的外边距 */
+.sec-pane > .glass { margin-bottom: 0 !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sec-pane.active { animation: none; }
+}

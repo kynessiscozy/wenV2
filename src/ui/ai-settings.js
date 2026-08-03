@@ -53,7 +53,7 @@ function _buildPanel(sheet) {
     <div class="ai-settings-title">AI 设置</div>
 
     <div class="ai-setting-section">
-      <div class="ai-setting-section-title">🔑 API Key</div>
+      <div class="ai-setting-section-title">API Key</div>
       <div class="ai-key-status" id="aiKeyStatus">
         ${hasCustom
           ? '<span class="ai-key-badge custom">自定义</span><span class="ai-key-masked">' + maskedKey + '</span>'
