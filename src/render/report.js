@@ -709,7 +709,8 @@ export function renderQuickRead(secKey,d){
 export function _qrCard(title,items,summary,actions){
   const itemsHtml=items.map(it=>`<div class="qr-item"><div class="qr-l">${it.l}</div><div class="qr-v"${it.c&&WC[it.c]?' style="color:'+WC[it.c]+'"':''}>${it.v}</div></div>`).join('');
   const actsHtml=(actions||[]).map(a=>`<button class="qr-act" onclick="jumpTo(null,'${a.k}')">${a.t}</button>`).join('');
-  return `<div class="qr-card"><div class="qr-head"><span class="qr-badge">速读</span><span class="qr-title">${title}</span></div><div class="qr-grid">${itemsHtml}</div><div class="qr-summary">${summary}</div><div class="qr-acts">${actsHtml}</div></div>`;
+  // 速读卡可折叠：头部整行可点，右侧箭头指示状态
+  return `<div class="qr-card"><button type="button" class="qr-head" onclick="TJToggleQuickRead(this)" aria-expanded="true"><span class="qr-badge">速读</span><span class="qr-title">${title}</span><span class="qr-toggle" aria-hidden="true"></span></button><div class="qr-body"><div class="qr-body-inner"><div class="qr-grid">${itemsHtml}</div><div class="qr-summary">${summary}</div><div class="qr-acts">${actsHtml}</div></div></div></div>`;
 }
 
 export function buildAISummary(b,wx,ss,dy,ln,pa,P,gen,si,age){

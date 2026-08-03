@@ -1864,3 +1864,59 @@ Object.assign(window, {
   obs.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
   window.TJInjectExplain=inject;
 })();
+
+/* ============================================================
+   速读卡折叠
+   ============================================================ */
+(function(){
+  const KEY='tj_qr_collapsed_v1';
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+  function save(m){ try{ localStorage.setItem(KEY,JSON.stringify(m)); }catch(e){} }
+  // 用所属分区做 key，各分区的速读独立记忆
+  function keyOf(card){ return card.closest('.sec')?.id || 'default'; }
+
+  window.TJToggleQuickRead=function(btn){
+    const card=btn.closest('.qr-card'); if(!card)return;
+    const open=!card.classList.toggle('qr-collapsed');
+    btn.setAttribute('aria-expanded', open?'true':'false');
+    const m=load(); m[keyOf(card)]=!open; save(m);
+  };
+
+  // 恢复上次的折叠状态
+  function restore(){
+    const m=load();
+    document.querySelectorAll('#page2 .qr-card').forEach(card=>{
+      const collapsed=!!m[keyOf(card)];
+      card.classList.toggle('qr-collapsed',collapsed);
+      card.querySelector('.qr-head')?.setAttribute('aria-expanded',collapsed?'false':'true');
+    });
+  }
+  /* 不能用「MutationObserver + 防抖」：restore 自身会改 class，
+     不断重置计时器导致永不执行（section-tabs 已踩过同一个坑）。
+     改为报告激活后轮询几次，状态稳定即停。 */
+  let timer=null,stable=0,last='';
+  const sigOf=()=>[...document.querySelectorAll('#page2 .qr-card')]
+    .map(c=>(c.closest('.sec')?.id||'')+(c.classList.contains('qr-collapsed')?'1':'0')).join(',');
+  function start(){
+    if(timer)return;
+    stable=0;last='';
+    timer=setInterval(()=>{
+      if(!document.body.classList.contains('report-active')){stop();return}
+      restore();
+      const s2=sigOf();
+      stable=(s2===last&&s2!=='')?stable+1:0;
+      last=s2;
+      if(stable>=3)stop();
+    },400);
+    setTimeout(stop,12000);
+  }
+  function stop(){ clearInterval(timer); timer=null; }
+
+  new MutationObserver(()=>{
+    if(document.body.classList.contains('report-active'))start(); else stop();
+  }).observe(document.body,{attributes:true,attributeFilter:['class']});
+  document.addEventListener('click',e=>{
+    if(e.target.closest?.('.tab-item')||e.target.closest?.('.mode-top-switch'))start();
+  },true);
+  if(document.body.classList.contains('report-active'))start();
+})();

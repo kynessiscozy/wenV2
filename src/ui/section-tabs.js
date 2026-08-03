@@ -200,12 +200,24 @@ export function initSectionTabs() {
       if (m.target instanceof Element && m.target.classList?.contains('sec')) { startPolling(); return; }
     }
   });
-  const attachCardObs = () => document.querySelectorAll('.sec').forEach(el => {
-    if (el.__cardObs) return;
-    el.__cardObs = 1;
-    cardObs.observe(el, { childList: true });
-  });
-  setInterval(attachCardObs, 1000);
+  // 只需在 .sec 首次出现时挂一次观察器。
+  // 早期写成 setInterval(…, 1000) 永久轮询，会让页面一直有待处理任务，
+  // 导致 Puppeteer 截图超时（实测 test-syn-fold 卡死）。
+  const attachCardObs = () => {
+    const list = document.querySelectorAll('.sec');
+    list.forEach(el => {
+      if (el.__cardObs) return;
+      el.__cardObs = 1;
+      cardObs.observe(el, { childList: true });
+    });
+    return list.length > 0;
+  };
+  if (!attachCardObs()) {
+    let tries = 0;
+    const t = setInterval(() => {
+      if (attachCardObs() || ++tries > 40) clearInterval(t);   // 最多等 20s
+    }, 500);
+  }
 
   if (document.body.classList.contains('report-active')) startPolling();
   window.TJBuildSectionTabs = run;

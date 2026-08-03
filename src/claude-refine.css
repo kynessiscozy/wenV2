@@ -1050,3 +1050,96 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
 @media (prefers-reduced-motion: reduce) {
   .sec-pane.active { animation: none; }
 }
+
+/* ============================================================
+   21. 速读折叠 + 分区标签改下划线式
+   ============================================================ */
+
+/* ---- 21.1 速读卡折叠 ---- */
+.qr-card > .qr-head {
+  display: flex !important;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+  min-height: 44px;
+  padding: 0 !important;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.qr-toggle {
+  margin-left: auto;
+  flex: 0 0 auto;
+  width: 9px; height: 9px;
+  border-right: 1.7px solid var(--c-text-3);
+  border-bottom: 1.7px solid var(--c-text-3);
+  transform: rotate(-135deg);      /* 展开：向上 */
+  margin-top: 4px;
+  transition: transform .2s ease;
+}
+.qr-card.qr-collapsed .qr-toggle { transform: rotate(45deg); margin-top: -3px; }
+
+/* 用 grid 行高做折叠，避免写死 max-height */
+.qr-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows .22s ease;
+}
+.qr-card.qr-collapsed .qr-body { grid-template-rows: 0fr; }
+/* grid-template-rows:0fr 只压第一行；qr-body 下有 4 个直接子元素时
+   grid 会自动创建 4 行，导致收不起来（实测收起后仍有 153px）。
+   必须包一层单一子元素。 */
+.qr-body-inner { min-height: 0; overflow: hidden; }
+/* 收起时去掉头部下方留白 */
+.qr-card.qr-collapsed > .qr-head { margin-bottom: 0 !important; }
+/* 「这段是什么意思」是在卡片末尾另行注入的，不在 qr-body 内，
+   收起时需一并隐藏，否则会孤零零留在空卡片里 */
+.qr-card.qr-collapsed > .explain-btn { display: none !important; }
+.qr-card.qr-collapsed { padding-bottom: 10px !important; }
+
+/* ---- 21.2 分区标签：去外框，改居中下划线 ---- */
+.sec-tabs {
+  justify-content: center;
+  gap: 0 !important;
+  padding: 2px 0 0 !important;
+  border-bottom: 1px solid var(--c-border);
+  margin-bottom: var(--sp-4);
+}
+.sec-tab {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 0 14px !important;
+  min-height: 40px !important;
+  color: var(--c-text-3) !important;
+  font-weight: 500 !important;
+  position: relative;
+}
+.sec-tab::after {
+  content: '';
+  position: absolute;
+  left: 12px; right: 12px; bottom: -1px;
+  height: 2px; border-radius: 2px 2px 0 0;
+  background: transparent;
+  transition: background .18s ease;
+}
+.sec-tab:hover { background: transparent !important; color: var(--c-text-2) !important; }
+.sec-tab.active {
+  background: transparent !important;
+  color: var(--c-accent-text) !important;
+  font-weight: 600 !important;
+}
+.sec-tab.active::after { background: var(--c-accent); }
+
+/* 标签多到放不下时仍可横滑，此时靠左起始更自然 */
+@media (max-width: 420px) {
+  .sec-tabs { justify-content: flex-start; }
+  .sec-tab { padding: 0 11px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qr-body, .qr-toggle, .sec-tab::after { transition: none !important; }
+}
