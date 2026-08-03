@@ -1143,3 +1143,101 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
 @media (prefers-reduced-motion: reduce) {
   .qr-body, .qr-toggle, .sec-tab::after { transition: none !important; }
 }
+
+/* ============================================================
+   22. 标签页内容去卡片化 + 精简标头
+   实测：标签「亲密关系画像」下面紧接着又是一张写着「亲密关系画像」
+   的白卡（24px 内边距 + 1px 描边 + 16px 圆角），
+   等于「一个容器里再套一个同名容器」，同一句话说了两遍。
+   标签栏已经承担了容器与标题的职责，面板内容改为直接贴在页面上。
+   ============================================================ */
+.sec-pane > .sec-plain,
+.sec-pane > .glass.sec-plain {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* 悬浮高光是给卡片做的，去壳后会变成一块无边界的色斑 */
+.sec-pane > .sec-plain::before,
+.sec-pane > .sec-plain::after { display: none !important; }
+.sec-pane > .sec-plain:hover { transform: none !important; }
+
+/* 标头被移除后，用副标题充当一行说明 */
+.sec-pane-desc {
+  margin: -2px 0 var(--sp-4);
+  color: var(--c-text-3);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+/* 没被精简掉的标头（标题与标签不同源）缩小一档，避免与标签抢层级 */
+.sec-pane > .sec-plain > .card-hd { margin-bottom: var(--sp-3) !important; }
+
+/* 去壳后内容直接贴边，标签栏下留白改由这里给 */
+.sec-panes { padding-top: 2px; }
+
+/* 面板内部若还有子卡片（如三式合参的分栏），保留它们自己的边界 */
+.sec-pane .glass:not(.sec-plain) { margin-bottom: var(--sp-3) !important; }
+
+/* ---- 22.2 标签栏：内容不再有卡片描边，标签栏需要自己站住 ---- */
+.sec-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  background: var(--c-bg) !important;
+}
+
+/* ============================================================
+   23. 问问大师：面板置于 Dock 之上，不遮蔽 Dock
+   实测（430×932）：面板 bottom=922、Dock top=858 —— 面板整整压住
+   Dock 64px，Dock 只剩一条边露在外面，切分区必须先关面板。
+   ============================================================ */
+:root { --ai-dock-gap: 10px; }
+
+#aiSheet, .ai-sheet {
+  /* Dock 高度 + 安全区 + Dock 自身的 12px 底距 + 间隙 */
+  bottom: calc(var(--ig-dock-height, 66px) + env(safe-area-inset-bottom, 0px) + 12px + var(--ai-dock-gap)) !important;
+  max-height: calc(100dvh - var(--ig-dock-height, 66px) - env(safe-area-inset-bottom, 0px) - 12px - var(--ai-dock-gap) - 16px) !important;
+}
+/* Dock 必须浮在遮罩之上才能点得到 */
+body .ig-dock.tab-bar { z-index: 210 !important; }
+#aiSheet, .ai-sheet { z-index: 301 !important; }
+
+@media (min-width: 768px) {
+  #aiSheet, .ai-sheet {
+    bottom: calc(var(--ig-dock-height, 66px) + env(safe-area-inset-bottom, 0px) + 12px + var(--ai-dock-gap)) !important;
+    height: auto !important;
+    max-height: calc(100dvh - var(--ig-dock-height, 66px) - env(safe-area-inset-bottom, 0px) - 12px - var(--ai-dock-gap) - 24px) !important;
+    /* 高度由 max-height 约束，min-height 保证大屏不至于过扁 */
+    min-height: min(620px, calc(100dvh - 220px)) !important;
+  }
+}
+@media (min-width: 1200px) {
+  #aiSheet, .ai-sheet {
+    height: auto !important;
+    min-height: min(700px, calc(100dvh - 220px)) !important;
+  }
+}
+
+/* ---- 22.3 二级子卡同样去壳 ----
+   标签页里还嵌着 .structure-subcard 这类灰底方块，
+   相当于「标签 → 卡片 → 再一张卡片」三层容器套同一段内容。 */
+/* 注意选择器要带 #page2：claude-ui.css 里有一条
+   `#page2 .glass .glass{background:var(--c-surface-2)!important}`
+   带 id，优先级更高，不加 #page2 这条会被它压回灰底（实测）。 */
+#page2 .sec-pane > .sec-plain .structure-subcard,
+#page2 .sec-pane > .sec-plain .glass,
+.sec-pane > .sec-plain .structure-subcard,
+.sec-pane > .sec-plain .three-styles-panes > .structure-pane > .glass {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 0 var(--sp-3) !important;
+  box-shadow: none !important;
+}

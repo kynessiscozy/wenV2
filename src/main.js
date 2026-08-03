@@ -1839,6 +1839,8 @@ Object.assign(window, {
     markFirstTerms();
     document.querySelectorAll(SEL).forEach(card=>{
       if(card.querySelector(':scope > .explain-btn'))return;
+      // 标签页里的卡片已去外壳；若内部子卡已有解释入口，外层再加一个
+      // 就会出现两个连着的「这段是什么意思」（实测命盘页）
       // 工具中心与合盘表单不需要解释入口
       const k=card.dataset?.card||'';
       if(k==='toolHub')return;
@@ -1854,6 +1856,16 @@ Object.assign(window, {
         }catch(err){ console.warn('explain',err); }
       });
       card.appendChild(btn);
+    });
+    // 去壳后的标签页卡片：外层与内部子卡会各挂一个按钮，
+    // 视觉上是两个紧挨着的「这段是什么意思」。外层那个所指不明，去掉。
+    // 注意必须放在注入之后 —— inject 按文档顺序先给外层加，
+    // 在 section-tabs 建标签时清理会被之后的注入重新加回来。
+    document.querySelectorAll('#page2 .sec-plain').forEach(card=>{
+      const all=[...card.querySelectorAll('.explain-btn')];
+      if(all.length<2)return;
+      const own=all.find(b=>b.parentElement===card);
+      if(own)own.remove();
     });
   }
 

@@ -24,13 +24,67 @@ function _isPinned(card) {
   return PINNED.has(card.dataset.card || '');
 }
 
-function _title(card) {
+/* 标签文案：优先用固定短标签。
+   自动截断曾产出「2026年流」这种被切断的词（原限 6 字），
+   而且标签与卡片标题完全重复，等于同一句话说两遍。 */
+const LABELS = {
+  structure: '命盘', persona: '人格', 'three-styles': '三式', reasoning: '判读依据',
+  bazi: '四柱', wuxing: '五行', ziwei: '紫微', qimen: '奇门', meihua: '梅花',
+  trend: '当年运势', timeline: '大运十程', focus: '当下关注', liuyue: '流月', dayun: '大运轴',
+  intimacy: '亲密关系', friends: '朋友', family: '亲人', relAi: '八字合盘',
+  loveMode: '感情模式', loveMatch: '适合对象', loveRisk: '关系风险',
+  layoffRisk: '裁员风险', toolHub: '小工具',
+};
+
+function _rawTitle(card) {
   const el = card.querySelector('.card-tt') || card.querySelector('.qr-title') || card.querySelector('.bb-title');
-  let t = (el?.textContent || card.dataset.card || '内容').trim();
-  // 标签要短，去掉括号补充与冗余前缀
-  t = t.replace(/（[^）]*）/g, '').replace(/\s+/g, '');
-  if (t.length > 6) t = t.slice(0, 6);
+  return (el?.textContent || '').trim();
+}
+
+function _title(card) {
+  if (card.dataset.secTab) return card.dataset.secTab;   // 标头可能已被精简，缓存住
+  const key = card.dataset.card || '';
+  if (LABELS[key]) return LABELS[key];
+  let t = _rawTitle(card) || key || '内容';
+  t = t.replace(/（[^）]*）/g, '').split(/[·|]/)[0]      // 去括号补充与副标题
+       .replace(/^\s*\d{4}\s*年\s*/, '')                 // 「2026年流月」→「流月」
+       .replace(/[⚠✦]/g, '').replace(/\s+/g, '').trim();
+  if (t.length > 7) t = t.slice(0, 7);
+  return t || '内容';
+}
+
+function _titleCached(card) {
+  const t = _title(card);
+  card.dataset.secTab = t;
   return t;
+}
+
+/* 标签已经写明这是哪一段，卡片里的图标 + 同名大标题就是重复信息。
+   去掉标头，只把副标题保留成一行说明。 */
+function _slimHead(card, label) {
+  const hd = card.querySelector(':scope > .card-hd');
+  if (!hd || card.dataset.slimmed === '1') return;
+  const tt = (hd.querySelector('.card-tt')?.textContent || '').replace(/\s+/g, '');
+  const st = (hd.querySelector('.card-st')?.innerHTML || '').trim();
+  // 标题与标签不同源时（极少数）保留原标头，避免丢失信息
+  const dup = tt && (tt.includes(label) || label.includes(tt.slice(0, 2)));
+  if (!dup) return;
+  card.dataset.slimmed = '1';
+  // 副标题若只是在罗列下面那排子标签（如「四柱、五行、细盘与十神关系」
+  // 下面正好就是四个同名子标签），也是重复信息，一并去掉
+  const subTabs = [...card.querySelectorAll('.structure-tab, .focus-tab')]
+    .map(b => b.textContent.trim()).filter(Boolean);
+  const plain = st.replace(/<[^>]*>/g, '');
+  const hit = subTabs.filter(x => x && plain.includes(x)).length;
+  if (hit >= 2) { hd.remove(); return; }
+  if (st) {
+    const p = document.createElement('div');
+    p.className = 'sec-pane-desc';
+    p.innerHTML = st;
+    hd.replaceWith(p);
+  } else {
+    hd.remove();
+  }
 }
 
 function _load() {
@@ -95,7 +149,8 @@ function build(sec) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'sec-tab';
-    btn.textContent = _title(card);
+    const label = _titleCached(card);
+    btn.textContent = label;
     btn.setAttribute('role', 'tab');
     btn.dataset.idx = String(i);
     btn.addEventListener('click', () => select(sec, i, true));
@@ -104,6 +159,11 @@ function build(sec) {
     // 折叠态在标签页里没有意义：进入即完整展示
     card.classList.remove('collapsed');
     card.querySelector('.card-toggle')?.remove();
+    // 去卡片壳 + 去重复标头：标签页本身已是容器与标题
+    card.classList.add('sec-plain');
+    _slimHead(card, label);
+    // 去壳后，外层按钮与卡内子卡的按钮会紧挨着出现两个
+    // 「这段是什么意思」（实测命盘页）。外层那个已无所指，去掉。
     const pane = document.createElement('div');
     pane.className = 'sec-pane';
     pane.dataset.pane = id;
@@ -144,7 +204,7 @@ function select(sec, idx, persist) {
 function teardown(sec) {
   const wrap = sec.querySelector(':scope > .sec-tabs-wrap');
   if (!wrap) return;
-  wrap.querySelectorAll('.sec-pane > *').forEach(c => sec.appendChild(c));
+  wrap.querySelectorAll('.sec-pane > *').forEach(c => { c.classList.remove('sec-plain'); sec.appendChild(c); });
   wrap.remove();
 }
 
