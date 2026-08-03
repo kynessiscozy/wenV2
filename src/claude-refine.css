@@ -578,3 +578,126 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
   margin-left: 2px;
   white-space: nowrap;
 }
+
+/* ============================================================
+   16. UI 修复（依据 360/430/768 三档实测）
+   ============================================================ */
+
+/* ---- 16.1 工具中心：360px 下塌成单列，116px 高的卡只放两行短文字 ---- */
+#s-adv .tool-grid,
+#s-adv .tool-grid-full {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: var(--sp-2) !important;
+}
+#s-adv .tool-tile {
+  min-height: 92px !important;
+  padding: var(--sp-3) !important;
+  justify-content: center !important;
+  gap: 4px !important;
+}
+#s-adv .tool-tile .tool-label {
+  font-size: var(--fs-base) !important;
+  line-height: 1.4 !important;
+}
+#s-adv .tool-tile .tool-tag {
+  font-size: var(--fs-micro) !important;
+  color: var(--c-text-3) !important;
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  line-height: 1.45 !important;
+}
+@media (max-width: 380px) {
+  #s-adv .tool-tile { min-height: 86px !important; padding: 10px !important; }
+  #s-adv .tool-tile .tool-label { font-size: var(--fs-sm) !important; }
+}
+
+/* ---- 16.2 筛选条：360px 下末项被截断且无滚动提示 ---- */
+.tools-filter {
+  overflow-x: auto !important;
+  flex-wrap: nowrap !important;
+  scroll-snap-type: x proximity;
+  /* 右侧渐隐，暗示还能横滑 */
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent);
+          mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent);
+  padding-right: 20px !important;
+}
+.tools-filter::-webkit-scrollbar { display: none; }
+.tools-filter > * { scroll-snap-align: start; flex: 0 0 auto; }
+
+/* ---- 16.3 工具弹层：关闭按钮压在简介卡上（实测重叠） ---- */
+#toolModal .tj-tool-intro {
+  padding-right: 52px !important;
+  background-image: none !important;   /* 底图让文字对比度不稳定 */
+  background: var(--c-surface-2) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--c-r) !important;
+}
+#toolModal .tool-sheet-close {
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border-2) !important;
+  box-shadow: var(--c-shadow-1) !important;
+}
+
+/* ---- 16.4 触控目标补齐到 ≥36px（WCAG 2.5.8 / iOS HIG） ---- */
+/* styles.css 里有 max-height:30px!important 钳住高度，
+   只写 min-height 无效，必须三个属性一起覆盖 */
+.p2-top .mode-top-switch,
+.mode-top-switch,
+.mode-top-switch.active {
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+}
+.p2-top .mode-top-group,
+.p2-top .p2-back,
+.p2-top .p2-act { height: 40px !important; min-height: 40px !important; max-height: 40px !important; }
+.gloss-hint-close { width: 36px !important; height: 36px !important; }
+.card-toggle { width: 36px !important; height: 36px !important; }
+.qr-act, .explain-btn, .structure-tab, .focus-tab { min-height: 36px !important; }
+/* 首页开关：26px 高不易点，扩到 44×28 并留出热区 */
+.switch { height: 28px !important; }
+.switch-row { min-height: 44px; }
+
+/* ---- 16.5 术语行内元素：不因下划线而被切掉基线 ---- */
+.glossary-term { line-height: 1.7 !important; }
+
+/* ---- 16.6 360px 顶栏：三组元素间距过紧 ---- */
+@media (max-width: 380px) {
+  .p2-top { padding-left: 10px !important; padding-right: 10px !important; gap: 6px !important; }
+  .p2-back { padding: 0 10px !important; }
+  .mode-top-switch { padding: 0 10px !important; }
+  .p2-actions { gap: 4px !important; }
+}
+
+/* ---- 16.7 命盘档案的导出/导入：原为内联样式，仅 48×29 ---- */
+.pf-io-btn {
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid var(--c-border-2);
+  color: var(--c-text-2);
+  font: 500 var(--fs-sm) var(--sf);
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.pf-io-btn:hover { background: var(--c-surface-3); color: var(--c-text); }
+
+/* ---- 16.8 术语是行内文本，无法靠尺寸达标；改为扩大触控热区 ---- */
+.glossary-term {
+  padding: 4px 1px;
+  margin: -4px 0;
+}
+
+/* ---- 16.9 工具卡内部间距：隐藏的 .tool-icon 仍占 12px 外边距 ---- */
+#s-adv .tool-tile .tool-icon { display: none !important; margin: 0 !important; }
+#s-adv .tool-tile > b,
+#s-adv .tool-tile .tool-label {
+  margin: 0 !important;
+  line-height: 1.35 !important;
+}
+#s-adv .tool-tile > small,
+#s-adv .tool-tile .tool-tag {
+  margin-top: 2px !important;
+}
