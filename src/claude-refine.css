@@ -701,3 +701,104 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
 #s-adv .tool-tile .tool-tag {
   margin-top: 2px !important;
 }
+
+/* ============================================================
+   17. 合盘结果：折叠分组
+   原本 9 个小节平铺 1170px（约 1.4 屏），用户必须一路滚到底。
+   现在结论常驻，细节按需展开。
+   ============================================================ */
+.syn-verdict {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--sp-2);
+  padding: 0 0 var(--sp-3);
+}
+.syn-verdict-label { font-size: var(--fs-base); font-weight: 600; }
+.syn-verdict-meta { font-size: var(--fs-micro); color: var(--c-text-3); font-variant-numeric: tabular-nums; }
+
+/* 双方命盘：两行紧凑对照，不用 tj-result-list 的大内距 */
+.syn-charts { display: flex; flex-direction: column; gap: 6px; }
+.syn-charts > div { display: flex; align-items: baseline; gap: var(--sp-2); }
+.syn-charts span { flex: 0 0 32px; font-size: var(--fs-micro); color: var(--c-text-3); }
+.syn-charts b {
+  font-family: var(--display); font-size: var(--fs-base);
+  letter-spacing: .04em; color: var(--c-text);
+}
+
+.syn-summary {
+  padding: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  background: var(--c-surface-2);
+  border-radius: var(--c-r);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  color: var(--c-text-2);
+}
+
+.syn-group {
+  border: 1px solid var(--c-border);
+  border-radius: var(--c-r);
+  margin-bottom: var(--sp-2);
+  overflow: hidden;
+  background: var(--c-surface);
+}
+.syn-group-hd {
+  display: flex; align-items: center; gap: var(--sp-2);
+  width: 100%; min-height: 48px;
+  padding: 0 var(--sp-3);
+  border: 0; background: transparent;
+  color: var(--c-text);
+  font: 600 var(--fs-sm) var(--sf);
+  text-align: left; cursor: pointer;
+  transition: background .15s ease;
+}
+.syn-group-hd:hover { background: var(--c-surface-2); }
+.syn-group-tt { flex: 1 1 auto; min-width: 0; }
+.syn-group-sub {
+  flex: 0 0 auto;
+  font-size: var(--fs-micro); font-weight: 500;
+  color: var(--c-text-3);
+}
+.syn-group-arrow {
+  flex: 0 0 auto;
+  width: 8px; height: 8px;
+  border-right: 1.6px solid var(--c-text-3);
+  border-bottom: 1.6px solid var(--c-text-3);
+  transform: rotate(45deg); margin-top: -3px;
+  transition: transform .2s ease;
+}
+.syn-group.open .syn-group-arrow { transform: rotate(-135deg); margin-top: 3px; }
+
+/* 折叠：用 grid 行高动画，避免写死 max-height */
+.syn-group-bd {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows .22s ease;
+}
+.syn-group.open .syn-group-bd { grid-template-rows: 1fr; }
+.syn-group-inner { overflow: hidden; min-height: 0; }
+.syn-group.open .syn-group-inner { padding: 0 var(--sp-3) var(--sp-3); }
+
+/* 组内条目去掉重复外框 */
+.syn-group .tj-result-list { background: transparent !important; border: 0 !important; }
+.syn-group .tj-result-list > div { padding: 10px 0 !important; border-bottom: 1px solid var(--c-border) !important; }
+.syn-group .tj-result-list > div:last-child { border-bottom: 0 !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .syn-group-bd, .syn-group-arrow { transition: none !important; }
+}
+
+/* 组内条目：默认 tj-result-list 的行距是为整页阅读设计的，
+   放进折叠卡后显得过松（单组 270px）。这里收紧到卡片尺度。 */
+.syn-group .tj-result-list > div { padding: 8px 0 !important; }
+.syn-group .tj-result-list > div > b {
+  font-size: var(--fs-micro) !important;
+  color: var(--c-text-3) !important;
+  font-weight: 500 !important;
+  margin-bottom: 2px !important;
+  display: block;
+}
+.syn-group .tj-result-list > div > span {
+  font-size: var(--fs-sm) !important;
+  line-height: 1.65 !important;
+  color: var(--c-text) !important;
+}
+.syn-group + .syn-group { margin-top: var(--sp-2); }
+.syn-summary { padding: 10px var(--sp-3); margin-bottom: var(--sp-3); }

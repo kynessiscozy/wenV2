@@ -788,15 +788,64 @@ function toggleUserMode(){setUserMode(document.body.classList.contains('beginner
    if(dp.chongZhi)dn.push('<strong>日支相冲</strong>，夫妻宫直接对冲：不代表不合适，但生活习惯差别大，需要明确规则而非靠默契。');
    if(dp.chongGan)dn.push('<strong>日干相冲</strong>，容易在观点上针锋相对。');
    if(dp.haiZhi)dn.push('<strong>日支相害</strong>，易因小事累积不满，要有及时说开的习惯。');
-   let H='<div class="tj-result-meta"><span>'+esc(focus)+'</span><span>'+lab+'</span><span>'+r.counts.he+' 合 / '+r.counts.chong+' 冲'+(r.counts.other?' / '+r.counts.other+' 刑害':'')+'</span><span>'+(r.precision==='full'?'四柱':'三柱')+'</span></div>';
-   H+='<div class="tj-result-list"><div><b>双方命盘</b><span>你：'+myGZ+'<br>对方：'+partnerGZ+(r.precision==='day'?'（时辰不详）':'')+'</span></div>';
-   H+='<div><b>日主关系 · '+r.dm.myDayGan+' 见 '+r.dm.theirDayGan+'（'+r.dm.ss+'）</b><span>'+r.dm.title+'　'+r.dm.desc+'</span></div>';
-   if(dn.length)H+='<div><b>夫妻宫（日柱）</b><span>'+dn.join('<br>')+'</span></div>';
-   H+='<div><b>五行互补 · 你的用神「'+r.comp.yongShen+'」</b><span>'+r.comp.text+'</span></div>';
-   if(r.positives.length)H+='<div><b>相合之处</b><span>'+r.positives.slice(0,4).map(h=>'· '+h.text+'（'+h.where+'）').join('<br>')+'</span></div>';
-   if(r.frictions.length)H+='<div><b>需要留意</b><span>'+r.frictions.slice(0,4).map(h=>'· '+h.text+'（'+h.where+'）').join('<br>')+'</span></div>';
-   H+='</div>';
-   H+='<div style="margin-top:14px"><b style="font-size:.9em">下一次沟通可以这样开始</b></div>'+scriptHtml;
+   // 折叠分组：结论常驻，细节按需展开。
+   // 原本 9 个小节平铺 1170px（约 1.4 屏），用户要一路滚才能看完。
+   const grp=(id,title,sub,body,open)=>
+     '<section class="syn-group'+(open?' open':'')+'" data-syn="'+id+'">'+
+       '<button type="button" class="syn-group-hd" onclick="TJSynToggle(this)" aria-expanded="'+(open?'true':'false')+'">'+
+         '<span class="syn-group-tt">'+title+'</span>'+
+         (sub?'<span class="syn-group-sub">'+sub+'</span>':'')+
+         '<span class="syn-group-arrow" aria-hidden="true"></span>'+
+       '</button>'+
+       // 必须包一层：grid-template-rows:0fr 只压第一行，
+       // 多个直接子元素时会自动创建第二行，导致收不起来
+       '<div class="syn-group-bd"><div class="syn-group-inner">'+body+'</div></div>'+
+     '</section>';
+   const rows=arr=>'<div class="tj-result-list">'+arr.map(x=>'<div><b>'+x[0]+'</b><span>'+x[1]+'</span></div>').join('')+'</div>';
+
+   // —— 顶部结论：始终可见 ——
+   // 外层 result() 已渲染「合盘结果 · 亲密关系 + 分数」标题条，
+   // 这里不再重复分数，只给判语与统计，避免三层标题叠在一起。
+   let H='<div class="syn-verdict">'+
+     '<span class="syn-verdict-label" style="color:'+
+       (r.score>=80?'var(--c-green)':r.score>=65?'var(--c-teal)':r.score>=50?'var(--c-yellow)':r.score>=35?'var(--c-orange)':'var(--c-red)')+
+       '">'+lab+'</span>'+
+     '<span class="syn-verdict-meta">'+r.counts.he+' 合 / '+r.counts.chong+' 冲'+
+       (r.counts.other?' / '+r.counts.other+' 刑害':'')+' · '+(r.precision==='full'?'四柱':'三柱')+'</span>'+
+   '</div>';
+
+   // 一句话总述，让用户不展开也知道结论
+   H+='<div class="syn-summary">'+r.dm.title+'　'+r.dm.desc+'</div>';
+
+   // —— 分组 1：双方命盘（默认展开，是理解后续的基础）——
+   H+=grp('chart','双方命盘',(r.precision==='day'?'对方时辰不详':''),
+     '<div class="syn-charts"><div><span>你</span><b>'+myGZ+'</b></div>'+
+     '<div><span>对方</span><b>'+partnerGZ+'</b></div></div>',true);
+
+   // —— 分组 2：关键结论（默认展开）——
+   const dn2=[];
+   if(dp.same)dn2.push('双方<strong>日柱相同</strong>，价值观与节奏高度接近，容易一拍即合，也容易同时陷入同一个盲区。');
+   if(dp.heZhi)dn2.push('<strong>日支六合</strong>——合婚中最被看重的一项，日常相处自然合拍。');
+   if(dp.heGan)dn2.push('<strong>日干相合</strong>，表达与决策方式容易同步。');
+   if(dp.chongZhi)dn2.push('<strong>日支相冲</strong>，夫妻宫直接对冲：不代表不合适，但生活习惯差别大，需要明确规则而非靠默契。');
+   if(dp.chongGan)dn2.push('<strong>日干相冲</strong>，容易在观点上针锋相对。');
+   if(dp.haiZhi)dn2.push('<strong>日支相害</strong>，易因小事累积不满，要有及时说开的习惯。');
+   // 日主关系已在上方 syn-summary 呈现，组内不再重复
+   let coreBody='';
+   if(dn2.length)coreBody+=rows([['夫妻宫（日柱）',dn2.join('<br>')]]);
+   coreBody+=rows([['五行互补 · 用神「'+r.comp.yongShen+'」',r.comp.text]]);
+   coreBody+=rows([['日主关系',r.dm.myDayGan+' 见 '+r.dm.theirDayGan+'（'+r.dm.ss+'）']]);
+   H+=grp('core','关键结论',(dn2.length?dn2.length+' 项':''),coreBody,true);
+
+   // —— 分组 3：逐项依据（默认折叠，这是最长的一块）——
+   let detail='';
+   if(r.positives.length)detail+=rows([['相合之处',r.positives.slice(0,4).map(h=>'· '+h.text+'（'+h.where+'）').join('<br>')]]);
+   if(r.frictions.length)detail+=rows([['需要留意',r.frictions.slice(0,4).map(h=>'· '+h.text+'（'+h.where+'）').join('<br>')]]);
+   if(detail)H+=grp('detail','逐项依据',(r.positives.length+r.frictions.length)+' 条',detail,false);
+
+   // —— 分组 4：沟通脚本（默认折叠）——
+   H+=grp('script','下一次沟通怎么开口','3 步',scriptHtml,false);
+
    if(r.precision==='day')H+='<div class="tj-disclaimer">未填对方时辰，本次用年月日三柱比对。日柱（夫妻宫）不依赖时辰，仍为精确计算，核心结论成立；缺少的时柱主要影响子女宫与晚年节奏的判断。</div>';
    H+='<div class="tj-disclaimer">合盘用于理解彼此差异、找到沟通方式，不预测关系结局，也不构成是否开始或结束一段关系的建议。</div>';
    H+='<div class="tj-sign-actions"><button type="button" class="tj-sign-share" onclick="TJSynShare()">分享结果</button><button type="button" class="tj-sign-refresh" onclick="TJSynSave()">保存这个人</button></div>';
@@ -1561,6 +1610,14 @@ Object.assign(window, {
   const HOUR_LABELS=['子 23:00–00:59','丑 01:00–02:59','寅 03:00–04:59','卯 05:00–06:59',
     '辰 07:00–08:59','巳 09:00–10:59','午 11:00–12:59','未 13:00–14:59',
     '申 15:00–16:59','酉 17:00–18:59','戌 19:00–20:59','亥 21:00–22:59'];
+
+  // 合盘结果分组展开/收起
+  window.TJSynToggle=function(btn){
+    const sec=btn.closest('.syn-group');
+    if(!sec)return;
+    const open=sec.classList.toggle('open');
+    btn.setAttribute('aria-expanded',open?'true':'false');
+  };
 
   window.TJSynShare=function(){
     const s=window._lastSynastry;

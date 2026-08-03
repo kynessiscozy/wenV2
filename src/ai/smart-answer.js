@@ -85,7 +85,12 @@ export function smartAnswer(q,ctx){
   // 原本用 q.length<=10 做门槛，导致「食神格是什么意思？」(11字) 落到
   // 模糊 FAQ 匹配上，答非所问。改为看提问意图。
   const ASK_MEANING=/(是什么|什么意思|怎么理解|指的是|啥意思|如何理解|怎么看)/;
-  if(term&&(q.length<=10||ASK_MEANING.test(q))){
+  // 只有「短问句」才走词典。带命盘数据的长提问（如「我的四柱是庚午…这组八字
+  // 说明我是什么样的人？」）虽然含「是什么」，但用户要的是解读而不是词条释义，
+  // 必须交给 AI/兜底，否则会退化成查字典。
+  const isTermLookup = term && q.length<=10
+    || (term && q.length<=24 && ASK_MEANING.test(q) && !/我的|我是|我现在|请解释|为什么/.test(q));
+  if(isTermLookup){
     const links=(term.see||[]).map(k=>KB.routes[k]).filter(Boolean);
     return{
       kind:'term',
