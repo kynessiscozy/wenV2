@@ -802,3 +802,104 @@ body .ig-dock .tab-item.active .ig-nav-icon { stroke-width: 2.1 !important; tran
 }
 .syn-group + .syn-group { margin-top: var(--sp-2); }
 .syn-summary { padding: 10px var(--sp-3); margin-bottom: var(--sp-3); }
+
+/* ============================================================
+   18. 细节打磨（逐项实测复现后修复）
+   ============================================================ */
+
+/* ---- 18.1 问问大师：发送按钮贴边、输入框里再套一层灰框 ----
+   实测 .ai-input-row padding:0，按钮右缘距边框仅 1px，视觉上"挂在框外"；
+   .ai-input 又有自己的灰底，形成框中框。 */
+#aiSheet .ai-input-row,
+.ai-sheet .ai-input-row {
+  padding: 6px !important;
+  gap: 6px !important;
+  align-items: flex-end !important;
+  overflow: hidden;            /* 圆角内收，按钮不会溢出描边 */
+}
+/* :focus 态另有一条 #aiSheet .ai-input:focus{background:var(--c-surface-3)!important}
+   会在聚焦时把灰底加回来，必须一并覆盖 */
+#aiSheet .ai-input,
+.ai-sheet .ai-input,
+#aiSheet .ai-input:focus,
+.ai-sheet .ai-input:focus {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  padding: 9px 8px !important;
+  box-shadow: none !important;
+}
+#aiSheet .ai-input-wrap { flex: 1 1 auto; min-width: 0; }
+#aiSheet .ai-send,
+.ai-sheet .ai-send {
+  flex: 0 0 auto;
+  width: 38px !important; min-width: 38px !important;
+  height: 38px !important; min-height: 38px !important;
+  margin: 0 !important;
+  border-radius: 10px !important;
+}
+
+/* ---- 18.2 工具页顶部多出的方形外框 ----
+   .tools-toolbar 是纯白实心块，与下方卡片之间形成一条突兀的方形边界。 */
+#s-adv .tools-toolbar {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--c-border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 0 var(--sp-3) !important;
+  margin-bottom: var(--sp-3) !important;
+}
+#s-adv .tools-toolbar::before,
+#s-adv .tools-toolbar::after { display: none !important; }
+/* 搜索框自己保留描边即可 */
+#s-adv .tools-search input {
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border-2) !important;
+  border-radius: 10px !important;
+}
+
+/* ---- 18.3 梅花易数：卦象格被 stretch 拉高，「动」标记悬在空白里 ----
+   左格改为内容高度并居中，与右列顶部对齐。 */
+[data-card="meihua"] .mh-grid,
+[data-card="meihua"] > div[style*="grid-template-columns"] {
+  align-items: start !important;
+}
+/* 卦象格：六爻线仅约 110px，格子却被右列撑到 220px+，
+   导致爻线堆在上方、「动」标记孤零零悬在下方空白里。
+   改为整体垂直居中，并给爻线足够的行高。 */
+.mh-hex { display: flex; flex-direction: column; }
+.mh-hex .mh-lines {
+  flex: 1 1 auto;
+  align-content: center;
+  gap: 5px !important;
+}
+/* 六爻线：span 无宽度时在 flex 行内塌成 0（实测 0x8），
+   容器又限死 180px，卦象几乎不可辨。 */
+.mh-lines { width: 100%; }
+.mh-line { width: 100%; min-height: 18px; }
+.mh-bar { min-width: 0; }
+
+/* ---- 18.4 当年运势四维：flex 溢出且无法滑动（424 > 348，健康被切掉） ----
+   四项固定 2×2 网格，不再横向溢出。 */
+.y-hero {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: var(--sp-2) !important;
+  align-items: stretch;
+}
+.y-hero-item { padding: 12px 8px !important; min-width: 0; }
+.y-hero-stars { font-size: 1em !important; white-space: nowrap; }
+.y-hero-label { letter-spacing: .02em !important; }
+@media (min-width: 560px) {
+  .y-hero { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}
+
+/* ---- 18.5 连接状态：只显示「离线」不解释含义，用户不知还能不能用 ---- */
+.ai-conn-bar { flex-wrap: wrap; row-gap: 2px; }
+.ai-conn-hint {
+  flex: 1 1 100%;
+  font-size: var(--fs-micro);
+  line-height: 1.5;
+  color: var(--c-text-3);
+}

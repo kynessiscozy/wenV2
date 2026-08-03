@@ -33,7 +33,7 @@ export const KB={
     loveMode:    {sec:'s-rel', card:'loveMode', name:'感情模式'},
     loveMatch:   {sec:'s-rel', card:'loveMatch',name:'适合对象'},
     loveRisk:    {sec:'s-rel', card:'loveRisk', name:'关系风险'},
-    relAi:       {sec:'s-rel', card:'relAi',    name:'AI 关系分析'},
+    relAi:       {sec:'s-rel', card:'relAi',    name:'八字合盘'},
     layoff:     {sec:'s-rel', card:'layoffRisk',name:'裁员风险检测'},
     todayAdv:    {sec:'s-adv', card:'todayAdv', name:'今日建议'},
     daySign:     {sec:'s-adv', card:'daySign',  name:'今日日签'}

@@ -236,6 +236,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       btn.className='card-toggle';
       btn.type='button';
       btn.title='折叠/展开';
+      btn.setAttribute('aria-label','折叠或展开这张卡片');
       btn.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
       hd.appendChild(btn);
       el.setAttribute('data-collapsible','1');
@@ -249,11 +250,15 @@ document.addEventListener('DOMContentLoaded',()=>{
       // —— 默认折叠：只有用户曾展开过的卡片才保持展开 ——
       const key=el.getAttribute('data-card');
       if(!expanded.includes(key))el.classList.add('collapsed');
+      // 折叠状态需要暴露给辅助技术，否则读屏用户不知道内容是收起的
+      btn.setAttribute('aria-expanded', el.classList.contains('collapsed')?'false':'true');
     });
   }
   function toggleCard(el){
     const key=el.getAttribute('data-card');
     el.classList.toggle('collapsed');
+    const tg=el.querySelector('.card-toggle');
+    if(tg)tg.setAttribute('aria-expanded', el.classList.contains('collapsed')?'false':'true');
     if(!key)return;
     let list=loadExpanded();
     if(el.classList.contains('collapsed')){

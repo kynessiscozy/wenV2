@@ -21,11 +21,12 @@ function _ts() {
 /* ============================================================
    连接状态 UI
    ============================================================ */
+// 光写「离线」用户不知道意味着什么、还能不能用；补一句说明与 title。
 const _STATE_MAP = {
-  unknown:  { dot: 'conn-unknown',  text: '未检测' },
-  checking: { dot: 'conn-checking', text: '检测中…' },
-  online:   { dot: 'conn-online',   text: '已连接' },
-  offline:  { dot: 'conn-offline',  text: '离线' },
+  unknown:  { dot: 'conn-unknown',  text: '未检测',  hint: '' },
+  checking: { dot: 'conn-checking', text: '检测中…', hint: '' },
+  online:   { dot: 'conn-online',   text: 'AI 已连接', hint: '可以自由提问' },
+  offline:  { dot: 'conn-offline',  text: '离线模式', hint: '仍可查术语与命盘解读，接入 AI 后回答更贴合你的提问' },
 };
 
 function _updateConnUI(state) {
@@ -34,6 +35,19 @@ function _updateConnUI(state) {
   const cfg = _STATE_MAP[state] || _STATE_MAP.unknown;
   bar.className = 'ai-conn-bar ' + cfg.dot;
   bar.querySelector('.ai-conn-text').textContent = cfg.text;
+  let hintEl = bar.querySelector('.ai-conn-hint');
+  if (cfg.hint) {
+    if (!hintEl) {
+      hintEl = document.createElement('span');
+      hintEl.className = 'ai-conn-hint';
+      bar.appendChild(hintEl);
+    }
+    hintEl.textContent = cfg.hint;
+    bar.title = cfg.text + '：' + cfg.hint;
+  } else {
+    hintEl?.remove();
+    bar.removeAttribute('title');
+  }
 }
 
 function _ensureConnBar() {
