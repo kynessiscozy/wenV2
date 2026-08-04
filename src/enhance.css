@@ -228,6 +228,14 @@ body.home .brand3d{display:block}
 .form-modal-close:hover{color:var(--c-text);border-color:var(--c-border-2);background:var(--c-surface-3)}
 @keyframes fmFade{from{opacity:0}to{opacity:1}}
 @keyframes fmIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+
+/* 移动端：表单保持双列并排 */
+@media(max-width:520px){
+  .form-grid{grid-template-columns:1fr 1fr!important;gap:10px}
+  .fd input,.fd select,.cw input{font-size:14px!important;padding-left:10px;padding-right:10px}
+  .form-modal-tt{font-size:1.1em;margin-bottom:16px}
+}
+
 @media(max-width:480px){
   .home-cta{min-width:0;flex:0 0 auto;white-space:nowrap;padding:14px 20px}
   .home-hero-actions{flex-direction:row;align-items:center;flex-wrap:nowrap;gap:10px;justify-content:center}
