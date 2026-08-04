@@ -452,67 +452,24 @@ body.report-active .home-menu-overlay,
 body.report-active .home-menu-drawer{display:none}
 
 /* ============================================================
-   天气卡片 — 菜单抽屉内的实时天气
+   天气行内信息 — 菜单 header 第三行，城市名在前
    ============================================================ */
-.wx-card{
-  display:none;flex-shrink:0;
-  margin:0 16px 14px;padding:13px 16px;
-  border-radius:14px;
-  background:linear-gradient(135deg,var(--c-surface-2),var(--c-surface-3));
-  border:1px solid var(--c-border);
-  transition:all .3s ease;
+.wx-line{
+  display:block;margin-top:8px;
+  font-family:var(--serif);font-size:.65em;font-weight:500;
+  color:var(--c-text-3);letter-spacing:.4px;
+  line-height:1.5;white-space:nowrap;
 }
-.wx-card.show{display:block;animation:wxIn .35s ease both}
-@keyframes wxIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
-
-.wx-card-inner{
-  display:flex;align-items:center;gap:14px;
-}
-.wx-icon{
-  flex:0 0 auto;width:44px;height:44px;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--c-accent-text);
-  opacity:.82;
-}
-.wx-icon svg{display:block}
-
-.wx-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
-
-.wx-primary{display:flex;align-items:baseline;gap:10px}
-.wx-temp{
-  font-family:var(--sf);font-size:1.6em;font-weight:700;
-  color:var(--c-text-hi);line-height:1;letter-spacing:-.5px;
-}
-.wx-label{
-  font-family:var(--serif);font-size:.88em;font-weight:500;
-  color:var(--c-text-2);letter-spacing:1px;
-}
-
-.wx-meta{display:flex;flex-direction:column;gap:1px}
-.wx-city{
-  font-size:.72em;font-weight:500;color:var(--c-text-3);letter-spacing:.5px;
-}
-.wx-detail{
-  font-size:.64em;color:var(--c-text-4);
-}
+.wx-line .wx-location{color:var(--c-text-2);font-weight:600}
+.wx-line .wx-sep{color:var(--c-text-4);margin:0 3px}
+.wx-line .wx-val{color:var(--c-accent-text);font-family:var(--sf);font-weight:600}
+.wx-line .wx-label{font-family:var(--serif);font-weight:500}
+.wx-line svg{color:var(--c-accent-text);opacity:.78;margin-right:2px}
 
 /* 加载态 */
 .wx-loading{
-  text-align:center;font-size:.76em;color:var(--c-text-3);
-  padding:8px 0;letter-spacing:1px;
+  font-size:inherit;color:var(--c-text-4);
   animation:wxPulse 1.6s ease-in-out infinite;
 }
 @keyframes wxPulse{0%,100%{opacity:.4}50%{opacity:.9}}
-
-/* 错误态 */
-.wx-error{
-  text-align:center;font-size:.72em;color:var(--c-text-4);
-  padding:6px 0;
-}
-
-/* 暗色模式下天气卡片微调 */
-[data-theme="dark"] .wx-card{
-  background:linear-gradient(135deg,var(--c-surface-2),color-mix(in srgb,var(--c-surface-3) 70%,var(--c-accent-soft) 30%));
-}
-[data-theme="dark"] .wx-icon{opacity:.9}
 

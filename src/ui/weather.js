@@ -1,9 +1,8 @@
 /* ============================================================
-   天气模块 — 定位 → Open-Meteo → 渲染到菜单卡片
-   自动适配明暗主题，使用项目语义变量
+   天气模块 — 定位 → Open-Meteo → 菜单头部内嵌行
+   城市名在前，去卡片化，融入 header
    ============================================================ */
 
-// Open-Meteo 天气编码 → 图标 key + 中文描述
 const WX_MAP = {
   0:  { icon: 'sun',        label: '晴' },
   1:  { icon: 'sun-cloud',  label: '晴间多云' },
@@ -31,62 +30,28 @@ const WX_MAP = {
   99: { icon: 'thunder',    label: '强雷暴' },
 };
 
-/* ---- 手绘风格天气 SVG 图标 ---- */
-function wxIconSVG(key) {
-  const base = '<svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">';
-  const sunRays = [
-    'M24 6v3','M24 39v3','M6 24h3','M39 24h3',
-    'M11.3 11.3l2.1 2.1','M34.6 34.6l2.1 2.1',
-    'M11.3 36.7l2.1-2.1','M34.6 13.4l2.1-2.1'
-  ];
-  const sunCircle = '<circle cx="24" cy="24" r="7.5"/>';
-  const cloudBody = '<path d="M12 28c-4 0-6-3-6-6s2-5.5 5.5-6a8 8 0 0 1 15-2c3.5.4 6 3 6 6.5S29 28 26 28Z"/>';
-  const drizzleDrops = [
-    'M20 36v4','M24 37v4','M28 36v4'
-  ];
-  const rainDrops = [
-    'M19 35l-1.5 5','M24 36l-1.5 5','M29 35l-1.5 5'
-  ];
-  const heavyRain = [
-    'M18 34l-1 4','M22 33l-1 5','M26 34l-1 4','M30 33l-1 5'
-  ];
-  const snowFlakes = [
-    'M20 37a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z',
-    'M25 38a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z',
-    'M29 37a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z'
-  ];
-  const thunderBolt = '<path d="M26 30 18 36h6l-2 6 8-7h-5l3-5Z"/>';
-  const fogLines = [
-    'M12 20h24','M12 24h20','M12 28h22'
-  ];
-
+/* ---- 迷你天气 SVG (14x14 行内图标) ---- */
+function wxIconMini(key) {
+  const s = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px">';
+  const sun   = '<circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5 M8 13v1.5 M1.5 8H3 M13 8h1.5 M3.4 3.4l1.1 1.1 M11.5 11.5l1.1 1.1 M3.4 12.6l1.1-1.1 M11.5 4.5l1.1-1.1"/>';
+  const cloud = '<path d="M3 10c-2 0-3-1.5-3-3s1-2.8 2.8-3a4 4 0 0 1 7.5-1c1.7.2 3 1.5 3 3.3S11.5 10 10 10Z"/>';
+  const rain  = '<path d="M9.5 13l-.8 2.5 M12 13.5l-.8 2.5"/>';
   switch (key) {
-    case 'sun':
-      return base + sunRays.map(d => `<path d="${d}"/>`).join('') + sunCircle + '</svg>';
-    case 'sun-cloud':
-      return base + sunRays.map(d => `<path d="${d}"/>`).join('') + sunCircle + cloudBody.replace(/M12 28/, 'M14 32') + '</svg>';
-    case 'cloud-sun':
-      return base + sunCircle.replace(/r="7.5"/, 'r="5.5"').replace(/24,24/, '18,18') + cloudBody + '</svg>';
-    case 'cloud':
-      return base + cloudBody + '</svg>';
-    case 'drizzle':
-      return base + cloudBody + drizzleDrops.map(d => `<path d="${d}" stroke-width="1.2"/>`).join('') + '</svg>';
-    case 'rain':
-      return base + cloudBody + rainDrops.map(d => `<path d="${d}"/>`).join('') + '</svg>';
-    case 'heavy-rain':
-      return base + cloudBody + heavyRain.map(d => `<path d="${d}"/>`).join('') + '</svg>';
-    case 'snow':
-      return base + cloudBody + snowFlakes.join('') + '</svg>';
-    case 'thunder':
-      return base + cloudBody + thunderBolt + '</svg>';
-    case 'fog':
-      return base + fogLines.map(d => `<path d="${d}"/>`).join('') + '</svg>';
-    default:
-      return base + sunCircle + '</svg>';
+    case 'sun':        return s + sun + '</svg>';
+    case 'sun-cloud':  return s + sun.replace('r="3"','r="2.5"').replace('cy="8"','cy="7"') + cloud + '</svg>';
+    case 'cloud-sun':  return s + '<circle cx="5" cy="6" r="2.5"/>' + cloud + '</svg>';
+    case 'cloud':      return s + cloud + '</svg>';
+    case 'drizzle':    return s + cloud + '<path d="M7 13v2 M9 13.5v2 M11 13v2" stroke-width="1"/>' + '</svg>';
+    case 'rain':       return s + rain + cloud + '</svg>';
+    case 'heavy-rain': return s + cloud + '<path d="M6 13l-.5 2 M8.5 12.5l-.5 2.5 M11 13l-.5 2" stroke-width="1"/>' + '</svg>';
+    case 'snow':       return s + cloud + '<circle cx="7" cy="13" r=".8"/><circle cx="9" cy="13.5" r=".8"/><circle cx="11" cy="13" r=".8"/>' + '</svg>';
+    case 'thunder':    return s + cloud + '<path d="M9 10 6 13h2.5l-1 3 4-2.5H9l1.5-3.5Z"/>' + '</svg>';
+    case 'fog':        return s + '<path d="M2 7h12 M2 9h10 M2 11h11" stroke-width="1.2"/>' + '</svg>';
+    default:           return s + sun + '</svg>';
   }
 }
 
-/* ---- 城市名反向地理编码 ---- */
+/* ---- 反向地理编码 ---- */
 async function reverseCity(lat, lon) {
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=zh&zoom=10`;
@@ -96,7 +61,6 @@ async function reverseCity(lat, lon) {
     clearTimeout(t);
     if (!r.ok) throw new Error('nominatim fail');
     const d = await r.json();
-    // 优先取 city / town / county / state
     const addr = d.address || {};
     return addr.city || addr.town || addr.county || addr.state || addr.country || '';
   } catch (e) {
@@ -115,17 +79,15 @@ async function fetchWeather(lat, lon) {
   return r.json();
 }
 
-/* ---- 主函数 ---- */
+/* ---- 渲染行内天气 ---- */
 async function refreshWeather() {
-  const el = document.getElementById('wxCard');
+  const el = document.getElementById('wxLine');
   if (!el) return;
 
-  // 显示加载态
-  el.innerHTML = `<div class="wx-loading">查询天气中…</div>`;
-  el.classList.add('show');
+  el.style.display = 'block';
+  el.innerHTML = '<span class="wx-loading">天气加载中…</span>';
 
   try {
-    // 1. 浏览器定位
     let lat, lon, city = '';
     try {
       const pos = await new Promise((resolve, reject) => {
@@ -138,54 +100,32 @@ async function refreshWeather() {
       lon = pos.coords.longitude.toFixed(4);
       city = await reverseCity(lat, lon);
     } catch (e) {
-      // 定位失败 → 默认北京
       lat = '39.9042'; lon = '116.4074'; city = '北京';
     }
 
-    // 2. 获取天气
     const data = await fetchWeather(lat, lon);
     const cur = data.current;
-    const wcode = cur.weather_code;
-    const wx = WX_MAP[wcode] || { icon: 'sun', label: '未知' };
-
-    // 3. 渲染
+    const wx = WX_MAP[cur.weather_code] || { icon: 'sun', label: '未知' };
     const temp = Math.round(cur.temperature_2m);
-    const hum = cur.relative_humidity_2m;
-    const wind = cur.wind_speed_10m;
-    const icon = wxIconSVG(wx.icon);
+    const hum  = cur.relative_humidity_2m;
 
-    el.innerHTML = `
-      <div class="wx-card-inner">
-        <div class="wx-icon">${icon}</div>
-        <div class="wx-info">
-          <div class="wx-primary">
-            <span class="wx-temp">${temp}°</span>
-            <span class="wx-label">${wx.label}</span>
-          </div>
-          <div class="wx-meta">
-            <span class="wx-city">${city || '当前位置'}</span>
-            <span class="wx-detail">湿度 ${hum}% · 风速 ${wind} km/h</span>
-          </div>
-        </div>
-      </div>`;
+    el.innerHTML = `${wxIconMini(wx.icon)} <span class="wx-location">${city || '当前位置'}</span> <span class="wx-sep">·</span> <span class="wx-val">${temp}°</span> <span class="wx-label">${wx.label}</span> <span class="wx-sep">·</span> <span class="wx-val">${hum}%</span>`;
   } catch (e) {
     console.warn('天气获取失败:', e);
-    el.innerHTML = `<div class="wx-error">天气暂不可用</div>`;
+    el.innerHTML = '<span class="wx-loading">天气暂不可用</span>';
   }
 }
 
-/* ---- 初始化（节流，菜单打开时拉取）---- */
+/* ---- 初始化 ---- */
 let _lastFetch = 0;
 
 export function initWeather() {
-  const el = document.getElementById('wxCard');
+  const el = document.getElementById('wxLine');
   if (!el) return;
 
-  // 首次拉取
   refreshWeather();
   _lastFetch = Date.now();
 
-  // 监听菜单打开，距离上次拉取 > 10 分钟则刷新
   const observer = new MutationObserver(() => {
     const drawer = document.getElementById('homeMenuDrawer');
     if (drawer && drawer.classList.contains('open')) {
