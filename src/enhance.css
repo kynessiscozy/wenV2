@@ -472,7 +472,7 @@ body.report-active .home-menu-drawer{display:none}
 .wx-line .wx-sep{color:var(--c-text-4);margin:0 3px}
 .wx-line .wx-val{color:var(--c-accent-text);font-family:var(--sf);font-weight:600}
 .wx-line .wx-label{font-family:var(--serif);font-weight:500}
-.wx-line svg{color:var(--c-accent-text);opacity:.78;margin-right:2px}
+.wx-line svg{color:var(--c-accent-text);opacity:.78;margin-right:3px;vertical-align:middle}
 
 /* 加载态 */
 .wx-loading{

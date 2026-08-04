@@ -32,7 +32,7 @@ const WX_MAP = {
 
 /* ---- 迷你天气 SVG (14x14 行内图标) ---- */
 function wxIconMini(key) {
-  const s = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px">';
+  const s = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle">';
   const sun   = '<circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5 M8 13v1.5 M1.5 8H3 M13 8h1.5 M3.4 3.4l1.1 1.1 M11.5 11.5l1.1 1.1 M3.4 12.6l1.1-1.1 M11.5 4.5l1.1-1.1"/>';
   const cloud = '<path d="M3 10c-2 0-3-1.5-3-3s1-2.8 2.8-3a4 4 0 0 1 7.5-1c1.7.2 3 1.5 3 3.3S11.5 10 10 10Z"/>';
   const rain  = '<path d="M9.5 13l-.8 2.5 M12 13.5l-.8 2.5"/>';
@@ -99,6 +99,7 @@ async function refreshWeather() {
       lat = pos.coords.latitude.toFixed(4);
       lon = pos.coords.longitude.toFixed(4);
       city = await reverseCity(lat, lon);
+      _wxGeo = { city, lat: parseFloat(lat), lon: parseFloat(lon) };
     } catch (e) {
       lat = '39.9042'; lon = '116.4074'; city = '北京';
     }
@@ -116,7 +117,12 @@ async function refreshWeather() {
   }
 }
 
-/* ---- 初始化 ---- */
+/* ---- 导出当前地理位置 ---- */
+let _wxGeo = null;
+
+export function getWxGeo() {
+  return _wxGeo;
+}
 let _lastFetch = 0;
 
 export function initWeather() {

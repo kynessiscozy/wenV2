@@ -57,7 +57,7 @@ import {
   getAISettings, getApiKey, toggleAISettings, initAISettings,
   initTheme, toggleTheme
 } from './ui/index.js';
-import { initWeather } from './ui/weather.js';
+import { initWeather, getWxGeo } from './ui/weather.js';
 
 initTheme();
 initWeather();
@@ -153,6 +153,26 @@ window.TJOpenForm=function(){
   if(!m)return;
   m.classList.add('open');
   const mb=document.getElementById('homeMenuBtn');if(mb)mb.style.display='none';
+
+  // 自动填入天气地理位置
+  const geo = getWxGeo();
+  if (geo && geo.city) {
+    const inp = document.getElementById('cInp');
+    const hid = document.getElementById('bPlace');
+    // 在 CD 中模糊匹配城市名
+    let matched = null;
+    for (const [id, info] of Object.entries(CD)) {
+      if (geo.city.includes(info.n) || info.n.includes(geo.city)) {
+        matched = { id, name: info.n };
+        break;
+      }
+    }
+    if (matched) {
+      hid.value = matched.id;
+      inp.value = matched.name;
+    }
+  }
+
   setTimeout(()=>{const f=document.getElementById('bDate');if(f)f.focus({preventScroll:true});},280);
 };
 window.TJCloseForm=function(){
@@ -258,7 +278,7 @@ async function exportProfiles(){try{const list=await dbGetAll();const blob=new B
 async function handleImport(input){const file=input.files[0];if(!file)return;try{const text=await file.text();const arr=JSON.parse(text);if(!Array.isArray(arr))throw new Error('格式错误');let count=0;for(const p of arr){if(p.bd&&p.bp&&p.gen){delete p.id;p.updatedAt=Date.now();await dbPut(p);count++;}}renderProfiles();showToast(`成功导入 ${count} 条档案`);}catch(e){showToast('导入失败：'+e.message);}input.value='';}
 
 (function(){const inp=document.getElementById('cInp'),hid=document.getElementById('bPlace'),dd=document.getElementById('cDD');let ai=-1;
-function rdd(f){let h='',n=0;const q=(f||'').toLowerCase();CG.forEach(g=>{const m=g.c.filter(c=>!q||c.n.includes(q)||c.i.includes(q)||g.g.includes(q));if(!m.length)return;h+=`<div class="cg">${g.g}</div>`;m.forEach(c=>{h+=`<div class="co" data-i="${c.i}" data-n="${c.n}"><span>${c.n}</span><span class="cp">${g.g}</span></div>`;n++})});if(!n)h='<div style="padding:18px;text-align:center;color:var(--c-text-3);font-size:.82em">未找到</div>';dd.innerHTML=h;ai=-1;dd.querySelectorAll('.co').forEach(el=>{el.addEventListener('mousedown',e=>{e.preventDefault();sel(el.dataset.i,el.dataset.n)})});}
+function rdd(f){let h='',n=0;const q=(f||'').toLowerCase();CG.forEach(g=>{const m=g.c.filter(c=>!q||c.n.includes(q)||c.i.includes(q)||g.g.includes(q)||(c.p&&c.p.toLowerCase().includes(q)));if(!m.length)return;h+=`<div class="cg">${g.g}</div>`;m.forEach(c=>{h+=`<div class="co" data-i="${c.i}" data-n="${c.n}"><span>${c.n}</span><span class="cp">${g.g}</span></div>`;n++})});if(!n)h='<div style="padding:18px;text-align:center;color:var(--c-text-3);font-size:.82em">未找到</div>';dd.innerHTML=h;ai=-1;dd.querySelectorAll('.co').forEach(el=>{el.addEventListener('mousedown',e=>{e.preventDefault();sel(el.dataset.i,el.dataset.n)})});}
 function sel(i,n){hid.value=i;inp.value=n;dd.classList.remove('show')}
 inp.addEventListener('focus',()=>{rdd(inp.value===(CD[hid.value]||{}).n?'':inp.value);dd.classList.add('show')});
 inp.addEventListener('input',()=>{rdd(inp.value);dd.classList.add('show')});
