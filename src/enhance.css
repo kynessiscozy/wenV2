@@ -474,18 +474,7 @@ body.report-active .home-menu-drawer{display:none}
    ============================================================ */
 .wx-card{
   margin:6px 4px 0;
-  border-radius:10px;
-  background:var(--c-surface);
-  border:1px solid var(--c-border);
   position:relative;
-  overflow:hidden;
-}
-/* 左侧金色装饰线 */
-.wx-card::before{
-  content:''; position:absolute; left:0; top:10px; bottom:10px;
-  width:2px; border-radius:1px;
-  background:var(--c-accent-text);
-  opacity:.35;
 }
 .wx-card-inner{
   display:flex; align-items:center; gap:14px;
