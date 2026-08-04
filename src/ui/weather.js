@@ -89,7 +89,7 @@ async function refreshWeather() {
   const primaryEl = document.getElementById('wxPrimary');
   const secondaryEl = document.getElementById('wxSecondary');
   if (primaryEl) primaryEl.innerHTML = '天气加载中…';
-  if (iconEl) iconEl.innerHTML = '☀';
+  if (iconEl) iconEl.innerHTML = '—';
   if (secondaryEl) secondaryEl.innerHTML = '';
 
   try {
@@ -119,11 +119,14 @@ async function refreshWeather() {
     if (iconEl) iconEl.innerHTML = wxIconBig(wx.icon);
     if (primaryEl) primaryEl.innerHTML = `<span style="font-size:1.3em;margin-right:6px">${temp}°</span> ${wx.label}`;
     if (secondaryEl) {
+      const locSvg = '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><circle cx="8" cy="6" r="3"/><path d="M12 14c0-2.2-4-6-4-6s-4 3.8-4 6"/></svg>';
+      const humSvg = '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M8 14c-1.7 0-3-1.3-3-3 0-2.5 3-5.5 3-5.5s3 3 3 5.5c0 1.7-1.3 3-3 3Z"/></svg>';
+      const wndSvg = '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M2 7h7c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2"/><path d="M5 10h6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2"/><path d="M3 12.5h5"/></svg>';
       let parts = [];
-      if (city) parts.push(`📍 ${city}`);
-      parts.push(`💧 ${hum}%`);
-      parts.push(`🌬 ${wind} km/h`);
-      secondaryEl.innerHTML = parts.join(' · ');
+      if (city) parts.push(`${locSvg} ${city}`);
+      parts.push(`${humSvg} ${hum}%`);
+      parts.push(`${wndSvg} ${wind} km/h`);
+      secondaryEl.innerHTML = parts.join(' <span style="color:var(--c-text-4);margin:0 2px">·</span> ');
     }
   } catch (e) {
     console.warn('天气获取失败:', e);
