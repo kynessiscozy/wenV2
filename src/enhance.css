@@ -481,3 +481,12 @@ body.report-active .home-menu-drawer{display:none}
 }
 @keyframes wxPulse{0%,100%{opacity:.4}50%{opacity:.9}}
 
+/* ============================================================
+   保存档案弹窗 — 移动端底部加安全距离，避免被 DOCK 栏遮蔽
+   ============================================================ */
+@media(max-width:560px){
+  #saveModal .modal-sheet{
+    padding-bottom:calc(80px + env(safe-area-inset-bottom, 34px));
+  }
+}
+
