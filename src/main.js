@@ -57,8 +57,10 @@ import {
   getAISettings, getApiKey, toggleAISettings, initAISettings,
   initTheme, toggleTheme
 } from './ui/index.js';
+import { initWeather } from './ui/weather.js';
 
 initTheme();
+initWeather();
 initSectionTabs();
 initNavigationUI();
 initAISettings();
