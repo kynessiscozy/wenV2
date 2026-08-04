@@ -166,7 +166,7 @@ window.TJOpenForm=function(){
   // 动态定位：表单底部距按钮顶部 5px
   if(cta){
     const r=cta.getBoundingClientRect();
-    m.style.bottom=(window.innerHeight-r.top+5)+'px';
+    m.style.bottom=(window.innerHeight-r.top+20)+'px';
   }
   const mb=document.getElementById('homeMenuBtn');if(mb)mb.style.display='none';
   // 按钮切换为「开始推演」
@@ -199,7 +199,7 @@ window.addEventListener('resize',()=>{
   const cta=document.getElementById('homeCtaMain');
   if(cta){
     const r=cta.getBoundingClientRect();
-    m.style.bottom=(window.innerHeight-r.top+5)+'px';
+    m.style.bottom=(window.innerHeight-r.top+20)+'px';
   }
 });
 window.TJCloseForm=function(){
