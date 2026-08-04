@@ -109,6 +109,10 @@ async function calc(isDemoPreview=false){
     const sheet=formModal.querySelector('.form-modal-sheet');
     const sheetRect=sheet?sheet.getBoundingClientRect():null;
     formModal.classList.remove('open');
+    document.body.classList.remove('form-open');
+    // 按钮恢复初始状态
+    const ctaBtn=document.getElementById('homeCtaMain');
+    if(ctaBtn){ctaBtn.textContent='输入信息';ctaBtn.classList.remove('home-cta-go');}
     const mb1=document.getElementById('homeMenuBtn');if(mb1)mb1.style.display='';
     const page1=document.getElementById('page1');
     if(page1)page1.classList.add('tj-fade'); // 过渡期间画面只留星环与粒子
@@ -2102,6 +2106,12 @@ Object.assign(window, {
   const oldBack=window.goBack;
   window.goBack=function(){
     if(oldBack)oldBack.apply(this,arguments);
+    // 确保首页按钮与表单状态干净
+    document.body.classList.remove('form-open');
+    const ctaBtn=document.getElementById('homeCtaMain');
+    if(ctaBtn){ctaBtn.textContent='输入信息';ctaBtn.classList.remove('home-cta-go');}
+    const fm=document.getElementById('formModal');
+    if(fm)fm.classList.remove('open');
     setTimeout(renderTodayCard,120);
   };
 
