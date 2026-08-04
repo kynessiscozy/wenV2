@@ -1,6 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#d97757"/>
-  <rect x="36" y="36" width="440" height="440" rx="88" fill="none" stroke="#faf9f5" stroke-opacity=".28" stroke-width="10"/>
-  <path d="M256 92c14 62 30 104 62 136 32 32 74 48 136 62-62 14-104 30-136 62-32 32-48 74-62 136-14-62-30-104-62-136-32-32-74-48-136-62 62-14 104-30 136-62 32-32 48-74 62-136z" fill="#faf9f5"/>
-  <circle cx="256" cy="280" r="26" fill="#d97757"/>
+  <rect width="512" height="512" rx="96" fill="#0d0804"/>
+  <!-- 莫比乌斯外环 — 金色 -->
+  <path d="M256 64 C400 64 448 160 448 256 C448 352 400 448 256 448 C112 448 64 352 64 256 C64 192 96 128 128 128 C192 128 224 224 224 256 C224 320 176 384 128 384" fill="none" stroke="rgba(240,199,110,.55)" stroke-width="20" stroke-linecap="round"/>
+  <!-- 莫比乌斯内环 — 橙红 -->
+  <path d="M256 64 C368 64 384 144 384 208 C384 272 320 336 256 336 C192 336 128 320 128 384" fill="none" stroke="#e8783a" stroke-width="20" stroke-linecap="round"/>
+  <!-- 命运之眼 — 外圈 -->
+  <circle cx="256" cy="256" r="36" fill="none" stroke="#fff" stroke-width="10" opacity=".35"/>
+  <!-- 命运之眼 — 瞳孔 -->
+  <circle cx="256" cy="256" r="14" fill="#f0c76e"/>
+  <!-- 微弱光晕 -->
+  <circle cx="256" cy="256" r="52" fill="none" stroke="#e8783a" stroke-width="3" opacity=".15"/>
 </svg>
