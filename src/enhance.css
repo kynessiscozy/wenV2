@@ -235,12 +235,6 @@ body.home .brand3d{display:block}
 }
 .form-modal-close:hover{color:var(--c-text);border-color:var(--c-border-2);background:var(--c-surface-3)}
 
-/* 表单打开时：星轨动画 dim，底部按钮区域保持清晰 */
-body.form-open canvas.particles,
-body.form-open canvas.brand3d{opacity:.15;transition:opacity .38s ease}
-body.form-open .mesh{opacity:.03;transition:opacity .38s ease}
-body.form-open .home-hero-copy{opacity:.32;transition:opacity .38s ease}
-
 /* 移动端：表单保持双列并排 */
 @media(max-width:520px){
   .form-grid{grid-template-columns:1fr 1fr!important;gap:9px}
