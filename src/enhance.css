@@ -371,7 +371,7 @@ body.beginner-mode .qr-acts{display:none!important}
 /* 汉堡按钮 */
 .home-menu-btn{
   position:fixed;top:max(14px,env(safe-area-inset-top));left:14px;z-index:1100;
-  width:42px;height:42px;border-radius:12px;
+  width:42px;height:42px;border-radius:50%;
   border:1px solid var(--c-border);
   background:var(--c-surface-2);
   display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;
