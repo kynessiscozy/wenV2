@@ -30,26 +30,47 @@ const WX_MAP = {
   99: { icon: 'thunder',    label: '强雷暴' },
 };
 
-/* ---- 天气大图标 (24x24) ---- */
+/* ---- 天气大图标 (26x26) — 精致版，含微光填充 ---- */
 function wxIconBig(key) {
-  const s = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">';
-  const sun   = '<circle cx="12" cy="12" r="4.5"/><path d="M12 2v2 M12 20v2 M2 12h2 M20 12h2 M4.9 4.9l1.4 1.4 M17.7 17.7l1.4 1.4 M4.9 19.1l1.4-1.4 M17.7 6.3l1.4-1.4"/>';
-  const cloud = '<path d="M4 14c-3 0-4-2.5-4-4.5S2 5 4.5 4.5a6 6 0 0 1 11-1c2.5.2 4.5 2 4.5 5S17 14 15 14Z"/>';
-  const rain  = '<path d="M14 19l-1 3 M18 19.5l-1 3"/>';
+  const h = '<svg viewBox="0 0 26 26" width="26" height="26" fill="none" stroke-linecap="round" stroke-linejoin="round">';
+  const s = 'stroke="currentColor" stroke-width="1.5"';
+  const su = 'stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity=".12"';
+  // 太阳 — 内外双圈 + 放射光芒
+  const sun = `<circle cx="13" cy="12" r="4.5" ${su}/><path d="M13 1.5v2M13 22.5v1.5M3.5 12h2M20.5 12h2M6.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M6.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" ${s}/>`;
+  // 云 — 叠加层云轮廓
+  const cloud = `<path d="M5.5 14.5C2.5 14.5 1.5 12 1.5 10S3.5 6 6 5.5a6 6 0 0 1 11-1c2.5.2 4.5 2 4.5 4.8S18 14.5 15.5 14.5Z" ${s}/>`;
+  // 雨滴
+  const rain = `<path d="M14.5 19l-1 3M18.5 19.5l-1 3" ${s}/>`;
   switch (key) {
-    case 'sun':        return s + sun + '</svg>';
-    case 'sun-cloud':  return s + sun.replace('r="4.5"','r="3.5"').replace('cy="12"','cy="10"') + cloud + '</svg>';
-    case 'cloud-sun':  return s + '<circle cx="7" cy="8" r="3.5"/>' + cloud + '</svg>';
-    case 'cloud':      return s + cloud + '</svg>';
-    case 'drizzle':    return s + cloud + '<path d="M10 19l-.5 2 M13 19.5l-.5 2 M16 19l-.5 2" stroke-width="1.2"/>' + '</svg>';
-    case 'rain':       return s + rain + cloud + '</svg>';
-    case 'heavy-rain': return s + cloud + '<path d="M9 19l-1 3 M12.5 18.5l-1 3 M16 19l-1 3" stroke-width="1.2"/>' + '</svg>';
-    case 'snow':       return s + cloud + '<circle cx="10" cy="19" r="1.2"/><circle cx="13.5" cy="20" r="1.2"/><circle cx="17" cy="19" r="1.2"/>' + '</svg>';
-    case 'thunder':    return s + cloud + '<path d="M13 14 9 18h3l-1.5 4 5-3.5h-3l2-4.5Z"/>' + '</svg>';
-    case 'fog':        return s + '<path d="M3 10h18 M3 13h15 M3 16h17" stroke-width="1.5"/>' + '</svg>';
-    default:           return s + sun + '</svg>';
+    case 'sun':
+      return h + sun + '</svg>';
+    case 'sun-cloud':
+      return h + `<circle cx="13" cy="10" r="3.5" ${su}/><path d="M13 2v1.5M13 18v1.5M5.5 10h1.5M18.5 10h1.5M7.7 6.7l1 1M16.3 13.3l1 1M7.7 13.3l1-1M16.3 6.7l1-1" ${s}/>` + cloud + '</svg>';
+    case 'cloud-sun':
+      return h + `<circle cx="7.5" cy="8.5" r="3" ${su}/><path d="M7.5 2v1.5M7.5 15v1.5M2.5 8.5h1.2M11.5 8.5h1.2M4 5l.9.9M10 12l.9.9M4 12l.9-.9M10 5l.9-.9" ${s}/>` + cloud + '</svg>';
+    case 'cloud':
+      return h + cloud + '</svg>';
+    case 'drizzle':
+      return h + cloud + `<path d="M10.5 19l-.5 2M13.5 19.5l-.5 2M16.5 19l-.5 2" stroke="currentColor" stroke-width="1.1"/>` + '</svg>';
+    case 'rain':
+      return h + rain + cloud + '</svg>';
+    case 'heavy-rain':
+      return h + cloud + `<path d="M9.5 19l-1 3M13 18.5l-1 3M16.5 19l-1 3" stroke="currentColor" stroke-width="1.2"/>` + '</svg>';
+    case 'snow':
+      return h + cloud + `<circle cx="10.5" cy="19" r="1.1" fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="1"/><circle cx="13.5" cy="20" r="1.1" fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="1"/><circle cx="16.5" cy="19" r="1.1" fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="1"/>` + '</svg>';
+    case 'thunder':
+      return h + cloud + `<path d="M13.5 14 9.5 18h3l-1.5 4 5-3.5h-3l2-4.5Z" fill="currentColor" fill-opacity=".18" stroke="currentColor" stroke-width="1.3"/>` + '</svg>';
+    case 'fog':
+      return h + `<path d="M3.5 10h19M3.5 13h15M3.5 16h17" stroke="currentColor" stroke-width="1.4"/>` + '</svg>';
+    default:
+      return h + sun + '</svg>';
   }
 }
+
+/* ---- 辅助图标 — 定位针 / 湿度 / 风速 (13x13) ---- */
+const miniLoc = '<svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="5.5" r="1" fill="currentColor" fill-opacity=".25"/><path d="M10.5 12c0-1.8-3.5-5.3-3.5-5.3S3.5 10.2 3.5 12" stroke="currentColor" stroke-width="1.3"/></svg>';
+const miniHum = '<svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12.5c-1.5 0-2.7-1.2-2.7-2.7 0-2.3 2.7-5 2.7-5s2.7 2.7 2.7 5c0 1.5-1.2 2.7-2.7 2.7Z" stroke="currentColor" stroke-width="1.3"/><path d="M6.3 10.7c0-.4.3-.7.7-.7s.7.3.7.7" fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width=".8"/></svg>';
+const miniWnd = '<svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5h6c1 0 1.8-.8 1.8-1.8S9 2.9 8 2.9s-1.8.8-1.8 1.8" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 9.5h5.5c1 0 1.8.8 1.8 1.8s-.8 1.8-1.8 1.8-1.8-.8-1.8-1.8" stroke="currentColor" stroke-width="1.3"/><path d="M3 12h4.5" stroke="currentColor" stroke-width="1.3"/></svg>';
 
 /* ---- 反向地理编码 ---- */
 async function reverseCity(lat, lon) {
@@ -81,16 +102,17 @@ async function fetchWeather(lat, lon) {
 
 /* ---- 渲染天气模块 ---- */
 async function refreshWeather() {
-  const el = document.getElementById('wxLine');
-  if (!el) return;
+  const card = document.getElementById('wxLine');
+  if (!card) return;
 
-  el.style.display = 'block';
+  card.style.display = 'block';
+  card.classList.add('is-loading');
   const iconEl = document.getElementById('wxIcon');
   const primaryEl = document.getElementById('wxPrimary');
   const secondaryEl = document.getElementById('wxSecondary');
   if (primaryEl) primaryEl.innerHTML = '天气加载中…';
-  if (iconEl) iconEl.innerHTML = '—';
   if (secondaryEl) secondaryEl.innerHTML = '';
+  if (iconEl) iconEl.innerHTML = '<svg viewBox="0 0 26 26" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="13" cy="12" r="4.5" fill="currentColor" fill-opacity=".12"/><path d="M13 1.5v2M13 22.5v1.5M3.5 12h2M20.5 12h2M6.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M6.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg>';
 
   try {
     let lat, lon, city = '';
@@ -116,23 +138,22 @@ async function refreshWeather() {
     const hum  = cur.relative_humidity_2m;
     const wind = Math.round(cur.wind_speed_10m);
 
+    card.classList.remove('is-loading');
     if (iconEl) iconEl.innerHTML = wxIconBig(wx.icon);
-    if (primaryEl) primaryEl.innerHTML = `<span style="font-size:1.3em;margin-right:6px">${temp}°</span> ${wx.label}`;
+    if (primaryEl) primaryEl.innerHTML = `<span class="t">${temp}°</span>${wx.label}`;
     if (secondaryEl) {
-      const locSvg = '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><circle cx="8" cy="6" r="3"/><path d="M12 14c0-2.2-4-6-4-6s-4 3.8-4 6"/></svg>';
-      const humSvg = '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M8 14c-1.7 0-3-1.3-3-3 0-2.5 3-5.5 3-5.5s3 3 3 5.5c0 1.7-1.3 3-3 3Z"/></svg>';
-      const wndSvg = '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M2 7h7c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2"/><path d="M5 10h6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2"/><path d="M3 12.5h5"/></svg>';
       let parts = [];
-      if (city) parts.push(`${locSvg} ${city}`);
-      parts.push(`${humSvg} ${hum}%`);
-      parts.push(`${wndSvg} ${wind} km/h`);
-      secondaryEl.innerHTML = parts.join(' <span style="color:var(--c-text-4);margin:0 2px">·</span> ');
+      if (city) parts.push(`<span class="wx-meta-item">${miniLoc}${city}</span>`);
+      parts.push(`<span class="wx-meta-item">${miniHum}${hum}%</span>`);
+      parts.push(`<span class="wx-meta-item">${miniWnd}${wind} km/h</span>`);
+      secondaryEl.innerHTML = parts.join('<span class="wx-meta-sep">·</span>');
     }
   } catch (e) {
     console.warn('天气获取失败:', e);
+    card.classList.remove('is-loading');
     if (primaryEl) primaryEl.innerHTML = '天气暂不可用';
     if (secondaryEl) secondaryEl.innerHTML = '';
-    if (iconEl) iconEl.innerHTML = '—';
+    if (iconEl) iconEl.innerHTML = '<svg viewBox="0 0 26 26" width="26" height="26"><circle cx="13" cy="13" r="5" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".4"/><path d="M10 10l6 6M10 16l6-6" stroke="currentColor" stroke-width="1.5" opacity=".4" stroke-linecap="round"/></svg>';
   }
 }
 
