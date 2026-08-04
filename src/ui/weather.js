@@ -30,23 +30,23 @@ const WX_MAP = {
   99: { icon: 'thunder',    label: '强雷暴' },
 };
 
-/* ---- 迷你天气 SVG (14x14 行内图标) ---- */
-function wxIconMini(key) {
-  const s = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle">';
-  const sun   = '<circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5 M8 13v1.5 M1.5 8H3 M13 8h1.5 M3.4 3.4l1.1 1.1 M11.5 11.5l1.1 1.1 M3.4 12.6l1.1-1.1 M11.5 4.5l1.1-1.1"/>';
-  const cloud = '<path d="M3 10c-2 0-3-1.5-3-3s1-2.8 2.8-3a4 4 0 0 1 7.5-1c1.7.2 3 1.5 3 3.3S11.5 10 10 10Z"/>';
-  const rain  = '<path d="M9.5 13l-.8 2.5 M12 13.5l-.8 2.5"/>';
+/* ---- 天气大图标 (24x24) ---- */
+function wxIconBig(key) {
+  const s = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">';
+  const sun   = '<circle cx="12" cy="12" r="4.5"/><path d="M12 2v2 M12 20v2 M2 12h2 M20 12h2 M4.9 4.9l1.4 1.4 M17.7 17.7l1.4 1.4 M4.9 19.1l1.4-1.4 M17.7 6.3l1.4-1.4"/>';
+  const cloud = '<path d="M4 14c-3 0-4-2.5-4-4.5S2 5 4.5 4.5a6 6 0 0 1 11-1c2.5.2 4.5 2 4.5 5S17 14 15 14Z"/>';
+  const rain  = '<path d="M14 19l-1 3 M18 19.5l-1 3"/>';
   switch (key) {
     case 'sun':        return s + sun + '</svg>';
-    case 'sun-cloud':  return s + sun.replace('r="3"','r="2.5"').replace('cy="8"','cy="7"') + cloud + '</svg>';
-    case 'cloud-sun':  return s + '<circle cx="5" cy="6" r="2.5"/>' + cloud + '</svg>';
+    case 'sun-cloud':  return s + sun.replace('r="4.5"','r="3.5"').replace('cy="12"','cy="10"') + cloud + '</svg>';
+    case 'cloud-sun':  return s + '<circle cx="7" cy="8" r="3.5"/>' + cloud + '</svg>';
     case 'cloud':      return s + cloud + '</svg>';
-    case 'drizzle':    return s + cloud + '<path d="M7 13v2 M9 13.5v2 M11 13v2" stroke-width="1"/>' + '</svg>';
+    case 'drizzle':    return s + cloud + '<path d="M10 19l-.5 2 M13 19.5l-.5 2 M16 19l-.5 2" stroke-width="1.2"/>' + '</svg>';
     case 'rain':       return s + rain + cloud + '</svg>';
-    case 'heavy-rain': return s + cloud + '<path d="M6 13l-.5 2 M8.5 12.5l-.5 2.5 M11 13l-.5 2" stroke-width="1"/>' + '</svg>';
-    case 'snow':       return s + cloud + '<circle cx="7" cy="13" r=".8"/><circle cx="9" cy="13.5" r=".8"/><circle cx="11" cy="13" r=".8"/>' + '</svg>';
-    case 'thunder':    return s + cloud + '<path d="M9 10 6 13h2.5l-1 3 4-2.5H9l1.5-3.5Z"/>' + '</svg>';
-    case 'fog':        return s + '<path d="M2 7h12 M2 9h10 M2 11h11" stroke-width="1.2"/>' + '</svg>';
+    case 'heavy-rain': return s + cloud + '<path d="M9 19l-1 3 M12.5 18.5l-1 3 M16 19l-1 3" stroke-width="1.2"/>' + '</svg>';
+    case 'snow':       return s + cloud + '<circle cx="10" cy="19" r="1.2"/><circle cx="13.5" cy="20" r="1.2"/><circle cx="17" cy="19" r="1.2"/>' + '</svg>';
+    case 'thunder':    return s + cloud + '<path d="M13 14 9 18h3l-1.5 4 5-3.5h-3l2-4.5Z"/>' + '</svg>';
+    case 'fog':        return s + '<path d="M3 10h18 M3 13h15 M3 16h17" stroke-width="1.5"/>' + '</svg>';
     default:           return s + sun + '</svg>';
   }
 }
@@ -79,13 +79,18 @@ async function fetchWeather(lat, lon) {
   return r.json();
 }
 
-/* ---- 渲染行内天气 ---- */
+/* ---- 渲染天气模块 ---- */
 async function refreshWeather() {
   const el = document.getElementById('wxLine');
   if (!el) return;
 
   el.style.display = 'block';
-  el.innerHTML = '<span class="wx-loading">天气加载中…</span>';
+  const iconEl = document.getElementById('wxIcon');
+  const primaryEl = document.getElementById('wxPrimary');
+  const secondaryEl = document.getElementById('wxSecondary');
+  if (primaryEl) primaryEl.innerHTML = '天气加载中…';
+  if (iconEl) iconEl.innerHTML = '☀';
+  if (secondaryEl) secondaryEl.innerHTML = '';
 
   try {
     let lat, lon, city = '';
@@ -109,11 +114,22 @@ async function refreshWeather() {
     const wx = WX_MAP[cur.weather_code] || { icon: 'sun', label: '未知' };
     const temp = Math.round(cur.temperature_2m);
     const hum  = cur.relative_humidity_2m;
+    const wind = Math.round(cur.wind_speed_10m);
 
-    el.innerHTML = `${wxIconMini(wx.icon)} <span class="wx-location">${city || '当前位置'}</span> <span class="wx-sep">·</span> <span class="wx-val">${temp}°</span> <span class="wx-label">${wx.label}</span> <span class="wx-sep">·</span> <span class="wx-val">${hum}%</span>`;
+    if (iconEl) iconEl.innerHTML = wxIconBig(wx.icon);
+    if (primaryEl) primaryEl.innerHTML = `<span style="font-size:1.3em;margin-right:6px">${temp}°</span> ${wx.label}`;
+    if (secondaryEl) {
+      let parts = [];
+      if (city) parts.push(`📍 ${city}`);
+      parts.push(`💧 ${hum}%`);
+      parts.push(`🌬 ${wind} km/h`);
+      secondaryEl.innerHTML = parts.join(' · ');
+    }
   } catch (e) {
     console.warn('天气获取失败:', e);
-    el.innerHTML = '<span class="wx-loading">天气暂不可用</span>';
+    if (primaryEl) primaryEl.innerHTML = '天气暂不可用';
+    if (secondaryEl) secondaryEl.innerHTML = '';
+    if (iconEl) iconEl.innerHTML = '—';
   }
 }
 

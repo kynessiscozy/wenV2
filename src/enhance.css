@@ -470,24 +470,14 @@ body.report-active .home-menu-overlay,
 body.report-active .home-menu-drawer{display:none}
 
 /* ============================================================
-   天气行内信息 — 菜单 header 第三行，城市名在前
+   天气模块 — 全宽展示块，与「关于问问大师」按钮等宽
    ============================================================ */
-.wx-line{
-  display:block;margin-top:8px;
-  font-family:var(--serif);font-size:.65em;font-weight:500;
-  color:var(--c-text-3);letter-spacing:.4px;
-  line-height:1.5;white-space:nowrap;
+.home-menu-weather{
+  font-family:var(--serif);
 }
-.wx-line .wx-location{color:var(--c-text-2);font-weight:600}
-.wx-line .wx-sep{color:var(--c-text-4);margin:0 3px}
-.wx-line .wx-val{color:var(--c-accent-text);font-family:var(--sf);font-weight:600}
-.wx-line .wx-label{font-family:var(--serif);font-weight:500}
-.wx-line svg{color:var(--c-accent-text);opacity:.78;margin-right:3px;vertical-align:middle}
-
-/* 加载态 */
-.wx-loading{
-  font-size:inherit;color:var(--c-text-4);
-  animation:wxPulse 1.6s ease-in-out infinite;
+.home-menu-weather .wx-icon{
+  color:var(--c-accent-text);
+  opacity:.85;
 }
 @keyframes wxPulse{0%,100%{opacity:.4}50%{opacity:.9}}
 
