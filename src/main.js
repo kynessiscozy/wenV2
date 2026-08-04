@@ -135,17 +135,17 @@ async function calc(isDemoPreview=false){
   }
 
   // —— 经典过渡：示例报告 / 从档案重新推演 ——
-  const ld=document.getElementById('ldov');ld.classList.add('on');document.getElementById('btnGo2').disabled=true;
+  const ld=document.getElementById('ldov');if(ld)ld.classList.add('on');const btnGo2=document.getElementById('btnGo2');if(btnGo2)btnGo2.disabled=true;
   const pb=document.getElementById('ldbf'),st=document.getElementById('ldst');
   const steps=['排列四柱…','推算五行…','分析十神…','查神煞…','排大运…','安紫微盘…','起奇门盘…','梅花起卦…','排流月…','综合合参…','生成报告…'];
   for(let i=0;i<steps.length;i++){st.textContent=steps[i];pb.style.width=(((i+1)/steps.length)*100)+'%';await new Promise(r=>setTimeout(r,220));}
   try{
     doCompute();
-    ld.classList.remove('on');document.getElementById('btnGo2').disabled=false;
+    if(ld)ld.classList.remove('on');if(btnGo2)btnGo2.disabled=false;
     showPage2();
     document.querySelectorAll('.tab-item')[0].click();
   }catch(e){
-    ld.classList.remove('on');document.getElementById('btnGo2').disabled=false;
+    if(ld)ld.classList.remove('on');if(btnGo2)btnGo2.disabled=false;
     console.error(e);
     showToast('推演出错：'+e.message+'\n\n建议：请检查输入信息是否正确，或刷新页面重试。');
   }
