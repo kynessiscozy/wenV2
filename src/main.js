@@ -151,15 +151,23 @@ async function calc(isDemoPreview=false){
 window.TJOpenForm=function(){
   const m=document.getElementById('formModal');
   if(!m)return;
+  const cta=document.getElementById('homeCtaMain');
+  // 已打开状态：主按钮已是「开始推演」，直接执行推演
+  if(m.classList.contains('open')){
+    calc();
+    return;
+  }
   m.classList.add('open');
+  document.body.classList.add('form-open');
   const mb=document.getElementById('homeMenuBtn');if(mb)mb.style.display='none';
+  // 按钮切换为「开始推演」
+  if(cta){cta.textContent='开始推演';cta.classList.add('home-cta-go');}
 
   // 自动填入天气地理位置
   const geo = getWxGeo();
   if (geo && geo.city) {
     const inp = document.getElementById('cInp');
     const hid = document.getElementById('bPlace');
-    // 在 CD 中模糊匹配城市名
     let matched = null;
     for (const [id, info] of Object.entries(CD)) {
       if (geo.city.includes(info.n) || info.n.includes(geo.city)) {
@@ -178,7 +186,11 @@ window.TJOpenForm=function(){
 window.TJCloseForm=function(){
   const m=document.getElementById('formModal');
   if(m)m.classList.remove('open');
+  document.body.classList.remove('form-open');
   const mb=document.getElementById('homeMenuBtn');if(mb)mb.style.display='';
+  // 按钮恢复为「输入信息」
+  const cta=document.getElementById('homeCtaMain');
+  if(cta){cta.textContent='输入信息';cta.classList.remove('home-cta-go');}
 };
 
 function renderRiQian(){

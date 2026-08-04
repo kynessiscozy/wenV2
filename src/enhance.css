@@ -179,6 +179,13 @@ body.home .brand3d{display:block}
   border-color:var(--c-border-2);box-shadow:none;
 }
 .home-cta-ghost:hover{border-color:var(--c-text-4);box-shadow:none;background:var(--c-surface-4)}
+/* 按钮切换为「开始推演」后的强调样式 */
+.home-cta-go{
+  background:linear-gradient(135deg,var(--c-accent),color-mix(in srgb,var(--c-accent) 70%,#f0c76e));
+  box-shadow:0 6px 22px color-mix(in srgb,var(--c-accent) 40%,transparent);
+  animation:ctaPulse 2.4s ease-in-out infinite;
+}
+@keyframes ctaPulse{0%,100%{box-shadow:0 6px 22px color-mix(in srgb,var(--c-accent) 40%,transparent)}50%{box-shadow:0 8px 30px color-mix(in srgb,var(--c-accent) 55%,transparent)}}
 /* 推演过渡：整个首页淡出，画面只留星环与粒子 */
 #page1.tj-fade{opacity:0;pointer-events:none;transition:opacity .4s ease}
 /* 过渡期间极简提示，上移至屏幕中下部 */
@@ -192,22 +199,23 @@ body.home .brand3d{display:block}
 }
 .tj-calc-hint.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ---- 出生信息表单弹窗 ---- */
-.form-modal{position:fixed;inset:0;z-index:950;display:none}
-.form-modal.open{display:block}
-.form-modal-bg{
-  position:absolute;inset:0;background:rgba(15,13,11,.46);
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  animation:fmFade .22s ease both;
+/* ---- 出生信息表单：悬浮面板，浮于按钮上方，不模糊底部 ---- */
+.form-modal{
+  position:fixed;left:50%;bottom:170px;z-index:550;
+  transform:translateX(-50%);
+  width:min(560px,92vw);
+  display:none;pointer-events:none;
 }
+.form-modal.open{display:block;pointer-events:auto}
 .form-modal-sheet{
-  position:relative;margin:6vh auto 0;width:min(560px,92vw);max-height:88vh;overflow:auto;
-  padding:26px 24px 22px;border-radius:24px;
+  padding:24px 22px 20px;border-radius:22px;
   background:var(--c-surface);border:1px solid var(--c-border-2);
-  box-shadow:0 26px 70px rgba(0,0,0,.28);
-  animation:fmIn .34s cubic-bezier(.2,.8,.2,1) both;
+  box-shadow:0 20px 54px rgba(0,0,0,.22),0 3px 10px rgba(0,0,0,.07);
+  animation:fmSlideUp .32s cubic-bezier(.22,.8,.22,1) both;
+  position:relative;
 }
-/* 弹层里的表单卡去掉自身的"卡片"外观，融进弹层，避免卡中卡 */
+@keyframes fmSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+/* 弹层里的表单卡去掉自身的"卡片"外观 */
 .form-modal-sheet .home-card{
   background:transparent!important;border:0!important;box-shadow:none!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
@@ -215,41 +223,46 @@ body.home .brand3d{display:block}
 }
 .form-modal-sheet .home-card::before,.form-modal-sheet .home-card::after{display:none!important}
 .form-modal-tt{
-  font-family:var(--serif);font-size:1.2em;font-weight:700;letter-spacing:1px;
-  color:var(--c-text-hi);margin:2px 0 20px;
+  font-family:var(--serif);font-size:1.15em;font-weight:700;letter-spacing:1px;
+  color:var(--c-text-hi);margin:0 0 18px;
 }
 .form-modal-close{
-  position:absolute;top:14px;right:14px;z-index:2;width:38px;height:38px;
+  position:absolute;top:12px;right:12px;z-index:2;width:34px;height:34px;
   display:flex;align-items:center;justify-content:center;border-radius:999px;
   border:1px solid var(--c-border);background:var(--c-surface-2);
-  color:var(--c-text-3);font-size:20px;line-height:1;cursor:pointer;
+  color:var(--c-text-3);font-size:18px;line-height:1;cursor:pointer;
   transition:all .15s ease;
 }
 .form-modal-close:hover{color:var(--c-text);border-color:var(--c-border-2);background:var(--c-surface-3)}
-@keyframes fmFade{from{opacity:0}to{opacity:1}}
-@keyframes fmIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+
+/* 表单打开时：星轨动画 dim，底部按钮区域保持清晰 */
+body.form-open canvas.particles,
+body.form-open canvas.brand3d{opacity:.15;transition:opacity .38s ease}
+body.form-open .mesh{opacity:.03;transition:opacity .38s ease}
+body.form-open .home-hero-copy{opacity:.32;transition:opacity .38s ease}
 
 /* 移动端：表单保持双列并排 */
 @media(max-width:520px){
-  .form-grid{grid-template-columns:1fr 1fr!important;gap:10px}
+  .form-grid{grid-template-columns:1fr 1fr!important;gap:9px}
   .fd input,.fd select,.cw input{font-size:14px!important;padding-left:10px;padding-right:10px}
-  .form-modal-tt{font-size:1.1em;margin-bottom:16px}
+  .form-modal-tt{font-size:1.05em;margin-bottom:14px}
+  .form-modal-sheet{padding:20px 16px 16px;border-radius:18px}
 }
-
 @media(max-width:480px){
-  .home-cta{min-width:0;flex:0 0 auto;white-space:nowrap;padding:14px 20px}
-  .home-hero-actions{flex-direction:row;align-items:center;flex-wrap:nowrap;gap:10px;justify-content:center}
-  .form-modal-sheet{margin:10vh auto 0;padding:22px 18px 18px;border-radius:20px}
+  .home-cta{min-width:0;flex:0 0 auto;white-space:nowrap;padding:14px 18px}
+  .home-hero-actions{flex-direction:row;align-items:center;flex-wrap:nowrap;gap:9px;justify-content:center}
+  .form-modal{bottom:150px;width:94vw}
+  .form-modal-sheet{padding:18px 14px 14px;border-radius:16px}
 }
-/* 超窄屏：按钮保持不换行，缩小内边距适配小屏 */
 @media(max-width:380px){
   .home-cta{
     min-width:0;flex:0 0 auto;white-space:nowrap;
-    padding:12px 15px;font-size:.82em;
+    padding:12px 14px;font-size:.82em;
     line-height:1.55;letter-spacing:1px;
     text-align:center;
   }
-  .home-hero-actions{gap:8px;padding-left:6px;padding-right:6px}
+  .home-hero-actions{gap:7px;padding-left:6px;padding-right:6px}
+  .form-modal{bottom:132px;width:96vw}
 }
 
 /* ---- 运势页 年/月/周/日 档位（下划线式样式见文件底部"改动6"）---- */
