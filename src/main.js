@@ -135,6 +135,14 @@ async function calc(isDemoPreview=false){
   }
 
   // —— 经典过渡：示例报告 / 从档案重新推演 ——
+  // 🔧 先关闭表单弹窗（position:fixed 独立于 page1，不关会浮在结果页上）
+  if(formModal&&formModal.classList.contains('open')){
+    formModal.classList.remove('open');
+    document.body.classList.remove('form-open');
+    const ctaBtn=document.getElementById('homeCtaMain');
+    if(ctaBtn){ctaBtn.textContent='输入信息';ctaBtn.classList.remove('home-cta-go');}
+    const mb2=document.getElementById('homeMenuBtn');if(mb2)mb2.style.display='';
+  }
   const ld=document.getElementById('ldov');if(ld)ld.classList.add('on');const btnGo2=document.getElementById('btnGo2');if(btnGo2)btnGo2.disabled=true;
   const pb=document.getElementById('ldbf'),st=document.getElementById('ldst');
   const steps=['排列四柱…','推算五行…','分析十神…','查神煞…','排大运…','安紫微盘…','起奇门盘…','梅花起卦…','排流月…','综合合参…','生成报告…'];
