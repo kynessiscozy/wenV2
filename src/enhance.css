@@ -229,20 +229,19 @@ body.home .brand3d{display:block}
 @keyframes fmFade{from{opacity:0}to{opacity:1}}
 @keyframes fmIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
 @media(max-width:480px){
-  .home-cta{min-width:0;flex:1 1 auto;max-width:48%}
-  .home-hero-actions{flex-direction:row;align-items:center;flex-wrap:nowrap;gap:10px}
+  .home-cta{min-width:0;flex:0 0 auto;white-space:nowrap;padding:14px 20px}
+  .home-hero-actions{flex-direction:row;align-items:center;flex-wrap:nowrap;gap:10px;justify-content:center}
   .form-modal-sheet{margin:10vh auto 0;padding:22px 18px 18px;border-radius:20px}
 }
-/* 超窄屏：按钮文字两字一排，保持并排紧凑 */
+/* 超窄屏：按钮保持不换行，缩小内边距适配小屏 */
 @media(max-width:380px){
   .home-cta{
-    min-width:0;flex:0 0 auto;
-    width:calc(2em + 28px);max-width:calc(2em + 28px);
-    padding:12px 14px;font-size:.88em;
+    min-width:0;flex:0 0 auto;white-space:nowrap;
+    padding:12px 15px;font-size:.82em;
     line-height:1.55;letter-spacing:1px;
-    word-break:break-all;text-align:center;
+    text-align:center;
   }
-  .home-hero-actions{gap:14px}
+  .home-hero-actions{gap:8px;padding-left:6px;padding-right:6px}
 }
 
 /* ---- 运势页 年/月/周/日 档位（下划线式样式见文件底部"改动6"）---- */
