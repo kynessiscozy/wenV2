@@ -60,7 +60,13 @@
 <div class="home-menu-overlay" id="homeMenuOverlay" onclick="toggleHomeMenu(false)"></div>
 <aside class="home-menu-drawer" id="homeMenuDrawer" aria-label="菜单面板">
   <div class="home-menu-header">
-    <div><span class="home-menu-title" style="font-weight:800">问问大师</span><small style="display:block;font-size:.62em;letter-spacing:2px;color:var(--c-text-4);margin-top:2px">BY COZYmade</small><small class="wx-line" id="wxLine" style="display:none"></small></div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <img src="./icon.svg" alt="" class="home-menu-icon" style="width:40px;height:40px;flex-shrink:0;border-radius:10px">
+      <div>
+        <span class="home-menu-title" style="font-weight:800">问问大师</span>
+        <small style="display:block;font-size:.62em;letter-spacing:2px;color:var(--c-text-4);margin-top:2px">BY COZYmade</small>
+      </div>
+    </div>
     <button class="home-menu-close" type="button" onclick="toggleHomeMenu(false)" aria-label="关闭">×</button>
   </div>
   <div class="home-menu-body">

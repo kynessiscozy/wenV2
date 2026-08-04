@@ -418,6 +418,9 @@ body.beginner-mode .qr-acts{display:none!important}
 .home-menu-title{
   font-size:1em;font-weight:600;color:var(--c-text-hi);letter-spacing:2px;
 }
+.home-menu-icon{
+  filter:drop-shadow(0 2px 6px rgba(180,140,100,.25));
+}
 .home-menu-close{
   width:32px;height:32px;border-radius:8px;border:none;
   background:transparent;font-size:1.4em;color:var(--c-text-3);
