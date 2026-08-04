@@ -1,18 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="96" fill="#0d0804"/>
   
-  <!-- 金色半环 — 从顶部出发，走右半边 -->
-  <path d="M 256 68 C 420 68, 444 180, 444 256 C 444 370, 380 440, 256 440" fill="none" stroke="rgba(240,199,110,.55)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 金色半环 — 莫比乌斯外环 -->
+  <path d="M256 64 C400 64 448 160 448 256 C448 352 400 448 256 448 C112 448 64 352 64 256 C64 192 96 128 128 128 C192 128 224 224 224 256 C224 320 176 384 128 384" fill="none" stroke="rgba(240,199,110,.5)" stroke-width="20" stroke-linecap="round"/>
   
-  <!-- 橙红半环 — 从底部接续，走左半边，形成完整闭环 -->
-  <path d="M 256 440 C 132 440, 68 370, 68 256 C 68 140, 124 68, 256 68" fill="none" stroke="#e8783a" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 橙红半环 — 莫比乌斯内环交叉 -->
+  <path d="M256 64 C368 64 384 144 384 208 C384 272 320 336 256 336 C192 336 128 320 128 384" fill="none" stroke="#e8783a" stroke-width="20" stroke-linecap="round"/>
   
   <!-- 命运之眼 — 外圈 -->
-  <circle cx="256" cy="256" r="36" fill="none" stroke="#fff" stroke-width="10" opacity=".35"/>
+  <circle cx="256" cy="256" r="36" fill="none" stroke="#fff" stroke-width="10" opacity=".4"/>
   
   <!-- 命运之眼 — 瞳孔 -->
   <circle cx="256" cy="256" r="14" fill="#f0c76e"/>
-  
-  <!-- 微弱光晕 -->
-  <circle cx="256" cy="256" r="52" fill="none" stroke="#e8783a" stroke-width="3" opacity=".15"/>
 </svg>
