@@ -159,6 +159,11 @@ window.TJOpenForm=function(){
   }
   m.classList.add('open');
   document.body.classList.add('form-open');
+  // 动态定位：表单底部距按钮顶部 5px
+  if(cta){
+    const r=cta.getBoundingClientRect();
+    m.style.bottom=(window.innerHeight-r.top+5)+'px';
+  }
   const mb=document.getElementById('homeMenuBtn');if(mb)mb.style.display='none';
   // 按钮切换为「开始推演」
   if(cta){cta.textContent='开始推演';cta.classList.add('home-cta-go');}
@@ -183,6 +188,16 @@ window.TJOpenForm=function(){
 
   setTimeout(()=>{const f=document.getElementById('bDate');if(f)f.focus({preventScroll:true});},280);
 };
+// resize 时动态更新表单位置
+window.addEventListener('resize',()=>{
+  const m=document.getElementById('formModal');
+  if(!m||!m.classList.contains('open'))return;
+  const cta=document.getElementById('homeCtaMain');
+  if(cta){
+    const r=cta.getBoundingClientRect();
+    m.style.bottom=(window.innerHeight-r.top+5)+'px';
+  }
+});
 window.TJCloseForm=function(){
   const m=document.getElementById('formModal');
   if(m)m.classList.remove('open');

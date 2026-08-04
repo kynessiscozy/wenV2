@@ -251,7 +251,7 @@ body.form-open .home-hero-copy{opacity:.32;transition:opacity .38s ease}
 @media(max-width:480px){
   .home-cta{min-width:0;flex:0 0 auto;white-space:nowrap;padding:14px 18px}
   .home-hero-actions{flex-direction:row;align-items:center;flex-wrap:nowrap;gap:9px;justify-content:center}
-  .form-modal{bottom:150px;width:94vw}
+  .form-modal{width:94vw}
   .form-modal-sheet{padding:18px 14px 14px;border-radius:16px}
 }
 @media(max-width:380px){
@@ -262,7 +262,7 @@ body.form-open .home-hero-copy{opacity:.32;transition:opacity .38s ease}
     text-align:center;
   }
   .home-hero-actions{gap:7px;padding-left:6px;padding-right:6px}
-  .form-modal{bottom:132px;width:96vw}
+  .form-modal{width:96vw}
 }
 
 /* ---- 运势页 年/月/周/日 档位（下划线式样式见文件底部"改动6"）---- */
