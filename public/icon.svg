@@ -1,15 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#0d0804"/>
-  
-  <!-- 金色半环 — 莫比乌斯外环 -->
-  <path d="M256 64 C400 64 448 160 448 256 C448 352 400 448 256 448 C112 448 64 352 64 256 C64 192 96 128 128 128 C192 128 224 224 224 256 C224 320 176 384 128 384" fill="none" stroke="rgba(240,199,110,.5)" stroke-width="20" stroke-linecap="round"/>
-  
-  <!-- 橙红半环 — 莫比乌斯内环交叉 -->
-  <path d="M256 64 C368 64 384 144 384 208 C384 272 320 336 256 336 C192 336 128 320 128 384" fill="none" stroke="#e8783a" stroke-width="20" stroke-linecap="round"/>
-  
-  <!-- 命运之眼 — 外圈 -->
-  <circle cx="256" cy="256" r="36" fill="none" stroke="#fff" stroke-width="10" opacity=".4"/>
-  
-  <!-- 命运之眼 — 瞳孔 -->
-  <circle cx="256" cy="256" r="14" fill="#f0c76e"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#0d0804"/>
+  <path d="M32 8 C50 8 56 20 56 32 C56 44 50 56 32 56 C14 56 8 44 8 32 C8 24 12 16 16 16 C24 16 28 28 28 32 C28 40 22 48 16 48" fill="none" stroke="rgba(240,199,110,.5)" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M32 8 C46 8 48 18 48 26 C48 34 40 42 32 42 C24 42 16 40 16 48" fill="none" stroke="#e8783a" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="32" cy="32" r="4.5" fill="none" stroke="#fff" stroke-width="1.2" opacity=".4"/>
+  <circle cx="32" cy="32" r="1.8" fill="#f0c76e"/>
 </svg>
