@@ -111,9 +111,10 @@
       </div>
     </div>
   </div>
-  <!-- 关于问问大师：固定在菜单底部 -->
-  <div class="home-menu-footer" style="padding:12px 16px;border-top:1px solid var(--c-border)">
+  <!-- 关于问问大师 / 免责声明：固定在菜单底部 -->
+  <div class="home-menu-footer" style="padding:12px 16px;border-top:1px solid var(--c-border);display:flex;flex-direction:column;gap:8px">
     <button type="button" class="pf-io-btn" style="width:100%;padding:10px;font-size:.82em" onclick="toggleHomeMenu(false);openAboutModal()">关于问问大师</button>
+    <button type="button" class="pf-io-btn" style="width:100%;padding:10px;font-size:.82em" onclick="toggleHomeMenu(false);openDisclaimerModal()">免责声明</button>
   </div>
 </aside>
 
@@ -312,6 +313,46 @@
 
       <div style="margin-top:18px;padding:12px 14px;border-radius:12px;background:var(--c-surface-3);border:1px solid var(--c-border);font-size:.9em;color:var(--c-text-2);line-height:1.7">
         <b style="color:var(--c-text-hi)">温馨提示：</b>本应用基于传统文化体系推演，内容仅供文化体验与自我反思参考，不构成任何专业建议。人生选择请结合实际情况理性判断。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 免责声明 弹窗 -->
+<div class="modal" id="disclaimerModal">
+  <div class="modal-bg" onclick="closeDisclaimerModal()"></div>
+  <div class="modal-sheet glass" style="max-width:440px;max-height:80vh;overflow-y:auto;text-align:left">
+    <div class="modal-close" onclick="closeDisclaimerModal()">×</div>
+    <div class="modal-title" style="text-align:center;margin-bottom:16px">免责声明</div>
+    <div style="font-size:.82em;line-height:1.85;color:var(--c-text)">
+      <p style="margin-bottom:12px">欢迎使用问问大师。在使用本应用前，请仔细阅读以下免责声明。使用本应用即表示您已充分理解并同意本声明的全部内容。</p>
+
+      <div style="font-weight:700;font-size:1.05em;margin:16px 0 8px;color:var(--c-text-hi)">一、内容仅供参考</div>
+      <p style="margin-bottom:10px">问问大师提供的所有命理推演、运势分析、关系合盘、决策建议等内容，均基于中国传统文化中的八字命理体系进行算法推演，仅供文化体验、娱乐消遣与自我反思参考，不构成任何形式的专业建议（包括但不限于法律、医疗、金融、心理咨询、职业规划等领域）。</p>
+
+      <div style="font-weight:700;font-size:1.05em;margin:16px 0 8px;color:var(--c-text-hi)">二、不构成决策依据</div>
+      <p style="margin-bottom:10px">本应用的推演结果不应作为人生重大决策（如投资、择业、婚恋、医疗、法律事务等）的唯一或主要依据。用户在做出任何重要决定前，应结合实际情况、咨询相关领域专业人士并独立判断。因依赖本应用内容而产生的任何直接或间接损失，本应用及开发者不承担任何责任。</p>
+
+      <div style="font-weight:700;font-size:1.05em;margin:16px 0 8px;color:var(--c-text-hi)">三、AI 生成内容说明</div>
+      <p style="margin-bottom:10px">本应用的部分内容由 AI 模型自动生成，包括但不限于命盘解读文本、运势描述、建议文案等。AI 生成内容可能存在偏差、不完整或不准确的情况，用户应理性看待。开发者不对 AI 生成内容的准确性、完整性和时效性做任何保证。</p>
+
+      <div style="font-weight:700;font-size:1.05em;margin:16px 0 8px;color:var(--c-text-hi)">四、隐私保护</div>
+      <p style="margin-bottom:10px">本应用所有数据（包括出生信息、命盘档案、推演记录等）均存储在用户本地设备，不会上传至任何服务器。开发者无法访问、收集或使用用户的个人数据。用户应自行妥善保管设备及数据安全。</p>
+
+      <div style="font-weight:700;font-size:1.05em;margin:16px 0 8px;color:var(--c-text-hi)">五、知识产权</div>
+      <p style="margin-bottom:10px">本应用的界面设计、算法逻辑、图标素材及所有原创内容的知识产权归开发者所有。未经书面许可，不得复制、修改、传播或用于商业目的。</p>
+
+      <div style="font-weight:700;font-size:1.05em;margin:16px 0 8px;color:var(--c-text-hi)">六、免责范围</div>
+      <p style="margin-bottom:10px">在法律允许的最大范围内，本应用及开发者对以下情况不承担责任：</p>
+      <ul style="padding-left:18px;margin-bottom:10px">
+        <li style="margin-bottom:4px">用户因依赖推演结果而做出的任何决策及其后果</li>
+        <li style="margin-bottom:4px">AI 生成内容的不准确、遗漏或误导</li>
+        <li style="margin-bottom:4px">因设备故障、网络问题等不可抗力导致的服务中断</li>
+        <li style="margin-bottom:4px">用户数据因设备丢失、损坏或未授权访问导致的泄露</li>
+      </ul>
+
+      <div style="margin-top:4px;padding:12px 14px;border-radius:12px;background:var(--c-surface-3);border:1px solid var(--c-border);font-size:.9em;color:var(--c-text-2);line-height:1.7">
+        <b style="color:var(--c-text-hi)">如您不同意以上声明：</b>请立即停止使用本应用。继续使用即视为您已仔细阅读并完全接受本声明的全部条款。
       </div>
     </div>
   </div>
